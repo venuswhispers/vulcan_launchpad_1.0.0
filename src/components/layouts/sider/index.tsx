@@ -13,7 +13,7 @@ interface INav {
 const navs: INav[] = [
   { title: "Dashboard", url: "/", icon: "radix-icons:dashboard" },
   { title: "Projects", url: "/projects", icon: "bi:gem" },
-  { title: "News", url: "/news", icon: "emojione:newspaper" },
+  { title: "News", url: "/news", icon: "emojione-monotone:newspaper" },
   { title: "Videos", url: "/videos", icon: "fluent:video-clip-28-regular" },
   { title: "Evangalists", url: "/evangalists", icon: "ph:user-circle-light" },
   { title: "Accreditors", url: "/accreditors", icon: "ph:user-circle-light" },
@@ -53,8 +53,8 @@ const Sider = () => {
   )
 
   const _renderNavItem = ({ title, icon, url }: INav) => (
-    <li key={title} onClick={() => setCurrent(title)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-2 ${title === current && 'bg-[#2B6EC8] !py-4 font-bold !text-white'}  rounded-2xl cursor-pointer hover:bg-[#2b48c8] hover:py-4 hover:font-bold hover:!text-white`}>
-      <Icon icon={icon} width={20}/> {title}
+    <li key={title} onClick={() => setCurrent(title)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-2 ${title === current && 'bg-[#2B6EC8] !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:bg-[#2b48c8] hover:py-4 hover:font-bold hover:!text-white hover:my-1`}>
+      <Icon icon={icon} width={22}/> {title}
     </li>
   )
 
