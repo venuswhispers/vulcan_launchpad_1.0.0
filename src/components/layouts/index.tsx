@@ -1,26 +1,27 @@
 import React from "react";
-import dynamic from 'next/dynamic'
-import HeaderLoader from '@/components/layouts/header/loader';
-import SiderLoader from '@/components/layouts/sider/loader';
+import dynamic from "next/dynamic";
+import HeaderLoader from "@/components/layouts/header/loader";
+import SiderLoader from "@/components/layouts/sider/loader";
 
-const Header = dynamic(() => import("@/components/layouts/header"), { 
+const Header = dynamic(() => import("@/components/layouts/header"), {
   ssr: false,
-  loading: () => <HeaderLoader/>
+  loading: () => <HeaderLoader />,
 });
-const Sider = dynamic(() => import("@/components/layouts/sider"), { 
+const Sider = dynamic(() => import("@/components/layouts/sider"), {
   ssr: false,
-  loading: () => <SiderLoader/> 
+  loading: () => <SiderLoader />,
 });
-
 
 const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <div className="p-4 flex w-full min-h-[100vh]">
+    <div className="p-4 gap-4 flex w-full min-h-[100vh]">
       <Sider />
-      {/* <div className="flex">
-        <Header />
-        {children}
-      </div> */}
+      <div className="flex grow">
+        <div className="w-full h-full">
+          <Header />
+          {children}
+        </div>
+      </div>
     </div>
   );
 };

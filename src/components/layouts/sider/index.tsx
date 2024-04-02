@@ -53,13 +53,13 @@ const Sider = () => {
   )
 
   const _renderNavItem = ({ title, icon, url }: INav) => (
-    <li key={title} onClick={() => setCurrent(title)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-2 ${title === current && 'bg-[#2B6EC8] !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:bg-[#2b48c8] hover:py-4 hover:font-bold hover:!text-white hover:my-1`}>
+    <li key={title} onClick={() => setCurrent(title)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${title === current && 'bg-[#2B6EC8] !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
       <Icon icon={icon} width={22}/> {title}
     </li>
   )
 
   return (
-    <div className="flex flex-col justify-between bg-white dark:bg-[#100E28] w-[252px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl">
+    <div className="hidden md:flex flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[252px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl">
       <div>
         <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">
           <Image
@@ -83,8 +83,6 @@ const Sider = () => {
           <h3 className="text-black font-sans dark:text-white font-bold mt-3 text-lg">Erfan Amade</h3>
           <div className="text-sm text mt-1 flex items-center gap-1"><span>verified</span><Icon className="text-[#0CAF60] text-[18px]" icon="ic:baseline-verified" /></div>
         </div>
-
-
 
         <ul className="mt-4 p-6">
           { navs.map((_nav: INav) => _renderNavItem(_nav)) }
