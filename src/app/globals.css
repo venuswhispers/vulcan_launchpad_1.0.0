@@ -50,3 +50,36 @@ body {
   background-color: #3e3e55;
   border-radius: 4px;
 }
+.dark ::-webkit-scrollbar {
+  width: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background-color: #ffffff;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #31313660;
+  border-radius: 4px;
+}
+
+
+.sider::-webkit-scrollbar {
+  width: 4px;
+}
+.sider::-webkit-scrollbar-track {
+  background-color: #ffffff00;
+}
+.sider::-webkit-scrollbar-thumb {
+  background-color: #363649;
+  border-radius: 5px;
+}
+
+.dark .sider::-webkit-scrollbar {
+  width: 4px;
+}
+.dark .sider::-webkit-scrollbar-track {
+  background-color: #ffffff00;
+}
+.dark .sider::-webkit-scrollbar-thumb {
+  background-color: #0000003a;
+  border-radius: 4px;
+}
