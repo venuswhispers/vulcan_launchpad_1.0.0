@@ -18,16 +18,34 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #E7EBEF;
+}
+
+.light body{
+  background-color: #040413;
+}
+
+.text{
+  color: #DBDBDB;
+}
+
+.dark .text{
+  color: #2F2F2F;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: #041431;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #3e3e55;
+  border-radius: 4px;
 }

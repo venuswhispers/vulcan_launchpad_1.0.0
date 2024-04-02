@@ -6,6 +6,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: ['class','.light'],
   theme: {
     extend: {
       backgroundImage: {
@@ -15,6 +16,11 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('flowbite/plugin')({
+        charts: true,
+    }),
+    // ... other plugins
+  ]
 };
 export default config;
