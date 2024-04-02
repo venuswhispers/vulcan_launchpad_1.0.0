@@ -15,7 +15,7 @@ const Sider = dynamic(() => import("@/components/layouts/sider"), {
 
 const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <div className="p-4 flex w-full">
+    <div className="p-4 flex w-full min-h-[100vh]">
       <Sider />
       {/* <div className="flex">
         <Header />

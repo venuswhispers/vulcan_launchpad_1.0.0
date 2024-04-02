@@ -4,9 +4,26 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
+interface INav {
+  title: string,
+  url: string,
+  icon: string
+}
+
+const navs: INav[] = [
+  { title: "Dashboard", url: "/", icon: "radix-icons:dashboard" },
+  { title: "Projects", url: "/projects", icon: "bi:gem" },
+  { title: "News", url: "/news", icon: "emojione:newspaper" },
+  { title: "Videos", url: "/videos", icon: "fluent:video-clip-28-regular" },
+  { title: "Evangalists", url: "/evangalists", icon: "ph:user-circle-light" },
+  { title: "Accreditors", url: "/accreditors", icon: "ph:user-circle-light" },
+  { title: "Help", url: "/help", icon: "lucide:badge-help" },
+]
+
 const Sider = () => {
 
   const { theme, setTheme } = useTheme();
+  const [current, setCurrent] = React.useState<string>("Dashboard");
 
   const _renderThemeSwitch = () => (
     <div className="relative flex bg-[#EFF3FF] dark:bg-[#050606] rounded-xl w-full px-2 py-1 mt-4">
@@ -35,10 +52,16 @@ const Sider = () => {
     </div>
   )
 
+  const _renderNavItem = ({ title, icon, url }: INav) => (
+    <li key={title} onClick={() => setCurrent(title)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-2 ${title === current && 'bg-[#2B6EC8] !py-4 font-bold !text-white'}  rounded-2xl cursor-pointer hover:bg-[#2b48c8] hover:py-4 hover:font-bold hover:!text-white`}>
+      <Icon icon={icon} width={20}/> {title}
+    </li>
+  )
+
   return (
     <div className="flex flex-col justify-between bg-white dark:bg-[#100E28] w-[252px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl">
       <div>
-        <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-none p-6">
+        <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">
           <Image
             src={ theme !== "dark" ? "/images/logo.dark.svg" : "/images/logo.svg" }
             width={110}
@@ -47,6 +70,25 @@ const Sider = () => {
             priority={true}    
           />
         </div>
+
+        <div className="flex justify-center items-center flex-col mt-4">
+          <Image
+            src="/images/man.png"
+            width={70}
+            height={70}
+            alt={"avatar"}  
+            className="rounded-3xl" 
+            priority={true}    
+          />
+          <h3 className="text-black font-sans dark:text-white font-bold mt-3 text-lg">Erfan Amade</h3>
+          <div className="text-sm text mt-1 flex items-center gap-1"><span>verified</span><Icon className="text-[#0CAF60] text-[18px]" icon="ic:baseline-verified" /></div>
+        </div>
+
+
+
+        <ul className="mt-4 p-6">
+          { navs.map((_nav: INav) => _renderNavItem(_nav)) }
+        </ul>
       </div>
       <div className="p-6">
         { _renderThemeSwitch() }

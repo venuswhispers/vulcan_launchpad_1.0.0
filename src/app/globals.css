@@ -19,6 +19,7 @@
 body {
   color: rgb(var(--foreground-rgb));
   background-color: #E7EBEF;
+  min-height: 100vh;
 }
 
 .light body{
