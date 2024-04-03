@@ -80,20 +80,20 @@ const Card = () => {
         <span>365 days</span>
       </section>
 
-      <section id="actions" className="text-sm mt-5 flex justify-between items-center">
-        <div className="flex items-center gap-2 rounded-full bg-[#E5EBFF] dark:bg-black p-3 pr-4 text-[#0776DA] dark:text-white">
+      <section id="actions" className="mt-5 max-w-1/2 flex justify-between items-center text-xs">
+        <div className="flex truncate items-center gap-2 rounded-full bg-[#E5EBFF] dark:bg-black p-2 pr-3 text-[#0776DA] dark:text-white">
           <Icon icon="fa6-regular:clock" width={22}/>
-          <span>10:40:57</span>
+          <span className="truncate">10:40:57</span>
         </div>
 
         <section className="flex gap-[6px]">
-          <button className="dark:bg-[#020110] bg-[#E5EBFF] px-3 rounded-xl hover:opacity-60">
+          <button className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60">
             <Icon icon="mdi:bell-outline" width={22} className="text-[#2B6EC8]"/>
           </button>
-          <button className="dark:bg-[#020110] bg-[#E5EBFF] px-3 rounded-xl hover:opacity-60">
+          <button className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60">
             <Icon icon="ph:heart-bold" width={22} className="text-[#2B6EC8]"/>
           </button>
-          <button className="rounded-2xl bg-[#2B6EC8] px-5 text-white py-3">View</button>
+          <button className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
         </section>
       </section>
     </div>
