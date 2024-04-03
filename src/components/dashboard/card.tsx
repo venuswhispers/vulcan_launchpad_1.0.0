@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 const Card = () => {
   return (
-    <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl">
+    <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
       <section id="logo" className="relative w-full">
         <Image
           src={'/images/spade.png'}
@@ -96,6 +96,8 @@ const Card = () => {
           <button className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
         </section>
       </section>
+
+      <div className="px-2 py-[1px] rounded-lg top-0 right-3 -translate-y-1/2 absolute bg-[#FFE7E4] text-[#FF6A55] text-[12px] font-bold">5%</div>
     </div>
   )
 };
