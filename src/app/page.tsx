@@ -8,7 +8,7 @@ const Card = dynamic(() => import("@/components/dashboard/card"), {ssr: false});
 
 export default function Home() {
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="flex w-full flex-col gap-4">
       <Header/>
       <Filter/>
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">All Launchpads</h1>

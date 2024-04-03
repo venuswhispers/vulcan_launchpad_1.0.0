@@ -83,3 +83,38 @@ body {
   background-color: #0000003a;
   border-radius: 4px;
 }
+
+.ql-background, .ql-header, .ql-color-pickerm, .ql-color, .ql-font, .ql-size{
+  display: none!important;
+}
+.ql-formats {
+  margin-right: 0px!important;
+}
+.ql-toolbar{
+  border: 2px solid #E5EFFA!important;
+  border-bottom: none!important;
+  border-radius: 5px 5px 0px 0px ;
+  background-color: white;
+}
+.light .ql-toolbar{
+  background-color: #1D1B39;
+  border-color: #1E203B!important;
+}
+.ql-container {
+  background-color: #F0F8FF;
+  border: 2px solid #E5EFFA!important;
+  border-top: none!important;
+  border-radius: 0px 0px 5px 5px;
+  min-height: 100px;
+  font-size: 14px!important;
+}
+.light .ql-container {
+  background-color: #020111;
+  border-color: #1E203B!important;
+}
+.ql-editor {
+  overflow-wrap: anywhere;
+}
+.ql-editor p, .ql-editor ol, .ql-editor ul, .ql-editor pre, .ql-editor blockquote, .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4, .ql-editor h5, .ql-editor h6 {
+  word-break: break-all!important;
+}
