@@ -67,7 +67,7 @@ const Sider = () => {
   return (
     <>
       { !isCollapse && <div onClick={handleCollapse} className="fixed md:hidden top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-[10px]"></div> }
-      <div className={`fixed ${isCollapse ? '-left-[252px]' : 'left-4'} transition-all duration-200 bottom-4 z-10 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[252px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}>
+      <div className={`fixed ${isCollapse ? '-left-[260px]' : 'left-4'} transition-all duration-200 bottom-4 z-10 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[260px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}>
         <div className="w-full h-full overflow-y-scroll sider">
           <div>
             <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">

@@ -26,38 +26,38 @@ const Filter = () => {
   const _renderFilter = () => (
     <Dropdown label="Dropdown button" renderTrigger={() => 
       <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[105px]">
-        <h4 className="text-[12px] px-1">Filters</h4>
+        <h4 className="text-xs px-1">Filters</h4>
         <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter }</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-    { ["All", "Progress", "Success", "Failed"].map((item: string) => <Dropdown.Item onClick={() => setFilter(item)} key={item} className={`${filter === item && 'font-bold'} text-[12px]`}>{item}</Dropdown.Item>) }
+    { ["All", "Progress", "Success", "Failed"].map((item: string) => <Dropdown.Item onClick={() => setFilter(item)} key={item} className={`${filter === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
     </Dropdown>
   )
 
   const _renderSort = () => (
     <Dropdown label="Dropdown button" renderTrigger={() => 
       <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[105px]">
-        <h4 className="text-[12px] px-1">Sort by</h4>
+        <h4 className="text-xs px-1">Sort by</h4>
         <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ sort }</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-      { ["Alphabet", "Created", "Softcap", "HardCap"].map((item: string) => <Dropdown.Item onClick={() => setSort(item)} key={item} className={`${sort === item && 'font-bold'} text-[12px]`}>{item}</Dropdown.Item>) }
+      { ["Alphabet", "Created", "Softcap", "HardCap"].map((item: string) => <Dropdown.Item onClick={() => setSort(item)} key={item} className={`${sort === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
     </Dropdown>
   )
 
   const _renderChainFilter = () => (
     <Dropdown label="Dropdown button" renderTrigger={() => 
       <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[105px]">
-        <h4 className="text-[12px] px-1">Chains</h4>
+        <h4 className="text-xs px-1">Chains</h4>
         <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{chain}</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-      { ["All", "Sepolia", "Arbitrum"].map((item: string) => <Dropdown.Item onClick={() => setChain(item)} key={item} className={`${chain === item && 'font-bold'} text-[12px]`}>{item}</Dropdown.Item>) }
+      { ["All", "Sepolia", "Arbitrum"].map((item: string) => <Dropdown.Item onClick={() => setChain(item)} key={item} className={`${chain === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
     </Dropdown>
   )
 
   return (
-    <div className="flex gap-2 flex-col sm:flex-row md:flex-col lg:flex-row items-end w-full border border-[#EFF3FA] p-4 bg-gradient-to-r from-[#2B6EC8] to-[#00D7E1] rounded-lg">
+    <div className="flex gap-2 flex-col sm:flex-row md:flex-col lg:flex-row items-end w-full border border-[#EFF3FA] p-4 bg-gradient-to-r from-[#2B6EC8] to-[#00D7E1] rounded-xl">
       { _renderSearch () }
       { _renderFilter () }
       { _renderSort () }
