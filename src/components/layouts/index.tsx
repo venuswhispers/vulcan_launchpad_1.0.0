@@ -17,7 +17,7 @@ const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     <div className="p-4 gap-4 flex w-full min-h-[100vh]">
       <Sider />
       <div className="flex grow">
-        <div className="w-full h-full">
+        <div className="w-full h-full flex gap-4 flex-col">
           <Header />
           {children}
         </div>
