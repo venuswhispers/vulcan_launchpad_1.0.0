@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter, usePathname } from "next/navigation";
+import path from "path";
 
 interface INav {
   title: string,
@@ -75,8 +76,8 @@ const Sider = () => {
     <>
       { !isCollapse && <div onClick={handleCollapse} className="fixed md:hidden top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-[10px] z-10"></div> }
       <div className={`fixed ${isCollapse ? '-left-[260px]' : 'left-4'} transition-all duration-200 bottom-4 z-20 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[260px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}>
-        <div className="w-full h-full overflow-y-scroll sider">
-          <div>
+        <div className="w-full h-full overflow-y-scroll vulcan-sider">
+          <section id="sider-info" className="">
             <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">
               <Image
                 src={ theme !== "dark" ? "/images/logo.dark.svg" : "/images/logo.svg" }
@@ -102,15 +103,17 @@ const Sider = () => {
             <ul className="mt-4 p-6">
               { navs.map((_nav: INav) => _renderNavItem(_nav)) }
             </ul>
-          </div>
-          <div className="p-6">
+          </section>
+
+          <section id="theme-switcher" className="p-6">
             { _renderThemeSwitch() }
             <h2 className="text mt-2 px-2">Insigts</h2>
             <div className="flex justify-between items-center mt-3 px-1">
               <div className="text flex gap-2 items-center"><Icon icon="tabler:message-circle" width={30} hFlip/><span>Inbox</span></div>
               <div className="p-1 px-2 rounded-md text-white bg-[#FF3E46]">8</div>
             </div>
-          </div>
+          </section>
+
         </div>
         <Icon onClick={handleCollapse} icon="material-symbols:arrow-forward-ios" width={30} className={`absolute cursor-pointer hover:opacity-60 right-0 top-1/2 translate-x-full -translate-y-1/2 !z-50 md:hidden dark:text-white ${!isCollapse && 'hidden'}`}/>
       </div>
