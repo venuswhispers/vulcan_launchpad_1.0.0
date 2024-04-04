@@ -4,22 +4,13 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 import Image from "next/image";
 import { useAtom } from "jotai";
+import { useDropzone} from 'react-dropzone';
 
-import {
-  titleAtom,
-  hardCapAtom,
-  softCapAtom,
-  youtubeLinkAtom,
-  tokenPriceAtom,
-  endTimeAtom,
-  descriptionAtom,
-  walletAtom,
-  checkedAtom,
-} from "@/store";
 
 const Uploader = () => {
 
 
+  const { getRootProps, getInputProps, isDragActive } = useDropzone();
 
   
 
@@ -40,6 +31,7 @@ const Uploader = () => {
 
   return (
     <label
+        {...getRootProps()}
         htmlFor="project-logo"
         id="upload"
         className="bg-[#F0F8FF] dark:bg-[#020111] border-2 border-[#98bdea17] py-16 rounded-2xl mt-3 flex justify-center items-center"
@@ -50,7 +42,7 @@ const Uploader = () => {
                 PNG, GIF, WEBP, MP4 or MP3. Max 1Gb.
             </p>
         </div>
-        <input onChange={readImage} id="project-logo" type="file" className="hidden" accept="image/png, image/gif, image/jpeg"/>
+        <input {...getInputProps()} onChange={readImage} id="project-logo" type="file" className="hidden" accept="image/png, image/gif, image/jpeg"/>
     </label>
   );
 };

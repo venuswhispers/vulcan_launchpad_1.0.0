@@ -16,7 +16,7 @@
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-drag-drop-files": "^2.3.10",
+    "react-dropzone": "^14.2.3",
     "react-quill": "^2.0.0"
   },
   "devDependencies": {
