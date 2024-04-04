@@ -55,7 +55,7 @@ const Header = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
-            className="peer dark:bg-[#030212] bg-white text-sm !text-[11px] w-full h-full bg-transparent rounded-lg text-blue-gray-700 font-sans font-normal dark:outline-none dark:border-none outline outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border p-3 !pr-9 border-blue-gray-200 dark:border-gray-600 focus:dark:border-gray-400 focus:border-gray-400 border-gray-200"
+            className="bg-white transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea3d] dark:border-none outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border"
             placeholder="" 
             // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
           />

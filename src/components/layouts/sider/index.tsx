@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { setConfig } from "next/config";
+import { useRouter, usePathname } from "next/navigation";
 
 interface INav {
   title: string,
@@ -13,15 +13,18 @@ interface INav {
 
 const navs: INav[] = [
   { title: "Dashboard", url: "/", icon: "radix-icons:dashboard" },
-  { title: "Projects", url: "/projects", icon: "bi:gem" },
+  { title: "Launch ICO", url: "/create", icon: "bi:gem" },
   { title: "News", url: "/news", icon: "emojione-monotone:newspaper" },
   { title: "Videos", url: "/videos", icon: "fluent:video-clip-28-regular" },
-  { title: "Evangalists", url: "/evangalists", icon: "ph:user-circle-light" },
+  { title: "Evangalists", url: "/evangilists", icon: "ph:user-circle-light" },
   { title: "Accreditors", url: "/accreditors", icon: "ph:user-circle-light" },
   { title: "Help", url: "/help", icon: "lucide:badge-help" },
 ]
 
 const Sider = () => {
+
+  const router = useRouter ();
+  const pathname = usePathname ();
 
   const { theme, setTheme } = useTheme();
   const [current, setCurrent] = React.useState<string>("Dashboard");
@@ -54,8 +57,12 @@ const Sider = () => {
     </div>
   )
 
+  const _gotoURL = (url: string) => {
+    router.push(url);
+  }
+
   const _renderNavItem = ({ title, icon, url }: INav) => (
-    <li key={title} onClick={() => setCurrent(title)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${title === current && 'bg-[#2B6EC8] !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
+    <li key={title} onClick={() => _gotoURL(url)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === url && 'bg-[#2B6EC8] !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
       <Icon icon={icon} width={22}/> {title}
     </li>
   )
@@ -66,8 +73,8 @@ const Sider = () => {
 
   return (
     <>
-      { !isCollapse && <div onClick={handleCollapse} className="fixed md:hidden top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-[10px]"></div> }
-      <div className={`fixed ${isCollapse ? '-left-[260px]' : 'left-4'} transition-all duration-200 bottom-4 z-10 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[260px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}>
+      { !isCollapse && <div onClick={handleCollapse} className="fixed md:hidden top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-[10px] z-10"></div> }
+      <div className={`fixed ${isCollapse ? '-left-[260px]' : 'left-4'} transition-all duration-200 bottom-4 z-20 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[260px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}>
         <div className="w-full h-full overflow-y-scroll sider">
           <div>
             <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">

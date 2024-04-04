@@ -1,5 +1,6 @@
 "use client"
 import React from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 interface INav {
   title: string,
@@ -7,17 +8,21 @@ interface INav {
 }
 
 const navs = [
-  {title: 'All Launchpads', url: ''},
-  {title: 'Advanced Mode', url: ''},
-  {title: 'My Contributions', url: ''},
+  {title: 'All Launchpads', url: '/'},
+  // {title: 'Advanced Mode', url: ''},
+  {title: 'Launch ICO', url: '/create'},
+  {title: 'My Contributions', url: '/profile'},
 ]
 
 const Header = () => {
 
+  const router = useRouter ();
+  const pathname = usePathname ();
+
   const [current, setCurrent] = React.useState<string>("All Launchpads");
 
   const _renderMenuItem = ({title, url}: INav) => (
-    <button onClick={() => setCurrent(title)} key={title} className={`text-sm truncate text-nowrap cursor-pointer py-2 px-4 rounded-full font-bold dark:text-[#777E90] text-[#777E90] hover:opacity-60 ${title === current && 'bg-[#2B6EC8] !text-white'}`}>{title}</button>
+    <button onClick={() => router.push(url)} key={title} className={`text-sm truncate text-nowrap cursor-pointer py-2 px-4 rounded-full font-bold dark:text-[#777E90] text-[#777E90] hover:opacity-60 ${pathname === url && 'bg-[#2B6EC8] !text-white'}`}>{title}</button>
   )
 
   return (
