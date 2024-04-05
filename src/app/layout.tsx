@@ -4,6 +4,7 @@ import Layout from "@/components/layouts";
 import Provider from '@/providers';
 import "./globals.css";
 import 'react-quill/dist/quill.snow.css';
+import 'react-image-crop/dist/ReactCrop.css'
 
 const inter = Inter({ subsets: ["latin"] });
 

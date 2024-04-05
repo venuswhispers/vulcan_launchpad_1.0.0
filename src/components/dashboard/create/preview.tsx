@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import Displayer from "@/components/dashboard/create/atoms/quillDisplayer";
 import { useAtom } from "jotai";
+import { previewAtom } from "@/store";
 
 import {
   titleAtom,
@@ -20,6 +21,8 @@ import {
 
 const Preview = () => {
 
+  const [preview] = useAtom(previewAtom);
+
   const [title, setTitle] = useAtom(titleAtom);
   const [hardCap, setHardCap] = useAtom(hardCapAtom);
   const [softCap, setSoftCap] = useAtom(softCapAtom);
@@ -32,7 +35,7 @@ const Preview = () => {
 
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [distance, setDistance] = React.useState<number>(0);
-  const [collapseDescription, setCollapseDescription] = React.useState<boolean>(false);
+  const [collapseDescription, setCollapseDescription] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     timerRef.current = setInterval(async () => {
@@ -69,23 +72,28 @@ const Preview = () => {
   return (
     <div className="bg-[#F0F8FF] dark:bg-[#020111] rounded-2xl md:w-full w1080:max-w-[350px] px-5 py-7 flex-none">
       <h3 className="font-bold">Preview</h3>
-      <div className="mt-1 mb-5 aspect-[1/1.5] flex justify-center items-center">
-        {/* <Image
-          src={'/images/preview.png'}
-          width={0}
-          alt=''
-          height={0}
-          sizes="100vw"
-          className='w-full h-full rounded-[19px]'
-        /> */}
-        <Image
-          src={'/images/logo.svg'}
-          width={0}
-          alt=''
-          height={0}
-          sizes="100vw"
-          className='w-4/5 rounded-[19px] animate-pulse'
-        />
+      <div className="mt-5 mb-5 aspect-[1/1.5] flex justify-center items-center">
+        {
+          !preview ?
+          <Image
+            src={'/images/logo.svg'}
+            width={0}
+            alt=''
+            height={0}
+            sizes="100vw"
+            className='w-4/5 rounded-[19px] animate-pulse'
+          /> :
+          preview.type === 'video/mp4' ? 
+          <video src={preview.data} className='w-full h-full rounded-[19px]' controls autoPlay></video> :
+          <Image
+            src={preview.data}
+            width={0}
+            alt=''
+            height={0}
+            sizes="100vw"
+            className='w-full h-full object-contain'
+          />
+        }
       </div>
       {
         title ? 

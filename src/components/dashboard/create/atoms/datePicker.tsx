@@ -8,10 +8,12 @@ interface IProps {
   onChange: (value: Date) => void,
   value: string,
   title: string,
-  placeholder: string
+  placeholder: string,
+  message: string,
+  isValid: boolean
 }
 
-const Input = ({title, className, onChange, value, placeholder}: IProps) => {
+const Input = ({title, className, onChange, value, placeholder, isValid, message}: IProps) => {
   return (
     <div className={className}>
       <div className="px-1 py-1 font-bold truncate flex gap-1 items-center">{title} <Icon icon="ep:info-filled" className="text-[#9A9FA5]" /></div>
@@ -22,7 +24,8 @@ const Input = ({title, className, onChange, value, placeholder}: IProps) => {
           value={value}
           onChange={() => {}}
         />
-        </Popover>
+      </Popover>
+      <p className="text-red-800 text-[11px] px-2 h-3">{ (isValid && !value) ? message : '' }</p>
     </div>
   )
 };

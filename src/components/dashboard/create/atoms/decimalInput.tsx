@@ -21,7 +21,7 @@ const Input = ({title, className, onChange, value, placeholder, message, isValid
         onChange={onChange}
         value={value}
       />
-      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isValid && !value ) ? message : '' }</p>
+      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isValid && !value || value === '0' ) ? message : ''  }</p>
     </div>
   )
 };

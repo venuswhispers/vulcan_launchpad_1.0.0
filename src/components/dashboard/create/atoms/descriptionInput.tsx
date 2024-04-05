@@ -8,7 +8,9 @@ interface IProps {
   onChange: (e: string) => void,
   value: string,
   title: string,
-  placeholder: string
+  placeholder: string,
+  message: string,
+  isValid: boolean
 }
 
 const modules = {
@@ -43,7 +45,7 @@ const modules = {
     "font"
   ];
 
-const Input = ({title, className, onChange, value, placeholder}: IProps) => {
+const Input = ({title, className, onChange, value, placeholder, isValid, message}: IProps) => {
 
   const [code, setCode] = React.useState("hellllo");
   const handleProcedureContentChange = (content:any, delta:any, source:any, editor:any) => {
@@ -61,6 +63,7 @@ const Input = ({title, className, onChange, value, placeholder}: IProps) => {
         value={value}
         onChange={handleProcedureContentChange}
       />
+      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isValid && !value || value === '<p><br></p>') ? message : '' }</p>
     </div>
   )
 };

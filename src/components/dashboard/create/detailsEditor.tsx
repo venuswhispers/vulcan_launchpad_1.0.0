@@ -2,12 +2,16 @@
 import React from "react";
 import Header from "@/components/dashboard/header";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Input from "@/components/dashboard/create/atoms/infoInput";
+import InputInfo from "@/components/dashboard/create/atoms/infoInput";
+import InputCap from "@/components/dashboard/create/atoms/capInput";
+
 import Datepicker from "@/components/dashboard/create/atoms/datePicker";
 import Description from "@/components/dashboard/create/atoms/descriptionInput";
 import Image from "next/image";
 import { useAtom } from "jotai";
 import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
+// import Croper from "@/components/dashboard/create/croper";
+import useToastr from "@/hooks/useToastr";
 
 import {
   titleAtom,
@@ -19,115 +23,164 @@ import {
   descriptionAtom,
   walletAtom,
   checkedAtom,
+  previewAtom
 } from "@/store";
+import { Yuji_Boku } from "next/font/google";
+import Preview from "./preview";
+import { SetStateAction } from "jotai/vanilla";
 
-const Create = () => {
+interface IProps {
+  step: number,
+  setStep: React.Dispatch<SetStateAction<number>>
+}
+
+const Create = ({ step, setStep }: IProps) => {
+  //atoms
   const [title, setTitle] = useAtom(titleAtom);
   const [hardCap, setHardCap] = useAtom(hardCapAtom);
   const [softCap, setSoftCap] = useAtom(softCapAtom);
   const [youtubeLink, setYoutubeLink] = useAtom(youtubeLinkAtom);
-  const [tokenPrice, setTokenPrice] = useAtom(tokenPriceAtom);
+  // const [tokenPrice, setTokenPrice] = useAtom(tokenPriceAtom);
   const [endTime, setEndTime] = useAtom(endTimeAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
-  const [wallet, setWallet] = useAtom(walletAtom);
+  // const [wallet, setWallet] = useAtom(walletAtom);
   const [checked, setChecked] = useAtom(checkedAtom);
+  const [preview, ] = useAtom (previewAtom);
+  const [isValid, setIsValid] = React.useState<boolean>(false);
+  //toastr
+  const { showToast } = useToastr ();
 
 
   const handleChangeEndTime = (date: Date) => {
     setEndTime(date.toLocaleDateString());
   };
 
-  const readImage = (event: React.FormEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const target = event.target as HTMLInputElement & {
-      files: FileList;
-    }
+  const handleSave = () => {
+    setIsValid (true);
+    let valid: boolean = true;
+    try {
+      if (!title) {
+        showToast("Project title field is required.", "warning");
+        valid = false;
+      } 
+      if (!hardCap || hardCap === "0") {
+        showToast("Project hardcap field is required.", "warning"); 
+        valid = false;
+      } 
+      if (!softCap || softCap === "0") {
+        showToast("Project softcap field is required.", "warning"); 
+        valid = false;
+      } 
+      if (!endTime) {
+        showToast("ICO duraction field is required.", "warning"); 
+        valid = false;
+      } 
+      if (!description || description === '<p><br></p>') {
+        showToast("Project description field is required.", "warning"); 
+        valid = false;
+      }
+      if (Number(hardCap) < Number(softCap)) {
+        showToast("Invalid softcap and hardcap configuration.", "warning");
+        valid = false;
+      }
 
-    console.log(target.files[0]);
-    // const reader = new window.FileReader()
-    // reader.readAsArrayBuffer(file)
-    // reader.onloadend = () => {
-    //     setType(file.type);
-    //     setBuffer(Buffer(reader.result));
-    // }
-}
+      if (valid) {
+        setStep (1);
+      }
+    } catch (err) {
+      // showToast(String(err), "warning");
+      // console.log(err)
+    }
+  }
+
+  const handleSoftcapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
+      return;
+    }
+    setSoftCap(value);
+  }
+
+  const handleHardcapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
+      return;
+    }
+    setHardCap(value);
+  }
+
 
   return (
-    <div className="text-[#23262F] dark:text-[#CCCCCC] text-[15px] grow">
+    <div className="w-full">
+
       <h3 className="font-bold">Upload File</h3>
       <h5 className="text-[#777E90] text-xs py-1">
         Drag or choose your file to upload
       </h5>
 
-      {/* <label
-        htmlFor="project-logo"
-        id="upload"
-        className="bg-[#F0F8FF] dark:bg-[#020111] border-2 border-[#98bdea17] py-16 rounded-2xl mt-3 flex justify-center items-center"
-      >
-        <div className="flex flex-col gap-3 cursor-pointer hover:opacity-60 items-center">
-          <Icon icon="line-md:cloud-upload-outline-loop" width={30} />
-          <p className="dark:text-[#777E90] text-[#777E90] text-xs text-center">
-            PNG, GIF, WEBP, MP4 or MP3. Max 1Gb.
-          </p>
-        </div>
-      </label> */}
-      <Uploader/>
-
-      {/* <input onChange={readImage} id="project-logo" type="file" className="hidden" accept="image/png, image/gif, image/jpeg"/> */}
-
+      <Uploader isValid={isValid}/>
+      
       <div
         id="information"
         className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2 mt-8"
       >
-        <Input
+        <InputInfo
           title="Project Title"
           placeholder="Enter your project title"
           value={title}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTitle(e.target.value)
           }
+          isValid={isValid}
+          message="input title"
         />
-        <Input
+        <InputCap
           title="Amount To Rise"
           placeholder="Enter your amount to rise"
           value={hardCap}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setHardCap(e.target.value)
-          }
+          onChange={handleHardcapChange}
+          isValid={isValid}
+          message="input hardcap"
         />
-        <Input
+        <InputCap
           title="Softcap Amount"
           placeholder="Enter your softcap amount"
           value={softCap}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSoftCap(e.target.value)
-          }
+          onChange={handleSoftcapChange}
+          isValid={isValid}
+          message="input softcap"
         />
-        <Input
+        <InputInfo
           title="Video Link"
           placeholder="Enter your Youtube link"
           value={youtubeLink}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setYoutubeLink(e.target.value)
           }
+          isValid={isValid}
+          message="input youtube video link"
         />
-        <Input
+        {/* <InputInfo
           title="Token Price"
           placeholder="Enter your token price"
           value={tokenPrice}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTokenPrice(e.target.value)
           }
-        />
+          isValid={isValid}
+          message="input token price"
+        /> */}
         <Datepicker
           title="End Time"
           placeholder="Enter your ICO end time"
           value={endTime}
           onChange={handleChangeEndTime}
+          isValid={isValid}
+          message="select end time"
         />
       </div>
 
-      <Input
+      {/* <InputInfo
         title="Wallet Address"
         className="mt-10"
         placeholder="Enter wallet address that sale proceeds will go to"
@@ -135,7 +188,9 @@ const Create = () => {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setWallet(e.target.value)
         }
-      />
+        isValid={isValid}
+        message="input wallet address"
+      /> */}
 
       <Description
         title="Description"
@@ -143,6 +198,8 @@ const Create = () => {
         placeholder="Enter your token's description..."
         value={description}
         onChange={(value: string) => setDescription(value)}
+        isValid={isValid}
+        message="input project description"
       />
 
       <div className="py-4 flex gap-4">
@@ -174,7 +231,7 @@ const Create = () => {
         </div>
       </div>
 
-      <button className="py-2 text-white rounded-lg mt-3 hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
+      <button onClick={handleSave} className="py-2 text-white rounded-lg mt-3 hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
         Save
       </button>
     </div>
