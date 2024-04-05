@@ -6,7 +6,6 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Displayer from "@/components/dashboard/create/atoms/quillDisplayer";
 
 const LaunchPad = () => {
-
   const _renderItem = (title: string, value: string) => (
     <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
       <h2 className="text-[15px] font-bold text-[#6F6F6F] dark:text-[#CCCCCC]">{title}</h2>
