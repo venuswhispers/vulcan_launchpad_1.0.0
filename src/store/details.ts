@@ -21,3 +21,4 @@ export const decimalAtom = atom<string>("");
 export const amountAtom = atom<string>("");
 export const addressAtom = atom<string>("");
 export const walletAtom = atom<string>("");
+export const priceAtom = atom<string>("");

@@ -11,7 +11,7 @@ const navs = [
   {title: 'All Launchpads', url: '/'},
   // {title: 'Advanced Mode', url: ''},
   {title: 'Launch ICO', url: '/create'},
-  {title: 'My Contributions', url: '/profile'},
+  // {title: 'My Contributions', url: '/'},
 ]
 
 const Header = () => {

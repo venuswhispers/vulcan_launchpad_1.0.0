@@ -112,7 +112,7 @@ const Preview = () => {
             <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">Dscription</h2>
             <div className="flex"><Icon icon="ooui:collapse" className="hover:opacity-60 cursor-pointer" onClick={() => setCollapseDescription(prev => !prev)} vFlip={collapseDescription}/></div>
           </div>
-          { !collapseDescription && <Displayer value={description}/> }
+          { !collapseDescription && <div className="pb-3"><Displayer value={description}/></div> }
         </div> : 
         <div className="flex h-12 justify-between items-center py-2">
           <div className="w-full h-full animate-pulse rounded-full bg-white dark:bg-[#1d1b3965]"></div>

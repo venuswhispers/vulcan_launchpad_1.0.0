@@ -28,7 +28,8 @@ import {
   nameAtom,
   symbolAtom,
   decimalAtom,
-  addressAtom
+  addressAtom,
+  priceAtom
 } from "@/store";
 import { Yuji_Boku } from "next/font/google";
 import Preview from "./preview";
@@ -44,6 +45,7 @@ const Create = ({ step, setStep }: IProps) => {
   const [name, setName] = useAtom(nameAtom);
   const [symbol, setSymbol] = useAtom(symbolAtom);
   const [decimal, setDecimal] = useAtom(decimalAtom);
+  const [price, setPrice] = useAtom(priceAtom);
   const [amount, setAmount] = useAtom(hardCapAtom);
   const [address, setAddress] = useAtom(addressAtom);
   const [wallet, setWallet] = useAtom(walletAtom);
@@ -108,6 +110,14 @@ const Create = ({ step, setStep }: IProps) => {
     setAmount(value);
   }
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
+      return;
+    }
+    setPrice(value);
+  }
+
   return (
     <div className="w-full">
       
@@ -136,13 +146,13 @@ const Create = ({ step, setStep }: IProps) => {
           isValid={isValid}
           message="input token symbol"
         />
-        <InputDecimal
-          title="Token Decimal"
-          placeholder="Enter your token decimal"
-          value={decimal}
-          onChange={handleChangeDecimal}
+        <InputCap
+          title="Token Price"
+          placeholder="Enter your token price"
+          value={price}
+          onChange={handlePriceChange}
           isValid={isValid}
-          message="decimal field is required"
+          message="Input token price for ICO"
         />
         <InputCap
           title="Amount for ICO"
@@ -151,6 +161,14 @@ const Create = ({ step, setStep }: IProps) => {
           onChange={handleAmountChange}
           isValid={isValid}
           message="Input token amount for ICO"
+        />
+        <InputDecimal
+          title="Token Decimal"
+          placeholder="Enter your token decimal"
+          value={decimal}
+          onChange={handleChangeDecimal}
+          isValid={isValid}
+          message="decimal field is required"
         />
       </div>
       <InputInfo
@@ -204,7 +222,7 @@ const Create = ({ step, setStep }: IProps) => {
       </div>
 
       <div className="flex gap-2 justify-between items-center pr-3">
-        <button onClick={handleSave} className="py-2 text-white rounded-lg mt-3 hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
+        <button onClick={handleSave} className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
           Save
         </button>
         <div onClick={() => setStep(0)} className="flex cursor-pointer hover:opacity-60 gap-2 items-center hover:underline"><Icon icon="ion:arrow-undo-sharp" /> Previous</div>

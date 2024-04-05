@@ -17,7 +17,7 @@ const Stepper = dynamic(() => import("@/components/dashboard/create/stepper"), {
 
 const Create = () => {
 
-  const [step, setStep] = React.useState<number>(1);
+  const [step, setStep] = React.useState<number>(0);
 
   return (
     <div className="flex w-full flex-col gap-2 text-[#141416] dark:text-[#FAFCFF]">

@@ -3,8 +3,12 @@ import React from "react";
 import Image from "next/image";
 import Progress from "@/components/dashboard/utils/progress";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useRouter } from "next/navigation";
 
 const Card = () => {
+
+  const router = useRouter ();
+  
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
       <section id="logo" className="relative w-full">
@@ -93,7 +97,7 @@ const Card = () => {
           <button className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60">
             <Icon icon="ph:heart-bold" width={22} className="text-[#2B6EC8]"/>
           </button>
-          <button className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
+          <button onClick={() => router.push("/asdfasdfasdf")} className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
         </section>
       </section>
 

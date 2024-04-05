@@ -119,6 +119,10 @@ body {
   word-break: break-all!important;
 }
 
+.displayer .ql-editor {
+  padding: 0px;
+}
+
 .displayer .ql-container {
   border: none!important;
   background: transparent!important;
