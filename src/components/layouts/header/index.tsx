@@ -3,6 +3,7 @@ import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { Dropdown } from "flowbite-react";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Header = () => {
 
@@ -60,7 +61,8 @@ const Header = () => {
             // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
           />
         </div>
-        {  _renderWalletConnectButton () }
+        {/* {  _renderWalletConnectButton () } */}
+        <ConnectButton/>
       </div>
 
 

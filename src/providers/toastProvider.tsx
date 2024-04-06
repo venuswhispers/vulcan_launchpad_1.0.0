@@ -1,10 +1,13 @@
 import { ReactElement, createContext } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import Image from "next/image";
 
 interface IToastContext {
   showToast: (type: string, str: string) => void;
 }
+
 export const ToastContext = createContext<IToastContext | undefined>(undefined);
+
 const ToastProvider = ({ children }: { children: ReactElement }) => {
   const showToast = (str: string, type: string) => {
     switch (type) {
@@ -18,13 +21,13 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
-                <div className="pt-0.5">
-                  <img
-                    className="h-10 w-10 rounded-full aspect-square"
-                    src="/images/success.png"
-                    alt=""
-                  />
-                </div>
+                <Image
+                  src="/images/success.png"
+                  alt=""
+                  width={40}
+                  height={40}
+                  sizes="100vw"                    
+                />
                 <div className="ml-3 flex items-center">
                   <p className="text-sm font-medium text-light-gray">{str}</p>
                 </div>
@@ -59,15 +62,15 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
             onClick={() => toast.dismiss(t.id)}
             style={{ zIndex: "100000!important", width: '320px' }}
           >
-            <div className="flex-1 w-0 p-4">
+            <div className="flex-1 p-4">
               <div className="flex items-center">
-                <div className="pt-0.5">
-                  <img
-                    className="h-10 w-10 rounded-full aspect-square"
-                    src="/images/warning.png"
-                    alt=""
-                  />
-                </div>
+                <Image
+                  src="/images/warning.png"
+                  alt=""
+                  width={40}
+                  height={40}
+                  sizes="100vw"                  
+                />
                 <div className="ml-3 flex items-center">
                   <p className="text-sm font-medium text-light-gray">{str}</p>
                 </div>
@@ -104,13 +107,13 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
-                <div className="pt-0.5">
-                  <img
-                    className="h-10 w-10 rounded-full aspect-square"
-                    src="/images/question.png"
-                    alt=""
-                  />
-                </div>
+                <Image
+                  src="/images/question.png"
+                  alt=""
+                  width={40}
+                  height={40}
+                  sizes="100vw"                     
+                />
                 <div className="ml-3 flex items-center">
                   <p className="text-sm font-medium text-light-gray">{str}</p>
                 </div>
@@ -147,13 +150,13 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
-                <div className="pt-0.5">
-                  <img
-                    className="h-10 w-10 rounded-full aspect-square"
-                    src="/images/fail.png"
-                    alt=""
-                  />
-                </div>
+                <Image
+                  src="/images/fail.png"
+                  alt=""
+                  width={40}
+                  height={40}
+                  sizes="100vw"                     
+                />
                 <div className="ml-3 flex items-center">
                   <p className="text-sm font-medium text-light-gray">{str}</p>
                 </div>

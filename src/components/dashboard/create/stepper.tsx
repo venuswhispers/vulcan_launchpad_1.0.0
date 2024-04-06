@@ -16,7 +16,7 @@ const Stepper = ({step}: IProps) => {
           <span className={`${step === 2 && "ring-2"} ${step > 2 && 'hidden'} size-7 flex justify-center items-center flex-shrink-0 bg-gray-100 font-medium text-gray-800 rounded-full dark:bg-gray-700 dark:text-white`}>
             3
           </span>
-          <svg className={`${step <= 2 && "hidden"} flex-shrink-0 size-3`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <svg className={`${step <= 2 && "hidden"} flex-shrink-0 size-3`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           <span className="ms-2 block grow xs:grow-0 text-sm font-medium text-gray-800 dark:text-white">
@@ -30,7 +30,7 @@ const Stepper = ({step}: IProps) => {
             <span className={`${step === 0 && "ring-2"} ${step > 0 && 'hidden'} size-7 flex justify-center items-center flex-shrink-0 bg-gray-100 font-medium text-gray-800 rounded-full dark:bg-gray-700 dark:text-white`}>
               1
             </span>
-            <svg className={`${step <= 0 && "hidden"} flex-shrink-0 size-3`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <svg className={`${step <= 0 && "hidden"} flex-shrink-0 size-3`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             <span className="ms-2 block grow xs:grow-0 text-sm font-medium text-gray-800 dark:text-white">
@@ -44,7 +44,7 @@ const Stepper = ({step}: IProps) => {
             <span className={`${step === 1 && "ring-2"} ${step > 1 && 'hidden'} size-7 flex justify-center items-center flex-shrink-0 bg-gray-100 font-medium text-gray-800 rounded-full dark:bg-gray-700 dark:text-white`}>
               2
             </span>
-            <svg className={`${step <= 1 && "hidden"} flex-shrink-0 size-3`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <svg className={`${step <= 1 && "hidden"} flex-shrink-0 size-3`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             <span className="ms-2 block grow xs:grow-0 text-sm font-medium text-gray-800 dark:text-white">
