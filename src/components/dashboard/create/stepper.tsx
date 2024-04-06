@@ -48,7 +48,7 @@ const Stepper = ({step}: IProps) => {
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             <span className="ms-2 block grow xs:grow-0 text-sm font-medium text-gray-800 dark:text-white">
-              Contract Deploy
+              ICO Deploy
             </span>
           </div>
           <div className="w-px h-4 ms-3.5 xs:ms-0 xs:w-full xs:h-px xs:flex-1 bg-gray-200 dark:bg-gray-700"></div>

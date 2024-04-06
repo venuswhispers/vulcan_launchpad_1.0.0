@@ -108,6 +108,9 @@ body {
   min-height: 200px;
   font-size: 14px!important;
 }
+.bio .ql-container {
+  min-height: 100px;
+}
 .light .ql-container {
   background-color: #020111;
   border-color: #1E203B!important;

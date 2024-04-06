@@ -10,7 +10,7 @@ interface IProps {
   title: string,
   placeholder: string,
   message: string,
-  isValid: boolean
+  isValid: boolean,
 }
 
 const modules = {
@@ -63,7 +63,7 @@ const Input = ({title, className, onChange, value, placeholder, isValid, message
         value={value}
         onChange={handleProcedureContentChange}
       />
-      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isValid && !value || value === '<p><br></p>') ? message : '' }</p>
+      <p className="text-red-800 text-[11px] px-2 h-3">{ isValid && (!value || value === '<p><br></p>') ? message : '' }</p>
     </div>
   )
 };
