@@ -1,8 +1,45 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
+import React from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { Dropdown } from "flowbite-react";
+import { Button, Popover } from "flowbite-react";
+import { useRouter } from 'next/navigation';
+import useAuth from '@/hooks/useAuth';
+import useActiveWeb3 from '@/hooks/useActiveWeb3';
 
 const WalletConnectButton = () => {
+
+  const router = useRouter ();
+  const { signIn, isAuthenticated, user } = useAuth ();
+  const { isConnected } = useActiveWeb3 ();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const _handleSignIn = async () => {
+    try {
+      setIsLoading (true);
+      await signIn ();
+    } catch (err) {
+
+    } finally {
+      setIsLoading (false);
+    }
+
+  }
+
+  const _renderSignActions = () => {
+    if (!isAuthenticated) {
+      return (
+        <div onClick={ _handleSignIn }className='flex gap-2 items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'>
+          { !isLoading ? <Icon icon="material-symbols:lab-profile-outline" width={20} height={20}/> : <Icon icon="eos-icons:bubble-loading" width={20} height={20}/>  }
+          SignIn
+        </div>
+      )
+    } else {
+      return <div onClick={ () => router.push("/profile") }className='flex gap-2 items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="material-symbols:lab-profile-outline" width={20} height={20}/>Profile</div>
+    }
+  }
+
   return (
     <ConnectButton.Custom>
       {({
@@ -74,28 +111,43 @@ const WalletConnectButton = () => {
                     }
                     <div className="pl-2 pr-3 truncate md:inline hidden">{chain.name}</div>
                   </button>
-                  <button 
-                    onClick={openAccountModal} 
-                    type="button"
-                    className="founded-full border-[2px] border-[#E6E8EC] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white cursor-pointer"
-                  >
-                    <Image
-                      src={"/images/man.png"}
-                      width={32}
-                      height={32}
-                      alt={"wallet"}   
-                      priority={true}    
-                      className="rounded-full"
-                    />
-                    {/* {account.displayName} */}
-                    { 
-                      account.displayBalance && 
-                      <div className="pl-2 pr-3 truncate md:inline hidden dark:text-white text-[#23262F]">
-                        { account.displayBalance.substring(0, account.displayBalance.length - 3) }
-                        <span className="text-[#45B26B]">ETH</span>
+                  <Popover 
+                    className='dark:border-none'
+                    content={
+                      <div className='flex flex-col gap-2 dark:bg-[#1F2937] bg-white border border-gray-200 rounded-lg dark:border-none'>
+                        <div className='px-3 py-2 border-b border-gray-200 dark:border-gray-700'>
+                          <span className="block text-sm">Bonnie Green</span>
+                        </div>
+                        { isConnected && _renderSignActions ()}
+                        <div onClick={openAccountModal} className='flex gap-2 rounded-b-md items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="tabler:logout"  width={20} height={20}/>Disconnect</div>
                       </div>
-                    }
-                  </button>
+                    } 
+                    arrow={false}
+                    trigger="hover"
+                  >
+                    <button 
+                      // onClick={openAccountModal} 
+                      type="button"
+                      className="founded-full border-[2px] border-[#E6E8EC] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white cursor-pointer"
+                    >
+                      <Image
+                        src={"/images/man.png"}
+                        width={32}
+                        height={32}
+                        alt={"wallet"}   
+                        priority={true}    
+                        className="rounded-full"
+                      />
+                      {/* {account.displayName} */}
+                      { 
+                        account.displayBalance && 
+                        <div className="pl-2 pr-3 truncate md:inline hidden dark:text-white text-[#23262F]">
+                          { account.displayBalance.substring(0, account.displayBalance.length - 3) }
+                          <span className="text-[#45B26B]">ETH</span>
+                        </div>
+                      }
+                    </button>
+                  </Popover>
                 </div>
               );
             })()}

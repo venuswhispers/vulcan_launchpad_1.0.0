@@ -140,7 +140,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           </div>
         ));
         break;
-      case "fail":
+      case "error":
         toast.custom((t) => (
           <div
             className={`${t.visible ? "animate-enter" : "animate-leave"

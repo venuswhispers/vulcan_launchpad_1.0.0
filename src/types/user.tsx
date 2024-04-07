@@ -4,3 +4,10 @@ export interface IUSER {
   avatar: string,
 };
 
+export type TMsg = { 
+  id: string, 
+  message: string, 
+  profileId: string 
+}
+
+

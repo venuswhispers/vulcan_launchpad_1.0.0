@@ -1,7 +1,7 @@
 import React from "react";
 import { Web3Context } from "@/providers/web3Provider";
 
-const useWeb3 = () => {
+const useActiveWeb3 = () => {
   const context = React.useContext(Web3Context);
   if (!context) {
     throw new Error("");
@@ -10,4 +10,4 @@ const useWeb3 = () => {
   }
 };
 
-export default useWeb3;
+export default useActiveWeb3;
