@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter, usePathname } from "next/navigation";
-import path from "path";
+import { useAtom } from "jotai";
 
 interface INav {
   title: string,
@@ -26,6 +26,7 @@ const Sider = () => {
 
   const router = useRouter ();
   const pathname = usePathname ();
+
 
   const { theme, setTheme } = useTheme();
   const [current, setCurrent] = React.useState<string>("Dashboard");

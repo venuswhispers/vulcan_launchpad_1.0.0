@@ -17,7 +17,7 @@ import {
   phantomWallet,
   okxWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { base, sepolia } from "wagmi/chains";
+import { sepolia, arbitrum } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 //@ts-ignore
 import { WagmiProvider } from "wagmi";
@@ -35,7 +35,7 @@ const config = getDefaultConfig({
     },
   ],
   chains: [
-    base,
+    arbitrum,
     sepolia,
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],

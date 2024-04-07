@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { Dropdown } from "flowbite-react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import WalletConnectButton from "@/components/layouts/header/atoms/walletConnect";
 
 const Header = () => {
 
@@ -62,7 +63,8 @@ const Header = () => {
           />
         </div>
         {/* {  _renderWalletConnectButton () } */}
-        <ConnectButton/>
+        {/* <ConnectButton/> */}
+        <WalletConnectButton/>
       </div>
 
 
