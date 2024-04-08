@@ -10,6 +10,7 @@ import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useAuth from "@/hooks/useAuth";
 import { useSignMessage } from "wagmi";
+import { uploadToPinata } from "@/utils";
 import axios from 'axios';
 
 import { TMsg } from "@/types/user";
@@ -65,8 +66,9 @@ const Evangilists = () => {
   }
 
   const _submitRegister = async () => {
-    const data = { fullName, company, socialLink, bio, avatar };
     setIsLoading (true);
+    const _avatar = preview ? await uploadToPinata(preview) : "";
+    const data = { fullName, company, socialLink, bio, avatar: _avatar };
     await signUp (data);
     setIsLoading (false);
   }
