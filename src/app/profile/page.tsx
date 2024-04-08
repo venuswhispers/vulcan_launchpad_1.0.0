@@ -10,6 +10,7 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { useSignMessage } from "wagmi";
 import useAPI from "@/hooks/useAPI";
 import { useAtom } from "jotai";
+import { uploadToPinata } from "@/utils";
 
 import { TMsg } from "@/types/user";
 import { SERVER_URL } from '@/constants/config';
@@ -122,8 +123,9 @@ const Evangilists = () => {
   const _updateProfile = async () => {
     try {
       setIsLoading (true);
-      const { data } = await api.put("/user", { avatar, bio, company, fullName, socialLink });
-      setUser({ address: String(user?.address), avatar, bio, company, fullName, socialLink })
+      const _avatar = preview ? await uploadToPinata(preview) : "";
+      const { data } = await api.put("/user", { avatar: _avatar, bio, company, fullName, socialLink });
+      setUser({ address: String(user?.address), avatar: _avatar, bio, company, fullName, socialLink })
       showToast ("Updated profile successfully", "success");
     } catch (err: any) {
       showToast (String(err.message), "error");
