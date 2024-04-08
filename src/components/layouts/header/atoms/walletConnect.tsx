@@ -139,7 +139,7 @@ const WalletConnectButton = () => {
                           height={32}
                           alt={"wallet avatar"}   
                           // priority={true}    
-                          className="rounded-full"
+                          className="rounded-full aspect-square"
                         /> :
                         // <Image
                         //   src={user.avatar}
