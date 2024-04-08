@@ -116,7 +116,7 @@ const WalletConnectButton = () => {
                     content={
                       <div className='flex flex-col gap-2 dark:bg-[#1F2937] bg-white border border-gray-200 rounded-lg dark:border-none'>
                         <div className='px-3 py-2 border-b border-gray-200 dark:border-gray-700'>
-                          <span className="block text-sm">Bonnie Green</span>
+                          <span className="block text-sm">{ isAuthenticated && user ? '@' + user.fullName : '@Vulcan Pad' }</span>
                         </div>
                         { isConnected && _renderSignActions ()}
                         <div onClick={openAccountModal} className='flex gap-2 rounded-b-md items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="tabler:logout"  width={20} height={20}/>Disconnect</div>
@@ -130,14 +130,18 @@ const WalletConnectButton = () => {
                       type="button"
                       className="founded-full border-[2px] border-[#E6E8EC] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white cursor-pointer"
                     >
-                      <Image
-                        src={"/images/man.png"}
-                        width={32}
-                        height={32}
-                        alt={"wallet"}   
-                        priority={true}    
-                        className="rounded-full"
-                      />
+                      { 
+                        user && user.avatar ?
+                        <Image
+                          src={user.avatar}
+                          width={32}
+                          height={32}
+                          alt={"wallet"}   
+                          priority={true}    
+                          className="rounded-full"
+                        /> :
+                        <Icon icon="flowbite:user-solid" width={32} height={32} className="rounded-full bg-[#46455367] dark:text-black dark:bg-[#868592c4] opacity-50"/>
+                      }
                       {/* {account.displayName} */}
                       { 
                         account.displayBalance && 

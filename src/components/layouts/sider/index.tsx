@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter, usePathname } from "next/navigation";
 import { useAtom } from "jotai";
+import useAuth from "@/hooks/useAuth";
 
 interface INav {
   title: string,
@@ -23,12 +24,12 @@ const navs: INav[] = [
 ]
 
 const Sider = () => {
-
+  //hooks
   const router = useRouter ();
   const pathname = usePathname ();
-
-
   const { theme, setTheme } = useTheme();
+  const { user, isAuthenticated } = useAuth ();
+  //state
   const [current, setCurrent] = React.useState<string>("Dashboard");
   const [isCollapse, setIsCollapse] = React.useState<boolean>(true);
 
@@ -89,18 +90,33 @@ const Sider = () => {
               />
             </div>
             <div className="flex justify-center items-center flex-col mt-4">
-              <Image
-                src="/images/man.png"
-                width={70}
-                height={70}
-                alt={"avatar"}  
-                className="rounded-3xl" 
-                priority={true}    
-              />
-              <h3 className="text-black font-sans dark:text-white font-bold mt-3 text-lg">Erfan Amade</h3>
-              <div className="text-sm text mt-1 flex items-center gap-1"><span>verified</span><Icon className="text-[#0CAF60] text-[18px]" icon="ic:baseline-verified" /></div>
+              { 
+                user && user.avatar ?
+                <Image
+                  src={user.avatar}
+                  width={70}
+                  height={70}
+                  alt={"avatar"}  
+                  className="rounded-xl" 
+                  priority={true}  
+                /> :
+                <Icon icon="flowbite:user-solid" width={70} height={70} className="rounded-3xl bg-[#46455367] dark:bg-[#919097e0] opacity-50"/>
+              }
+              <h3 className="text-black font-sans dark:text-white font-bold mt-3 text-lg">{ user && user.fullName ? user.fullName : "Unknown" }</h3>
+              <div className="text-sm text mt-1 flex items-center gap-1">
+              { 
+                isAuthenticated ? 
+                <>
+                  <span>verified</span>
+                  <Icon className="text-[#0CAF60] text-[18px]" icon="ic:baseline-verified" />
+                </> :
+                <>
+                  <span>Not Verified</span>
+                  <Icon className="text-[#0CAF60] text-[18px]" icon="octicon:unverified-24" />
+                </>
+              }  
+              </div>
             </div>
-
             <ul className="mt-4 p-6">
               { navs.map((_nav: INav) => _renderNavItem(_nav)) }
             </ul>

@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
+import useAuth from "@/hooks/useAuth";
 import { useSignMessage } from "wagmi";
 import axios from 'axios';
 
@@ -35,6 +36,7 @@ const Evangilists = () => {
   const { showToast } = useToastr ();
 
   const { address, chain, isConnected, chainId } = useActiveWeb3();
+  const { signUp } = useAuth();
   const { signMessageAsync } = useSignMessage();
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,41 +66,9 @@ const Evangilists = () => {
 
   const _submitRegister = async () => {
     const data = { fullName, company, socialLink, bio, avatar };
-
-    try {
-      setIsLoading (true);
-
-      if (!chainId) throw "chain is not defined...";
-      if (!address) throw "address is not defined..."
-
-      const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: chainId, address });
-      const { id, message, profileId }: TMsg = msgData;
-
-      if (!id || !message || !profileId) { 
-        throw "not defined message"
-      }
-
-      const signature = await signMessageAsync({ message });
-      
-      const { data : registerData } = await axios.post(`${SERVER_URL}/api/user/signup`, { message, signature, data });
-      console.log(registerData);
-      const { status, data: msg } = registerData;
-      
-      if (status === "SUCCESS") {
-        showToast ("Successfully registered!", "success");
-      } else {
-        showToast (msg, "warning");
-      }
-    } catch (err) {
-      console.log(err);
-      if (String(err).includes("User rejected the request.")) {
-        showToast ("User rejected the request", "warning");
-      } else {
-        showToast (String(err), "error");
-      }
-    } finally {
-      setIsLoading (false);
-    }
+    setIsLoading (true);
+    await signUp (data);
+    setIsLoading (false);
   }
 
   const handleSubmit = () => {
@@ -147,7 +117,6 @@ const Evangilists = () => {
           </h3>
         </div>
         <section className="mt-5 flex gap-3 items-center">
-          {/*  */}
           {
             preview  ?
             <Image

@@ -8,7 +8,7 @@ import axios from 'axios';
 import { SERVER_URL } from "@/constants/config";
 import { useAtom } from "jotai";
 import { isAuthenticatedAtom, userAtom } from "@/store/user";
-import { IUSER } from '@/types/user';
+import { IUSER, TRegister } from '@/types/user';
 import { TMsg } from "@/types/user";
 import jwt from 'jsonwebtoken';
 import useToastr from "@/hooks/useToastr";
@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 
 interface IContext {
   signIn: () => Promise<void>,
+  signUp: (data: TRegister) => Promise<void>
   isAuthenticated: boolean,
   user: IUSER|undefined
 }
@@ -36,12 +37,18 @@ const AuthProvider = ({
   const [isAuthenticated, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
   const [user, setUser] = useAtom (userAtom);
 
+  const _setAuth = (user: IUSER, token: string) => {
+    axios.defaults.headers.common['x-auth-token'] = token;
+    setIsAuthenticated (true);
+    setUser (user);
+  }
+
   const signIn = async () => {
     try {
       if (!chain) throw "chain is not defined...";
       if (!address) throw "address is not defined..."
 
-      const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: chain.id, address });
+      const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: 1, address });
       const { id, message, profileId }: TMsg = msgData;
 
       if (!id || !message || !profileId) { 
@@ -55,8 +62,7 @@ const AuthProvider = ({
       if (signinData.status === "SUCCESS") {
         const { data: _user }: any = jwt.decode(signinData.data);
         if (_user) {
-          setUser ({ address: _user.address, fullName: _user.fullName, avatar: _user.avatar });
-          setIsAuthenticated (true);
+          _setAuth (_user, signinData.data);
           showToast ("Signin Success", "success");
         } else {
           throw "Empty user"
@@ -99,6 +105,46 @@ const AuthProvider = ({
     // push(url);
   };
 
+  const signUp = async (user: TRegister) => {
+
+    try {
+      if (!chainId) throw "chain is not defined...";
+      if (!address) throw "address is not defined...";
+      
+      const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: chainId, address });
+      const { id, message, profileId }: TMsg = msgData;
+      
+      if (!id || !message || !profileId) { 
+        throw "not defined message"
+      }
+      
+      const signature = await signMessageAsync({ message });
+
+      const { data : registerData } = await axios.post(`${SERVER_URL}/api/user/signup`, { message, signature, user });
+      console.log(registerData);
+      const { status, data: payload } = registerData;
+      
+      if (status === "SUCCESS") {
+        const { data: _user }: any = jwt.decode(payload);
+        if (_user) {
+          _setAuth (_user, payload);
+          showToast ("Registered Successfully.", "success");
+        } else {
+          throw "Empty user"
+        }
+      } else {
+        showToast (payload, "warning");
+      }
+    } catch (err) {
+      console.log(err);
+      if (String(err).includes("User rejected the request.")) {
+        showToast ("User rejected the request", "warning");
+      } else {
+        showToast (String(err), "error");
+      }
+    }
+  }
+
   React.useEffect(() => {
     if (isConnected) {
       signIn ();
@@ -114,6 +160,7 @@ const AuthProvider = ({
     <AuthContext.Provider
       value={{
         signIn,
+        signUp,
         isAuthenticated, 
         user
       }}
