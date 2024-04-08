@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter, usePathname } from "next/navigation";
 import { useAtom } from "jotai";
 import useAuth from "@/hooks/useAuth";
+import { Avatar } from "flowbite-react";
 
 interface INav {
   title: string,
@@ -92,13 +93,15 @@ const Sider = () => {
             <div className="flex justify-center items-center flex-col mt-4">
               { 
                 user && user.avatar ?
-                <Image
+                // <Avatar img={user.avatar} className="h-[70px] w-[70px]" /> :
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                   src={user.avatar}
                   width={70}
                   height={70}
                   alt={"avatar"}  
-                  className="rounded-xl" 
-                  priority={true}  
+                  className="rounded-xl aspect-square" 
+                  // priority={true}  
                 /> :
                 <Icon icon="flowbite:user-solid" width={70} height={70} className="rounded-3xl bg-[#46455367] dark:bg-[#919097e0] opacity-50"/>
               }

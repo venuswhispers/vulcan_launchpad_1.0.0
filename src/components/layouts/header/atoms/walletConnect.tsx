@@ -132,14 +132,23 @@ const WalletConnectButton = () => {
                     >
                       { 
                         user && user.avatar ?
-                        <Image
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
                           src={user.avatar}
                           width={32}
                           height={32}
-                          alt={"wallet"}   
-                          priority={true}    
+                          alt={"wallet avatar"}   
+                          // priority={true}    
                           className="rounded-full"
                         /> :
+                        // <Image
+                        //   src={user.avatar}
+                        //   width={32}
+                        //   height={32}
+                        //   alt={"wallet"}   
+                        //   priority={true}    
+                        //   className="rounded-full"
+                        // /> :
                         <Icon icon="flowbite:user-solid" width={32} height={32} className="rounded-full bg-[#46455367] dark:text-black dark:bg-[#868592c4] opacity-50"/>
                       }
                       {/* {account.displayName} */}
