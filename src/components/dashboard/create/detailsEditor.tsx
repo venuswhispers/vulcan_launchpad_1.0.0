@@ -12,6 +12,7 @@ import { useAtom } from "jotai";
 import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
 // import Croper from "@/components/dashboard/create/croper";
 import useToastr from "@/hooks/useToastr";
+import useAuth from "@/hooks/useAuth";
 
 import {
   titleAtom,
@@ -49,6 +50,8 @@ const Create = ({ step, setStep }: IProps) => {
   const [isValid, setIsValid] = React.useState<boolean>(false);
   //toastr
   const { showToast } = useToastr ();
+  //hooks
+  const { user, isAuthenticated } = useAuth ();
 
 
   const handleChangeEndTime = (date: Date) => {
@@ -56,6 +59,11 @@ const Create = ({ step, setStep }: IProps) => {
   };
 
   const handleSave = () => {
+    
+    if (!isAuthenticated) {
+      return showToast ("Connect your wallet first", "warning");
+    }     
+
     setIsValid (true);
     let valid: boolean = true;
     try {
@@ -202,7 +210,8 @@ const Create = ({ step, setStep }: IProps) => {
         message="input project description"
       />
 
-      <div className="py-4 flex gap-4">
+      <h4 className="mt-3 font-bold">*Require KYC</h4>
+      <div className="py-4 flex gap-4 -mt-2">
         <div className="flex gap-2 items-center">
           <input
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

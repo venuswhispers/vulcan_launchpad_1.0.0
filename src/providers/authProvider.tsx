@@ -13,6 +13,7 @@ import { TMsg } from "@/types/user";
 import jwt from 'jsonwebtoken';
 import useToastr from "@/hooks/useToastr";
 import { useRouter } from "next/navigation";
+import useAPI from "@/hooks/useAPI";
 
 
 interface IContext {
@@ -32,6 +33,7 @@ const AuthProvider = ({
   const { requestChallengeAsync } = useAuthRequestChallengeEvm();
   const { signMessageAsync } = useSignMessage();
   const { showToast } = useToastr ();
+  const api = useAPI ();
   const router = useRouter ();
   //atoms
   const [isAuthenticated, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
@@ -48,7 +50,7 @@ const AuthProvider = ({
       if (!chain) throw "chain is not defined...";
       if (!address) throw "address is not defined..."
 
-      const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: 1, address });
+      const { data : msgData } = await api.post(`/user/request-message`, { chain: 1, address });
       const { id, message, profileId }: TMsg = msgData;
 
       if (!id || !message || !profileId) { 
@@ -57,7 +59,7 @@ const AuthProvider = ({
 
       const signature = await signMessageAsync({ message });
       
-      const { data : signinData } = await axios.post(`${SERVER_URL}/api/user/signin`, { message, signature });
+      const { data : signinData } = await api.post(`/user/signin`, { message, signature });
       console.log(signinData);
       if (signinData.status === "SUCCESS") {
         const { data: _user }: any = jwt.decode(signinData.data);
@@ -111,7 +113,7 @@ const AuthProvider = ({
       if (!chainId) throw "chain is not defined...";
       if (!address) throw "address is not defined...";
       
-      const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: chainId, address });
+      const { data : msgData } = await api.post(`/user/request-message`, { chain: chainId, address });
       const { id, message, profileId }: TMsg = msgData;
       
       if (!id || !message || !profileId) { 
@@ -120,7 +122,7 @@ const AuthProvider = ({
       
       const signature = await signMessageAsync({ message });
 
-      const { data : registerData } = await axios.post(`${SERVER_URL}/api/user/signup`, { message, signature, user });
+      const { data : registerData } = await api.post(`/user/signup`, { message, signature, user });
       console.log(registerData);
       const { status, data: payload } = registerData;
       

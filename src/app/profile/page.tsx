@@ -81,45 +81,6 @@ const Evangilists = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const _submitRegister = async () => {
-  //   const data = { fullName, company, socialLink, bio, avatar };
-
-  //   try {
-  //     setIsLoading (true);
-
-  //     if (!chainId) throw "chain is not defined...";
-  //     if (!address) throw "address is not defined..."
-
-  //     const { data : msgData } = await axios.post(`${SERVER_URL}/api/user/request-message`, { chain: chainId, address });
-  //     const { id, message, profileId }: TMsg = msgData;
-
-  //     if (!id || !message || !profileId) { 
-  //       throw "not defined message"
-  //     }
-
-  //     const signature = await signMessageAsync({ message });
-      
-  //     const { data : registerData } = await axios.post(`${SERVER_URL}/api/user/signup`, { message, signature, data });
-  //     console.log(registerData);
-  //     const { status, data: msg } = registerData;
-      
-  //     if (status === "SUCCESS") {
-  //       showToast ("Successfully registered!", "success");
-  //     } else {
-  //       showToast (msg, "warning");
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     if (String(err).includes("User rejected the request.")) {
-  //       showToast ("User rejected the request", "warning");
-  //     } else {
-  //       showToast (String(err), "error");
-  //     }
-  //   } finally {
-  //     setIsLoading (false);
-  //   }
-  // }
-
   const _updateProfile = async () => {
     try {
       setIsLoading (true);

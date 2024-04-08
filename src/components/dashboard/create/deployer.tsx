@@ -13,6 +13,7 @@ import { useAtom } from "jotai";
 import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
 // import Croper from "@/components/dashboard/create/croper";
 import useToastr from "@/hooks/useToastr";
+import useAuth from "@/hooks/useAuth";
 
 import {
   titleAtom,
@@ -54,6 +55,8 @@ const Create = ({ step, setStep }: IProps) => {
   const [checked, setChecked] = React.useState<boolean>(false);
   //toastr
   const { showToast } = useToastr ();
+  //hooks
+  const { user, isAuthenticated } = useAuth (); 
 
 
   const handleChangeDecimal = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +68,11 @@ const Create = ({ step, setStep }: IProps) => {
   };
 
   const handleSave = () => {
+
+    if (!isAuthenticated) {
+      return showToast ("Connect your wallet first", "warning");
+    }     
+
     setIsValid (true);
     let valid: boolean = true;
     try {
@@ -191,36 +199,7 @@ const Create = ({ step, setStep }: IProps) => {
         isValid={isValid}
         message="input wallet address"
       />
-
-      <div className="py-4 flex gap-4">
-        <div className="flex gap-2 items-center">
-          <input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setChecked(e.target.checked)
-            }
-            checked={checked}
-            type="checkbox"
-            value=""
-            name="bordered-checkbox"
-            className="w-5 h-5 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded dark:border-gray-600"
-          />
-          <span>Yes</span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <input
-            checked={!checked}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setChecked(!e.target.checked)
-            }
-            type="checkbox"
-            value=""
-            name="bordered-checkbox"
-            className="w-5 h-5 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded dark:border-gray-600"
-          />
-          <span>No</span>
-        </div>
-      </div>
-
+     
       <div className="flex gap-2 justify-between items-center pr-3">
         <button onClick={handleSave} className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
           Save
