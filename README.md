@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+```
+  888       88  888       88  888           8888b        888      8888      88       8888888           888      8888888b
+   88       88   88       88   88         88     88   88     88    8888     88        88     88     88     88    88      88
+   88       88   88       88   88        88          88       88   88  88   88        88      88   88       88   88       88
+   88       88   88       88   88        88          88 88888 88   88   88  88        88     88    88 88888 88   88       88
+    8       8    88       88   88        88          88       88   88    88 88        888888Y      88       88   88       88
+     8     8      8       8    88         88      8  88       88   88     8888        88           88       88   88      88
+       888          Y888Y      888888888    88888    88       88  888      888        88           88       88   8888888Y
+       
+```
+
 ## Getting Started
 
 First, run the development server:
