@@ -268,7 +268,7 @@ const Create = ({ step, setStep }: IProps) => {
         <InputInfo
           title="Lens"
           placeholder="*Input your Lens link"
-          value={twitter}
+          value={lens}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setLens(e.target.value)
           }

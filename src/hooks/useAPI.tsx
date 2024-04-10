@@ -11,8 +11,8 @@ const useAPI = () => {
   const [, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
   
   const api = axios.create({
-    // baseURL: 'http://localhost:5050/api',
-    baseURL: 'https://vulcan-launchpad-1-0-0-backend.onrender.com/api',
+    baseURL: 'http://localhost:5050/api',
+    // baseURL: 'https://vulcan-launchpad-1-0-0-backend.onrender.com/api',
     headers: {
       'Content-Type': 'application/json',
     },
