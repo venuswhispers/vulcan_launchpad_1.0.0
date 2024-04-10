@@ -81,28 +81,18 @@ const Create = ({ step, setStep }: IProps) => {
     setIsValid (true);
     let valid: boolean = true;
     try {
-      if (!name) {
-        showToast("Token name is required.", "warning");
-        valid = false;
-      } 
-      if (!symbol) {
-        showToast("Token symbol is required.", "warning"); 
-        valid = false;
-      } 
-      if (decimal === "0" || !decimal) {
-        showToast("Token decimal is required.", "warning"); 
-        valid = false;
-      } 
-      if (!amount || amount === "0") {
-        showToast("Token amount for ICO is required.", "warning"); 
-        valid = false;
-      } 
+      
+      
       if (!address) {
         showToast("Token address is required.", "warning"); 
         valid = false;
       }
       if (!wallet) {
         showToast("Wallet address is required.", "warning");
+        valid = false;
+      }
+      if (!price) {
+        showToast("Token Price is required.", "warning");
         valid = false;
       }
 
