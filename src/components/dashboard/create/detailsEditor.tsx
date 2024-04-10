@@ -299,33 +299,33 @@ const Create = ({ step, setStep }: IProps) => {
         message="input project description"
       />
 
-      <h4 className="mt-3 font-bold">*Require KYC <span className="text-sm opacity-60">(coming soon)</span></h4>
+      <h4 className="mt-3 font-bold text-gray-700">*Require KYC <span className="text-sm opacity-60">(coming soon)</span></h4>
       <div className="py-4 flex gap-4 -mt-2">
         <div className="flex gap-2 items-center">
           <input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setChecked(e.target.checked)
-            }
+            // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            //   setChecked(e.target.checked)
+            // }
             checked={checked}
             type="checkbox"
             value=""
             name="bordered-checkbox"
-            className="w-5 h-5 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded dark:border-gray-600"
+            className="w-5 h-5 cursor-pointer opacity-40 text-blue-600 border-gray-300 rounded dark:border-gray-600"
           />
-          <span>Yes</span>
+          <span className="text-gray-700">Yes</span>
         </div>
         <div className="flex gap-2 items-center">
           <input
-            checked={!checked}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setChecked(!e.target.checked)
-            }
+            // checked={!checked}
+            // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            //   setChecked(!e.target.checked)
+            // }
             type="checkbox"
-            value=""
+            checked={!checked}
             name="bordered-checkbox"
-            className="w-5 h-5 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded dark:border-gray-600"
+            className="w-5 h-5 cursor-pointer  opacity-40 text-blue-600 bg-gray-100 border-gray-300 rounded dark:border-gray-600"
           />
-          <span>No</span>
+          <span className="text-gray-700">No</span>
         </div>
       </div>
 
