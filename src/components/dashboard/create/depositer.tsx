@@ -5,7 +5,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputCap from "@/components/dashboard/create/atoms/capInput";
 import InputDecimal from "@/components/dashboard/create/atoms/decimalInput";
-
+import { Tooltip } from 'flowbite-react';
+import ClipboardCopier from "@/components/share/clipCopier";
 
 import Datepicker from "@/components/dashboard/create/atoms/datePicker";
 import Description from "@/components/dashboard/create/atoms/descriptionInput";
@@ -15,6 +16,8 @@ import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
 // import Croper from "@/components/dashboard/create/croper";
 import useToastr from "@/hooks/useToastr";
 import useAuth from "@/hooks/useAuth";
+import { copyToClipboard } from "@/utils";
+import QRcode from "react-qr-code";
 
 import {
   titleAtom,
@@ -49,7 +52,8 @@ const Create = ({ step, setStep }: IProps) => {
   const [price, setPrice] = useAtom(priceAtom);
   const [decimal, setDecimal] = useAtom(decimalAtom);
   const [amount, setAmount] = useAtom(hardCapAtom);
-  const [address, setAddress] = useAtom(addressAtom);
+  // const [address, setAddress] = useAtom(addressAtom);
+  const [address, setAddress] = React.useState<string>("0x29f95970cd0dd72Cd7D6163B78693Fe845dAF796");
   const [wallet, setWallet] = useAtom(walletAtom);
   //states
   const [isValid, setIsValid] = React.useState<boolean>(false);
@@ -67,6 +71,11 @@ const Create = ({ step, setStep }: IProps) => {
 
     showToast("ICO launched successfully", "success");
     setStep (3);
+  }
+
+  const handleCopyAddress =  async () => {
+    showToast("Copied address to clipboard", "success");
+    await copyToClipboard (String(address));
   }
   
   return (
@@ -102,6 +111,31 @@ const Create = ({ step, setStep }: IProps) => {
           <h2 className="text-[15px] truncate font-bold dark:text-[#B4B4B7] text-[#101010]">10000000</h2>
         </div>
       </section> */}
+
+      <div className="dark:text-white text-black text-sm mt-8 flex gap-1 items-center justify-center">
+        <span onClick={handleCopyAddress} className="hover:underline cursor-pointer w-[100px] xs:w-auto truncate" >{address}</span> 
+        <Tooltip content="Copy address" style="dark">
+          <ClipboardCopier size={22} text={address}/>
+        </Tooltip>
+        <Tooltip content="Go to chain" style="dark">
+          <Icon className='cursor-pointer' icon="fluent:open-16-filled" onClick={() => window.open(`https://sepolia.etherscan.io/address/${address }}`)} width={22} />
+        </Tooltip>
+      </div>
+
+      <div className='w-full flex justify-center relative mt-5'>
+          <QRcode
+            value={address}
+            width={100}
+            height={100}
+          />
+          <Image
+            src={'/favicon.svg'}
+            width={60}
+            height={60} 
+            alt={"logo"}
+            className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'  
+          />
+      </div>
      
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">
         <button onClick={handleSave} className="py-2 text-white flex items-center gap-1 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">

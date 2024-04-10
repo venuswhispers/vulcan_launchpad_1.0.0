@@ -25,6 +25,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
+    "react-qr-code": "^2.0.12",
     "react-quill": "^2.0.0",
     "viem": "^2.9.9",
     "wagmi": "^2.5.19"
