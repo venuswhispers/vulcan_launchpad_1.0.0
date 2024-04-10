@@ -27,6 +27,14 @@ const WalletConnectButton = () => {
 
   }
 
+  const handleProfile = async () => {
+    if (user) {
+      router.push("/profile")
+    } else {
+      router.push("/profile/create")
+    }
+  }
+
   const _renderSignActions = () => {
     if (!isAuthenticated) {
       return (
@@ -118,7 +126,11 @@ const WalletConnectButton = () => {
                         <div className='px-3 py-2 border-b border-gray-200 dark:border-gray-700'>
                           <span className="block text-sm">{ isAuthenticated && user ? '@' + user.fullName : '@Vulcan Pad' }</span>
                         </div>
-                        { isConnected && _renderSignActions ()}
+                        { 
+                          isConnected && 
+                          <div onClick={handleProfile}className='flex gap-2 items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="material-symbols:lab-profile-outline" width={20} height={20}/>Profile</div>
+                          
+                        }
                         <div onClick={openAccountModal} className='flex gap-2 rounded-b-md items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="tabler:logout"  width={20} height={20}/>Disconnect</div>
                       </div>
                     } 

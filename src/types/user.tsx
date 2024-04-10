@@ -3,8 +3,14 @@ export interface IUSER {
   fullName: string,
   company: string,
   avatar: string,
-  socialLink: string,
-  bio: string
+  website: string,
+  bio: string,
+  twitter: string, 
+  facebook: string, 
+  instagram: string, 
+  farcaster: string, 
+  lens: string, 
+  linkedin: string
 };
 
 export type TMsg = { 
@@ -16,7 +22,13 @@ export type TMsg = {
 export type TRegister = {
   fullName: string, 
   company: string, 
-  socialLink: string, 
+  twitter: string,
+  facebook: string,
+  linkedin: string,
+  website: string, 
+  instagram: string, 
+  farcaster: string, 
+  lens: string, 
   bio: string, 
   avatar: string
 }

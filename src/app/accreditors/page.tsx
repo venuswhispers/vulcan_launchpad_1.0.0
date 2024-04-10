@@ -72,8 +72,12 @@ const Evangilists = () => {
   return (
     <div className="flex w-full flex-col gap-2 text-[#141416] dark:text-[#FAFCFF]">
       <h1 className="text-lg px-1">Elons Endorsements</h1>
-      
+
       <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
+        Coming
+      </div>
+      
+      {/* <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
         <section className="mt-5 gap-7 w1080:gap-3 items-center grid grid-cols-1 w1080:grid-cols-3">
           <div className="flex gap-2 items-center justify-center w1080:justify-start">
             <Image
@@ -149,7 +153,7 @@ const Evangilists = () => {
         { _renderItem () }
         { _renderItem () }
 
-      </div>
+      </div> */}
        
     </div>
   );

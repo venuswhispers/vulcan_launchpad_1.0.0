@@ -3,9 +3,10 @@ import axios from "axios";
 import useAuth from "./useAuth";
 import { useAtom } from "jotai";
 import { userAtom, isAuthenticatedAtom } from "@/store/user";
+import { useRouter } from "next/navigation";
 
 const useAPI = () => {
-
+  const router = useRouter ();
   const [, setUser] = useAtom (userAtom);
   const [, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
   
@@ -27,6 +28,7 @@ const useAPI = () => {
         axios.defaults.headers.common['x-auth-token'] = undefined;
         setUser (undefined);
         setIsAuthenticated (false);
+        router.push("/");
       }
       return Promise.reject(err);
     }

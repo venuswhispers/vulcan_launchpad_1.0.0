@@ -52,6 +52,13 @@ const Create = ({ step, setStep }: IProps) => {
   const { showToast } = useToastr ();
   //hooks
   const { user, isAuthenticated } = useAuth ();
+  //socials
+  const [twitter, setTwitter] = React.useState<string>("");
+  const [linkedin, setLinkedin] = React.useState<string>("");
+  const [facebook, setFacebook] = React.useState<string>("");
+  const [instagram, setInstagram] = React.useState<string>("");
+  const [farcaster, setFarcaster] = React.useState<string>("");
+  const [lens, setLens] = React.useState<string>("");
 
 
   const handleChangeEndTime = (date: Date) => {
@@ -60,7 +67,7 @@ const Create = ({ step, setStep }: IProps) => {
 
   const handleSave = () => {
     
-    if (!isAuthenticated) {
+    if (!user || !isAuthenticated) {
       return showToast ("Connect your wallet first", "warning");
     }     
 
@@ -91,6 +98,31 @@ const Create = ({ step, setStep }: IProps) => {
         showToast("Invalid softcap and hardcap configuration.", "warning");
         valid = false;
       }
+      if (!twitter) {
+        showToast("Twitter account is required.", "warning");
+        valid = false;
+      }
+      if (!facebook) {
+        showToast("facebook account is required.", "warning");
+        valid = false;
+      }
+      if (!instagram) {
+        showToast("instagram account is required.", "warning");
+        valid = false;
+      }
+      if (!linkedin) {
+        showToast("linkedin account is required.", "warning");
+        valid = false;
+      }
+      if (!farcaster) {
+        showToast("farcaster account is required.", "warning");
+        valid = false;
+      }
+      if (!lens) {
+        showToast("lens account is required.", "warning");
+        valid = false;
+      }
+     
 
       if (valid) {
         setStep (1);
@@ -134,7 +166,7 @@ const Create = ({ step, setStep }: IProps) => {
       >
         <InputInfo
           title="Project Title"
-          placeholder="Enter your project title"
+          placeholder="*What is the name of your project?"
           value={title}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTitle(e.target.value)
@@ -144,7 +176,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputCap
           title="Amount To Rise"
-          placeholder="Enter your amount to rise"
+          placeholder="*What’s the total you wish to raise in Eth"
           value={hardCap}
           onChange={handleHardcapChange}
           isValid={isValid}
@@ -152,7 +184,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputCap
           title="Softcap Amount"
-          placeholder="Enter your softcap amount"
+          placeholder="*Whats the minimum you’ll accept before distributing tokens?"
           value={softCap}
           onChange={handleSoftcapChange}
           isValid={isValid}
@@ -160,7 +192,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputInfo
           title="Video Link"
-          placeholder="Enter your Youtube link"
+          placeholder="*Link to a video describing your project in greater detail"
           value={youtubeLink}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setYoutubeLink(e.target.value)
@@ -168,30 +200,87 @@ const Create = ({ step, setStep }: IProps) => {
           isValid={isValid}
           message="input youtube video link"
         />
-        {/* <InputInfo
-          title="Token Price"
-          placeholder="Enter your token price"
-          value={tokenPrice}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setTokenPrice(e.target.value)
-          }
-          isValid={isValid}
-          message="input token price"
-        /> */}
         <Datepicker
           title="End Time"
-          placeholder="Enter your ICO end time"
+          placeholder="*When do you want your project fundraising to conclude?"
           value={endTime}
-          onChange={handleChangeEndTime}
+          onChange={(value: string) => setEndTime (value)}
           isValid={isValid}
           message="select end time"
+        />
+      </div>
+
+
+      <div
+        id="information"
+        className="w-full grid grid-cols-1 sm:grid-cols-3 gap-1 mt-8"
+      >
+        <InputInfo
+          title="Twitter"
+          placeholder="*Input your twitter link"
+          value={twitter}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTwitter(e.target.value)
+          }
+          isValid={isValid}
+          message="input your twitter link"
+        />
+        <InputInfo
+          title="Facebook"
+          placeholder="*Input your facebook link"
+          value={facebook}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFacebook(e.target.value)
+          }
+          isValid={isValid}
+          message="input your facebook link"
+        />
+        <InputInfo
+          title="Instagram"
+          placeholder="*Input your Instagram link"
+          value={instagram}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setInstagram(e.target.value)
+          }
+          isValid={isValid}
+          message="input your instagram link"
+        />
+        <InputInfo
+          title="Linkedin"
+          placeholder="*Input your Linkedin link"
+          value={linkedin}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setLinkedin(e.target.value)
+          }
+          isValid={isValid}
+          message="input your Linkedin link"
+        />
+        <InputInfo
+          title="Farcaster"
+          placeholder="*Input your farcaster link"
+          value={farcaster}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFarcaster(e.target.value)
+          }
+          isValid={isValid}
+          message="input your farcaster link"
+        />
+        <InputInfo
+          title="Lens"
+          placeholder="*Input your Lens link"
+          value={twitter}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setLens(e.target.value)
+          }
+          isValid={isValid}
+          message="input your Lens link"
         />
       </div>
 
       {/* <InputInfo
         title="Wallet Address"
         className="mt-10"
-        placeholder="Enter wallet address that sale proceeds will go to"
+        placeholder="*Enter wallet address that sale proceeds will go to"
         value={wallet}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setWallet(e.target.value)
@@ -203,14 +292,14 @@ const Create = ({ step, setStep }: IProps) => {
       <Description
         title="Description"
         className="mt-10"
-        placeholder="Enter your token's description..."
+        placeholder="*Enter your token's description..."
         value={description}
         onChange={(value: string) => setDescription(value)}
         isValid={isValid}
         message="input project description"
       />
 
-      <h4 className="mt-3 font-bold">*Require KYC</h4>
+      <h4 className="mt-3 font-bold">*Require KYC <span className="text-sm opacity-60">(coming soon)</span></h4>
       <div className="py-4 flex gap-4 -mt-2">
         <div className="flex gap-2 items-center">
           <input

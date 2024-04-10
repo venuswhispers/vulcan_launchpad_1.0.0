@@ -84,7 +84,7 @@ const Preview = () => {
             className='w-4/5 rounded-[19px] animate-pulse'
           /> :
           preview.type === 'video/mp4' ? 
-          <video src={preview.data} className='w-full h-full rounded-[19px]' controls autoPlay></video> :
+          <video src={preview.data} className='w-full h-full rounded-[19px]' controls></video> :
           <Image
             src={preview.data}
             width={0}
@@ -121,7 +121,7 @@ const Preview = () => {
       {
         hardCap ? 
         <div className="flex h-12 gap-4 justify-between items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
-          <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">Soft Cap</h2>
+          <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">Hardcap</h2>
           <div className="flex gap-1 items-center">
             <Image
               src={'/images/eth.svg'}
@@ -144,7 +144,7 @@ const Preview = () => {
       {
         softCap ? 
         <div className="flex h-12 gap-4 justify-between items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
-          <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">Soft Cap</h2>
+          <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">Softcap</h2>
           <div className="flex gap-1 items-center">
             <Image
               src={'/images/eth.svg'}

@@ -39,11 +39,20 @@ const AuthProvider = ({
   const [isAuthenticated, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
   const [user, setUser] = useAtom (userAtom);
 
-  const _setAuth = (user: IUSER, token: string) => {
+  const _setAuth = (user: IUSER|undefined, token: string|undefined) => {
     axios.defaults.headers.common['x-auth-token'] = token;
     setIsAuthenticated (true);
     setUser (user);
   }
+  //disconnect
+  React.useEffect(() => {
+    if (isDisconnected) {
+      setUser (undefined);
+      setIsAuthenticated (false);
+      router.push("/");
+    }  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDisconnected]);
 
   const signIn = async () => {
     try {
@@ -70,8 +79,9 @@ const AuthProvider = ({
           throw "Empty user"
         }
       } else if (signinData.status === "NONE") {
-        router.push("/register");
-        throw signinData.data;
+        _setAuth (undefined, undefined);
+        router.push("/profile/create");
+        throw "Please create your profile";
       } else {
         throw signinData.data;
       }
@@ -130,7 +140,7 @@ const AuthProvider = ({
         const { data: _user }: any = jwt.decode(payload);
         if (_user) {
           _setAuth (_user, payload);
-          showToast ("Registered Successfully.", "success");
+          showToast ("Profile created Successfully.", "success");
         } else {
           throw "Empty user"
         }
@@ -149,7 +159,7 @@ const AuthProvider = ({
 
   React.useEffect(() => {
     if (isConnected) {
-      signIn ();
+      // signIn ();
     } else {
       setUser (undefined);
       setIsAuthenticated (false);

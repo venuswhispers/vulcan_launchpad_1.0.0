@@ -5,6 +5,9 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputCap from "@/components/dashboard/create/atoms/capInput";
 import InputDecimal from "@/components/dashboard/create/atoms/decimalInput";
+import InfoShower from '@/components/dashboard/create/atoms/infoShower';
+
+import { Dropdown } from "flowbite-react";
 
 import Datepicker from "@/components/dashboard/create/atoms/datePicker";
 import Description from "@/components/dashboard/create/atoms/descriptionInput";
@@ -57,6 +60,8 @@ const Create = ({ step, setStep }: IProps) => {
   const { showToast } = useToastr ();
   //hooks
   const { user, isAuthenticated } = useAuth (); 
+  //currency
+  const [currency, setCurrency] = React.useState<string>("ETH");
 
 
   const handleChangeDecimal = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,13 +135,84 @@ const Create = ({ step, setStep }: IProps) => {
     <div className="w-full">
       
       <h2 className="">* Pays non-refundable Spam filter fee - $100 DAI to launch ICO, and Depoly contract</h2>
+      <button className="py-2 text-white flex items-center gap-1 mt-3 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
+        <Icon icon="ph:currency-eth-duotone" /> Pay Spam Filter 
+      </button>
+      <InputInfo
+        title="Token Address"
+        className="mt-10"
+        placeholder="*Enter your address of your token"
+        value={address}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
+        isValid={isValid}
+        message="Input token address"
+      />
+      <InputInfo
+        title="Wallet Address"
+        className=""
+        placeholder="*Enter wallet address that sale proceeds will go to"
+        value={wallet}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setWallet(e.target.value)
+        }
+        isValid={isValid}
+        message="input wallet address"
+      />
+      <div className="flex gap-1 w-full items-center">
+        <InputInfo
+          title="Token Price"
+          className="w-full"
+          placeholder="*Enter token price for ICO"
+          value={price}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPrice(e.target.value)
+          }
+          isValid={isValid}
+          message="input wallet address"
+        />
+        <Dropdown 
+          label="Dropdown button" 
+          renderTrigger={() => (
+            <div className="w-[100px] mt-[18px]">
+              <div className="bg-[#F0F8FF] flex justify-between items-center cursor-pointer transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border">
+                <span>{currency}</span> <Icon icon="iwwa:arrow-down" />
+              </div>
+            </div>
+          )}
+        >
+          <Dropdown.Item onClick={() => setCurrency("ETH")}>ETH</Dropdown.Item>
+          <Dropdown.Item onClick={() => setCurrency("USD")}>USD</Dropdown.Item>
+        </Dropdown>
+      </div>
+      <h2 className="text-lg font-bold mt-10">*Token Information</h2>
       <div
+        id="information"
+        className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2"
+      >
+        <InfoShower
+          title="Token Name"
+          value={"Dreams Evolving Wildly"}
+        />
+        <InfoShower
+          title="Token Symbol"
+          value={"DEW"}
+        />
+        <InfoShower
+          title="Token Decimal"
+          value={"18"}
+        />
+        <InfoShower
+          title="Total Supply"
+          value={"80000000000"}
+        />
+      </div>
+      {/* <div
         id="information"
         className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 mt-5"
       >
         <InputInfo
           title="Token Name"
-          placeholder="Enter your token name"
+          placeholder="*Enter your token name"
           value={name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setName(e.target.value)
@@ -146,7 +222,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputInfo
           title="Token Symbol"
-          placeholder="Enter your token symbol"
+          placeholder="*Enter your token symbol"
           value={symbol}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSymbol(e.target.value)
@@ -156,7 +232,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputCap
           title="Token Price"
-          placeholder="Enter your token price"
+          placeholder="*Enter your token price"
           value={price}
           onChange={handlePriceChange}
           isValid={isValid}
@@ -164,7 +240,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputCap
           title="Amount for ICO"
-          placeholder="Enter your amount to rise"
+          placeholder="*Enter your amount to rise"
           value={amount}
           onChange={handleAmountChange}
           isValid={isValid}
@@ -172,7 +248,7 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputDecimal
           title="Token Decimal"
-          placeholder="Enter your token decimal"
+          placeholder="*Enter your token decimal"
           value={decimal}
           onChange={handleChangeDecimal}
           isValid={isValid}
@@ -182,7 +258,7 @@ const Create = ({ step, setStep }: IProps) => {
       <InputInfo
         title="Token Address"
         className="mt-10"
-        placeholder="Enter your address of your token"
+        placeholder="*Enter your address of your token"
         value={address}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
         isValid={isValid}
@@ -191,16 +267,16 @@ const Create = ({ step, setStep }: IProps) => {
       <InputInfo
         title="Wallet Address"
         className=""
-        placeholder="Enter wallet address that sale proceeds will go to"
+        placeholder="*Enter wallet address that sale proceeds will go to"
         value={wallet}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setWallet(e.target.value)
         }
         isValid={isValid}
         message="input wallet address"
-      />
+      /> */}
      
-      <div className="flex gap-2 justify-between items-center pr-3">
+      <div className="flex gap-2 justify-between items-center pr-3 mt-5">
         <button onClick={handleSave} className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
           Save
         </button>

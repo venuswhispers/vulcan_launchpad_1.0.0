@@ -7,11 +7,15 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAtom } from "jotai";
 import useAuth from "@/hooks/useAuth";
 import { Avatar } from "flowbite-react";
+import useActiveWeb3 from "@/hooks/useActiveWeb3";
+import { copyToClipboard } from "@/utils";
+import useToastr from "@/hooks/useToastr";
 
 interface INav {
   title: string,
   url: string,
-  icon: string
+  icon: string,
+  soon?: true
 }
 
 const navs: INav[] = [
@@ -19,9 +23,9 @@ const navs: INav[] = [
   { title: "Launch ICO", url: "/create", icon: "bi:gem" },
   { title: "News", url: "/news", icon: "emojione-monotone:newspaper" },
   { title: "Videos", url: "/videos", icon: "fluent:video-clip-28-regular" },
-  { title: "Evangalists", url: "/evangilists", icon: "ph:user-circle-light" },
-  { title: "Accreditors", url: "/accreditors", icon: "ph:user-circle-light" },
-  { title: "Help", url: "/help", icon: "lucide:badge-help" },
+  { title: "Evangalists", url: "/evangilists", icon: "simple-icons:marketo", soon: true },
+  { title: "Accreditors", url: "/accreditors", icon: "ph:user-circle-light", soon: true },
+  { title: "Help", url: "/help", icon: "ri:file-list-3-line" },
 ]
 
 const Sider = () => {
@@ -33,6 +37,10 @@ const Sider = () => {
   //state
   const [current, setCurrent] = React.useState<string>("Dashboard");
   const [isCollapse, setIsCollapse] = React.useState<boolean>(true);
+  //web3
+  const { address } = useActiveWeb3 ();
+  //hoos
+  const { showToast } = useToastr ();
 
   const _renderThemeSwitch = () => (
     <div className="relative flex bg-[#EFF3FF] dark:bg-[#050606] rounded-xl w-full px-2 py-1 mt-4">
@@ -65,14 +73,20 @@ const Sider = () => {
     router.push(url);
   }
 
-  const _renderNavItem = ({ title, icon, url }: INav) => (
-    <li key={title} onClick={() => _gotoURL(url)} className={`w-full px-5 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === url && 'bg-[#2B6EC8] !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
-      <Icon icon={icon} width={22}/> {title}
+  const _renderNavItem = ({ title, icon, url, soon }: INav) => (
+    <li key={title} onClick={() => _gotoURL(url)} className={`w-full px-1 flex justify-between gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === url && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
+      <div className="flex gap-2"><Icon icon={icon} width={22}/> {title}</div>
+      { soon && <span className={`text-[9px] text-center text-[#0776DA] bg-[#E5F6FF] dark:bg-[#e5f6ff13] rounded-full px-2 py-1 ${pathname === url && 'text-white'}`}>Coming Soon</span> }
     </li>
   )
 
   const handleCollapse = () => {
     setIsCollapse(prev => !prev);
+  }
+
+  const handleCopyAddress =  async () => {
+    showToast("Copied address to clipboard", "success");
+    await copyToClipboard (String(address));
   }
 
   return (
@@ -119,8 +133,20 @@ const Sider = () => {
                 </>
               }  
               </div>
+              {
+                address &&
+                <div className="dark:text-white text-black text-xs mt-5 flex gap-1">
+                  <span onClick={handleCopyAddress} className="hover:underline cursor-pointer">{address.substring(0, 10) + "...." + address.substr(address.length - 10, 10)}</span> <Icon className='cursor-pointer' width={15} onClick={() => window.open("https://sepolia.etherscan.io/address/" + address)} height={15} icon="fluent:open-16-filled"/>
+                </div>
+              }
             </div>
             <ul className="mt-4 p-6">
+              {
+                isAuthenticated &&
+                <li key={"profile"} onClick={() => _gotoURL("/profile")} className={`w-full px-2 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname.includes("/profile") && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
+                  <Icon icon="flowbite:profile-card-solid" width={22}/> Profile
+                </li>
+              }
               { navs.map((_nav: INav) => _renderNavItem(_nav)) }
             </ul>
           </section>

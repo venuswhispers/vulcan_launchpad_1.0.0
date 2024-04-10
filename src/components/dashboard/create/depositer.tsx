@@ -6,6 +6,7 @@ import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputCap from "@/components/dashboard/create/atoms/capInput";
 import InputDecimal from "@/components/dashboard/create/atoms/decimalInput";
 
+
 import Datepicker from "@/components/dashboard/create/atoms/datePicker";
 import Description from "@/components/dashboard/create/atoms/descriptionInput";
 import Image from "next/image";
@@ -103,8 +104,8 @@ const Create = ({ step, setStep }: IProps) => {
       </section>
      
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">
-        <button onClick={handleSave} className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
-          Save
+        <button onClick={handleSave} className="py-2 text-white flex items-center gap-1 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
+          <Icon icon="solar:square-transfer-vertical-line-duotone" width={20} height={20} /> Token Transfer
         </button>
         <div onClick={() => setStep(1)} className="flex cursor-pointer hover:opacity-60 gap-2 items-center hover:underline"><Icon icon="ion:arrow-undo-sharp" /> Previous</div>
       </div>

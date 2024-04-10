@@ -20,7 +20,7 @@ const Evangilists = () => {
       <Header />
       <h1 className="text-lg px-1">Become an Evangilist</h1>
       <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
-        <div className="flex gap-3 items-center">
+        {/* <div className="flex gap-3 items-center">
           <div className="bg-[#4285EC] w-3 h-6 rounded-sm"></div>
           <h3 className="dark:text-[#CCCCCC] text-[#1A1D1F]">
             Profile information
@@ -44,7 +44,7 @@ const Evangilists = () => {
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-5">
           <InputInfo
             title="Display Name"
-            placeholder="Enter your Display Name"
+            placeholder="*Enter your Display Name"
             value={fullName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFullName (e.target.value)
@@ -54,7 +54,7 @@ const Evangilists = () => {
           />
           <InputInfo
             title="Social Media"
-            placeholder="Enter your link"
+            placeholder="*Enter your link"
             value={link}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setLink (e.target.value)
@@ -67,7 +67,7 @@ const Evangilists = () => {
         <Description
           title="Bio"
           className="mt-5 bio"
-          placeholder="Enter Bio..."
+          placeholder="*Enter Bio..."
           value={bio}
           onChange={(value: string) => setBio(value)}
           isValid={isValid}
@@ -76,7 +76,8 @@ const Evangilists = () => {
 
         <div>
           <button className="bg-[#2B6EC8] rounded-lg py-[10px] px-4 text-white text-xs hover:bg-[#2b35c8] font-bold mt-3">PAY BOND in CRDD</button>
-        </div>
+        </div> */}
+        Coming Soon
       </div>
        
     </div>

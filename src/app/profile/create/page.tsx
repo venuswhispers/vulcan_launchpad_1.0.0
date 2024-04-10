@@ -15,6 +15,7 @@ import axios from 'axios';
 
 import { TMsg } from "@/types/user";
 import { SERVER_URL } from '@/constants/config';
+import { useRouter } from "next/navigation";
 
 const acceptables = [
   'image/png',
@@ -25,10 +26,15 @@ const acceptables = [
 
 
 const Evangilists = () => {
-
   const [fullName, setFullName] = React.useState<string>("");
-  const [socialLink, setSocialLink] = React.useState<string>("");
   const [company, setCompany] = React.useState<string>("");
+  const [website, setWebsite] = React.useState<string>("");
+  const [twitter, setTwitter] = React.useState<string>("");
+  const [linkedin, setLinkedin] = React.useState<string>("");
+  const [facebook, setFacebook] = React.useState<string>("");
+  const [instagram, setInstagram] = React.useState<string>("");
+  const [farcaster, setFarcaster] = React.useState<string>("");
+  const [lens, setLens] = React.useState<string>("");
   const [avatar, setAvatar] = React.useState<string>("");
   const [bio, setBio] = React.useState<string>("");
   const [preview, setPreview] = React.useState<string>("");
@@ -39,6 +45,7 @@ const Evangilists = () => {
   const { address, chain, isConnected, chainId } = useActiveWeb3();
   const { signUp } = useAuth();
   const { signMessageAsync } = useSignMessage();
+  const router = useRouter ();
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -66,11 +73,17 @@ const Evangilists = () => {
   }
 
   const _submitRegister = async () => {
-    setIsLoading (true);
-    const _avatar = preview ? await uploadToPinata(preview) : "";
-    const data = { fullName, company, socialLink, bio, avatar: _avatar };
-    await signUp (data);
-    setIsLoading (false);
+    try {
+      setIsLoading (true);
+      const _avatar = preview ? await uploadToPinata(preview) : "";
+      const data = { fullName, company, website, twitter, facebook, instagram, farcaster, lens, bio, linkedin, avatar: _avatar };
+      await signUp (data);
+      router.push("/profile");
+    } catch (err) {
+      
+    } finally {
+      setIsLoading (false);
+    }
   }
 
   const handleSubmit = () => {
@@ -89,8 +102,32 @@ const Evangilists = () => {
       showToast ("Input your company name", "warning");
       valid = false;
     }
-    if (!socialLink) {
-      showToast ("Input your social link", "warning");
+    if (!website) {
+      showToast ("Input your website link", "warning");
+      valid = false;
+    }
+    if (!twitter) {
+      showToast ("Input your twitter link", "warning");
+      valid = false;
+    }
+    if (!facebook) {
+      showToast ("Input your facebook link", "warning");
+      valid = false;
+    }
+    if (!instagram) {
+      showToast ("Input your instagram link", "warning");
+      valid = false;
+    }
+    if (!linkedin) {
+      showToast ("Input your linkedin link", "warning");
+      valid = false;
+    }
+    if (!farcaster) {
+      showToast ("Input your farcaster link", "warning");
+      valid = false;
+    }
+    if (!lens) {
+      showToast ("Input your lens link", "warning");
       valid = false;
     }
     if (!bio) {
@@ -110,7 +147,7 @@ const Evangilists = () => {
   return (
     <div className="flex w-full flex-col gap-2 text-[#141416] dark:text-[#FAFCFF]">
       <Header />
-      <h1 className="text-lg px-1">User Register</h1>
+      <h1 className="text-lg px-1">Create Your Profile</h1>
       <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
         <div className="flex gap-3 items-center">
           <div className="bg-[#4285EC] w-3 h-6 rounded-sm"></div>
@@ -142,7 +179,7 @@ const Evangilists = () => {
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-5">
           <InputInfo
             title="Display Name"
-            placeholder="Enter your Display Name"
+            placeholder="*Enter your Display Name"
             value={fullName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFullName (e.target.value)
@@ -151,10 +188,10 @@ const Evangilists = () => {
             message="Input fullName"
           />
         </section>
-        <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-3">
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-5">
           <InputInfo
             title="Company"
-            placeholder="Enter your Company name"
+            placeholder="*Enter your Company name"
             value={company}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setCompany (e.target.value)
@@ -163,21 +200,89 @@ const Evangilists = () => {
             message="Input your company name"
           />
           <InputInfo
-            title="Social Link"
-            placeholder="Enter your social link"
-            value={socialLink}
+            title="Instagram"
+            placeholder="*Enter your Instagram"
+            value={instagram}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSocialLink (e.target.value)
+              setInstagram (e.target.value)
             }
             isValid={isValid}
-            message="Input Social link"
+            message="Input Instagram link"
+          />
+        </section>
+        
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-3">
+          <InputInfo
+            title="Website"
+            placeholder="*Enter your Website link"
+            value={website}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setWebsite (e.target.value)
+            }
+            isValid={isValid}
+            message="Input your Website link"
+          />
+          <InputInfo
+            title="Linkedin"
+            placeholder="*Enter your soLinkedincial link"
+            value={linkedin}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setLinkedin (e.target.value)
+            }
+            isValid={isValid}
+            message="Input Linkedin link"
+          />
+        </section>
+
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-3">
+          <InputInfo
+            title="Twitter"
+            placeholder="*Enter your Twitter link"
+            value={twitter}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTwitter (e.target.value)
+            }
+            isValid={isValid}
+            message="Input your Twitter link"
+          />
+          <InputInfo
+            title="Facebook"
+            placeholder="*Enter your Facebook link"
+            value={facebook}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFacebook (e.target.value)
+            }
+            isValid={isValid}
+            message="Input your Facebook link"
+          />
+        </section>
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mt-3">
+          <InputInfo
+            title="Farcaster"
+            placeholder="*Enter your Farcaster link"
+            value={farcaster}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFarcaster (e.target.value)
+            }
+            isValid={isValid}
+            message="Input your Farcaster link"
+          />
+          <InputInfo
+            title="Lens"
+            placeholder="*Enter your Lens link"
+            value={lens}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setLens (e.target.value)
+            }
+            isValid={isValid}
+            message="Input your lens link"
           />
         </section>
 
         <Description
           title="Bio"
           className="mt-5 bio"
-          placeholder="Enter Bio..."
+          placeholder="*Enter Bio..."
           value={bio}
           onChange={(value: string) => setBio(value)}
           isValid={isValid}
@@ -186,7 +291,7 @@ const Evangilists = () => {
 
         <div>
           <button onClick={handleSubmit} className="bg-[#2B6EC8] flex gap-1 justify-center items-center rounded-lg py-2 px-4 text-white text-xs hover:bg-[#2b35c8] font-bold mt-3">
-            { !isLoading ? <Icon icon="bx:cloud-upload" width={20} height={20}/> : <Icon icon="line-md:uploading-loop" width={20} height={20}/> }  REGISTER
+            { !isLoading ? <Icon icon="bx:cloud-upload" width={20} height={20}/> : <Icon icon="line-md:uploading-loop" width={20} height={20}/> }  CREATE
           </button>
         </div>
       </div>

@@ -17,7 +17,7 @@ const Filter = () => {
       </svg>
       <input
         className="peer bg-white text-sm !text-[11px] w-full h-full bg-transparent pl-10 rounded-lg text-blue-gray-700 font-sans font-normal outline-none border-none disabled:bg-blue-gray-50 x-3 py-[10px]  !pr-9  border-gray-200"
-        placeholder="Search ICO..." 
+        placeholder="*Search ICO..." 
         // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
       />
     </div>
