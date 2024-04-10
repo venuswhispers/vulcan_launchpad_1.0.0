@@ -20,7 +20,7 @@ const Stepper = ({step}: IProps) => {
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           <span className="ms-2 block grow xs:grow-0 text-sm font-medium text-gray-800 dark:text-white">
-            Transfer Token
+            Deposit Token
           </span>
         </div>
       </li>

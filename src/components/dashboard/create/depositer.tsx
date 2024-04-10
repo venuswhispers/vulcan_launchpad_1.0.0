@@ -71,8 +71,8 @@ const Create = ({ step, setStep }: IProps) => {
   
   return (
     <div className="w-full">
-      <h2 className="text-lg font-bold text-center">** Transfer token for ICO **</h2>
-      <section className="mt-5 flex flex-col gap-1">
+      <h2 className="text-lg font-bold text-center">** Please send the token to the following address **</h2>
+      {/* <section className="mt-5 flex flex-col gap-1">
         <div className="flex gap-2">
           <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">* Token Name:</h2>
           <h2 className="text-[15px] truncate font-bold dark:text-[#B4B4B7] text-[#101010]">{name}</h2>
@@ -101,11 +101,11 @@ const Create = ({ step, setStep }: IProps) => {
           <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">* Your Balance:</h2>
           <h2 className="text-[15px] truncate font-bold dark:text-[#B4B4B7] text-[#101010]">10000000</h2>
         </div>
-      </section>
+      </section> */}
      
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">
         <button onClick={handleSave} className="py-2 text-white flex items-center gap-1 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
-          <Icon icon="solar:square-transfer-vertical-line-duotone" width={20} height={20} /> Token Transfer
+          <Icon icon="solar:square-transfer-vertical-line-duotone" width={20} height={20} /> Next
         </button>
         <div onClick={() => setStep(1)} className="flex cursor-pointer hover:opacity-60 gap-2 items-center hover:underline"><Icon icon="ion:arrow-undo-sharp" /> Previous</div>
       </div>
