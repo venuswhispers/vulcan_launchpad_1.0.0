@@ -36,7 +36,7 @@ export default function Home() {
   }, [contractFactory]);
 
   React.useEffect(() => {
-    if (!address || !chainId || !signer) {
+    if (!address || !chainId || !signer || !FACTORY_ADDRESSES[chainId]) {
       return;
     }
     // const _contractDAI = new Contract(DAI_ADDRESSES[chainId], DAI, signer);

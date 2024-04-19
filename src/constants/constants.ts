@@ -20,12 +20,12 @@ export const CHAIN_IDS = {
 };
 
 export const FACTORY_ADDRESSES = {
-  [CHAIN_IDS.AVALANCHE]: "0x4C58e76E7b52d1ca562A2fF971234615A97350E9", //verified
+  [CHAIN_IDS.AVALANCHE]: "", //verified
   [CHAIN_IDS.SEPOLIA]: "0x4C58e76E7b52d1ca562A2fF971234615A97350E9", //verified
 };
 
 export const DAI_ADDRESSES = {
-  [CHAIN_IDS.AVALANCHE]: "dc1a36bc15d5255Bb7061ec78e735e5C4dA4Ce5e", //verified
+  [CHAIN_IDS.AVALANCHE]: "", //verified
   [CHAIN_IDS.SEPOLIA]: "dc1a36bc15d5255Bb7061ec78e735e5C4dA4Ce5e", //verified
 };
 
