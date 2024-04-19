@@ -38,6 +38,7 @@ interface IProject {
   facebook?: string,
   farcaster?: string,
   lens?: string,
+  youtubeLink?: string
 }
 
 interface IUser {
@@ -102,7 +103,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
     setCreator (user);
 
-    fetch('')
+    fetch(_project?.logo)
     .then(response => response.blob())
     .then(blob => {
       const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
@@ -190,17 +191,17 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">All Launchpads</h1>
       <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl grid grid-cols-1 gap-12 w1300:gap-8 w1300:grid-cols-[55%_calc(45%-32px)]" >
         <section>
-          <div>
-            {/* <video src={"/introduction.mp4"} className='w-full h-full rounded-[19px]' controls></video> */}
+          <div className="w-full min-h-[230px] bg-black rounded-xl flex items-center">
             <ReactPlayer
+              controls
               className='react-player rounded-[19px]'
-              url={"/introduction.mp4"}
+              url={project?.youtubeLink ? project?.youtubeLink : "/introduction.mp4"}
               width='100%'
               height='100%'
               style={{
                 borderRadius: 17,
               }}
-              light={<Image src='/images/spade.png' alt='Thumbnail' />}
+              // light={<Image width={150} height={150} src='/favicon.svg' alt='Thumbnail'/>}
             />
           </div>
 
@@ -262,22 +263,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         <section>
           <h1 className="text-[#23262F] dark:text-[#CCCCCC] text-2xl font-bold">Building an open digital economy</h1>
           <div className="mt-5 mb-5 aspect-[2/1] flex justify-center items-center">
-            {/* <Image
-              src={'/images/intro.png'}
-              width={0}
-              alt=''
-              height={0}
-              sizes="100vw"
-              className='w-full rounded-xl'
-            />  */}
             {
               mediaType === "video" ?
               <video 
                 className='w-full rounded-xl'
+                src={project ? project.logo : '/images/spade.png'}
                 controls
-              >
-                <source src={project ? project.logo : '/images/spade.png'}/>
-              </video> : mediaType === "image" ?
+              /> : mediaType === "image" ?
               <Image
                 src={project ? project.logo : '/images/spade.png'}
                 // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}

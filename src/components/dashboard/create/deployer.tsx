@@ -322,6 +322,7 @@ const Create = ({ step, setStep }: IProps) => {
         title,
         description: description,
         logo: _logoURI,
+        youtubeLink,
         twitter,
         instagram,
         linkedin,
