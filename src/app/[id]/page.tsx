@@ -96,7 +96,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     setEndTime (Number(_endTime));
 
     const _projectURI = await contract?.projectURI ();
-    const { data: _project } = await axios.get(_projectURI);
+    const response = await fetch(_projectURI);
+    const _project = await response.json();
     setProject(_project);
 
     const _creator = await contract?.creator ();
@@ -195,7 +196,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             <ReactPlayer
               controls
               className='react-player rounded-[19px]'
-              url={project?.youtubeLink ? project?.youtubeLink : "/introduction.mp4"}
+              url={project?.youtubeLink ? project?.youtubeLink : "/introdution.mp4"}
               width='100%'
               height='100%'
               style={{

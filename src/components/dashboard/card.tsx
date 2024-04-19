@@ -13,7 +13,6 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 //abis
 import ICO from '@/constants/abis/ICO.json';
 
-import axios from 'axios';
 import { reduceAmount } from "@/utils";
 
 
@@ -80,7 +79,8 @@ const Card = ({ id }: IProps) => {
     setEndTime (Number(_endTime));
 
     const _projectURI = await contract?.projectURI ();
-    const { data: _project } = await axios.get(_projectURI);
+    const response = await fetch(_projectURI);
+    const _project = await response.json();
     setProject(_project);
 
     fetch(_project.logo)
