@@ -13,7 +13,7 @@ const Evangilists = () => {
   const [fullName, setFullName] = React.useState<string>("");
   const [link, setLink] = React.useState<string>("");
   const [bio, setBio] = React.useState<string>("");
-  const [isValid, setIsValid] = React.useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
 
   return (
     <div className="flex w-full flex-col gap-2 text-[#141416] dark:text-[#FAFCFF]">
@@ -49,7 +49,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFullName (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input fullName"
           />
           <InputInfo
@@ -59,7 +59,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setLink (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input you social link"
           />
         </section>
@@ -70,7 +70,7 @@ const Evangilists = () => {
           placeholder="*Enter Bio..."
           value={bio}
           onChange={(value: string) => setBio(value)}
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your Bio"
         />
 

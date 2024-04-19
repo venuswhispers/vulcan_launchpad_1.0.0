@@ -4,23 +4,172 @@ import Image from "next/image";
 import Progress from "@/components/dashboard/utils/progress";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter } from "next/navigation";
+import { Contract } from "ethers";
+import { formatEther, formatUnits } from  'viem';
+import ReactPlayer from 'react-player';
+//hooks
+import useToastr from "@/hooks/useToastr";
+import useActiveWeb3 from "@/hooks/useActiveWeb3";
+//abis
+import ICO from '@/constants/abis/ICO.json';
 
-const Card = () => {
+import axios from 'axios';
+import { reduceAmount } from "@/utils";
+
+
+interface IProps {
+  id: string
+}
+
+interface IToken {
+  name: string;
+  symbol: string;
+  totalSupply: bigint;
+  tokenAddress: string;
+  decimal: bigint;
+  price: bigint;
+}
+
+interface IProject {
+  title: string,
+  description: string,
+  logo: string,
+  twitter?: string,
+  instagram?: string,
+  linkedin?: string,
+  facebook?: string,
+  farcaster?: string,
+  lens?: string,
+}
+
+const Card = ({ id }: IProps) => {
+
+  const { address, chainId, signer } = useActiveWeb3();
+  const [contract, setContract] = React.useState<Contract | undefined> (undefined);
+  const [token, setToken] = React.useState<IToken|undefined>(undefined);
+  const [project, setProject] = React.useState<IProject|undefined>(undefined);
+  const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
+  const [softcap, setSoftcap] = React.useState<bigint>(BigInt("0"));
+  const [fundsRaised, setFundsRaised] = React.useState<bigint>(BigInt("0"));
+  const [endTime, setEndTime] = React.useState<number>(0);
+  const [distance, setDistance] = React.useState<number>(0);
+  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+  const [mediaType, setMediaType] = React.useState<string>("");
+
+  React.useEffect(() => {
+    if (!contract) return;
+    _getICOInfo ();
+  }, [contract]);
+
+  const _getICOInfo = async () => {
+    const _token = await contract?.tokenInfo ();
+    setToken (_token);
+
+    
+    const _hardcap = await contract?.hardcap();
+    setHardcap (_hardcap);
+
+    const _softcap = await contract?.softcap();
+    setSoftcap (_softcap);
+    
+    const _fundsRaised = await contract?.fundsRaised ();
+    setFundsRaised (_fundsRaised);
+    
+    const _endTime = await contract?.endTime ();
+    setEndTime (Number(_endTime));
+
+    const _projectURI = await contract?.projectURI ();
+    const { data: _project } = await axios.get(_projectURI);
+    setProject(_project);
+
+    fetch(_project.logo)
+    .then(response => response.blob())
+    .then(blob => {
+      const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
+      setMediaType (type);
+    })
+    .catch(error => console.error('Error fetching media:', error));
+  }
+
+  React.useEffect(() => {
+    timerRef.current = setInterval(async () => {
+      const _now = new Date().getTime();
+      const _distance = endTime - Math.floor(_now/1000);
+      setDistance(_distance);
+      if ((_distance < 0 || isNaN(_distance)) && timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      //@ts-ignore
+      clearInterval(timerRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endTime]);
+
+  const [ days, hours, minutes, seconds ] = React.useMemo(() => {
+    let days: string|number = Math.floor(distance / (60 * 60 * 24));
+    let hours: string|number = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+    let minutes: string|number = Math.floor((distance % (60 * 60)) / 60);
+    let seconds: string|number = Math.floor(distance % 60);
+
+    days = days > 9 ? days : ( days > 0 ? '0' + days : '0');
+    hours = hours > 9 ? hours : ( hours > 0 ? '0' + hours : '0');
+    minutes = minutes > 9 ? minutes : ( minutes > 0 ? '0' + minutes : '0');
+    seconds = seconds > 9 ? seconds : ( seconds > 0 ? '0' + seconds : '0');
+   
+    return [days, hours, minutes, seconds];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [distance]);
+
+
+  React.useEffect(() => {
+    if (!address || !chainId || !signer || !id) {
+      return;
+    }
+    const _contract = new Contract(
+      id,
+      ICO,
+      signer
+    );
+    setContract(_contract);
+  }, [address, chainId, signer, id]);
 
   const router = useRouter ();
   
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
-      <section id="logo" className="relative w-full">
-        <Image
-          src={'/images/spade.png'}
-          // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
-          width={0}
-          alt=''
-          height={0}
-          sizes="100vw"
-          className='w-full h-full aspect-[2/1] rounded-[19px]'
-        />
+      <section id="logo" className="relative w-full rounded-2xl">
+        {
+          // <ReactPlayer
+          //   className='react-player rounded-[19px]'
+          //   url={project?.logo}
+          //   width='100%'
+          //   height='100%'
+          //   style={{
+          //     borderRadius: 17,
+
+          //   }}
+          //   light={<img src='/images/spade.png' alt='Thumbnail' />}
+          // />
+          mediaType === "video" ?
+          <video 
+            className='w-full h-full aspect-[2/1] rounded-[19px]'
+            controls
+          >
+            <source src={project ? project.logo : '/images/spade.png'}/>
+          </video> :
+          <Image
+            src={project ? project.logo : '/images/spade.png'}
+            // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
+            width={0}
+            alt=''
+            height={0}
+            sizes="100vw"
+            className='w-full h-full aspect-[2/1] rounded-[19px]'
+          />
+        }
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
           <Image
             src={'/images/mini-avatar.png'}
@@ -33,13 +182,13 @@ const Card = () => {
         </div>
         <div className="absolute flex gap-1 items-center p-2 left-3 bottom-3 rounded-full bg-[#00000069] backdrop-filter backdrop-blur-[5px]">
           <Image
-            src={'/images/usdt.png'}
+            src={'/images/eth.webp'}
             width={22}
             height={22}
             alt='mini-logo'
             className="rounded-full"
           />
-          <span className="text-xs text-white pr-2">9.04 USDT</span>
+          <span className="text-xs text-white pr-2">{ token ? reduceAmount(formatEther(token.price)) : "0" } ETH</span>
         </div>
       </section>
 
@@ -50,7 +199,7 @@ const Card = () => {
         </div>
       </section>
 
-      <h2 className="mt-2 font-bold text-black dark:text-white text-[15px]">CryptoSI DAO</h2>
+      <h2 className="mt-2 font-bold text-black dark:text-white text-[15px]">{project?.title}</h2>
       <h5 className="text-[] dark:text-[#868686] text-xs mt-1">Fair Launch</h5>
 
       <section id="title" className="gap-2 mt-4 flex items-center">
@@ -66,12 +215,12 @@ const Card = () => {
 
       <section id="progress" className="mt-3 text-[#868686]">
         <h2 className="text-sm mb-2">
-          Progress (56.71 %)
+          Progress ({hardcap > 0 ? Number(formatEther(fundsRaised))*100/Number(formatEther(hardcap)) : 0} %)
         </h2>
-        <Progress percent={56.71}/>
+        <Progress percent={hardcap > 0 ? Number(formatEther(fundsRaised))*100/Number(formatEther(hardcap)) : 0}/>
         <div className="mt-2 flex justify-between text-sm">
-          <span>56.23435356464 ETH</span>
-          <span>1 ETH</span>
+          <span>{ formatEther(fundsRaised) } ETH</span>
+          <span>{ formatEther(hardcap) } ETH</span>
         </div>
       </section>
 
@@ -81,13 +230,13 @@ const Card = () => {
       </section>
       <section id="LockupTime" className="flex justify-between text-black dark:text-[#C0C0C0] text-sm mt-1">
         <span>Lockup Time:</span>
-        <span>365 days</span>
+        <span>{new Date(endTime*1000).toDateString()}</span>
       </section>
 
       <section id="actions" className="mt-5 max-w-1/2 flex justify-between items-center text-xs">
         <div className="flex truncate items-center gap-2 rounded-full bg-[#E5EBFF] dark:bg-black p-2 pr-3 text-[#0776DA] dark:text-white">
           <Icon icon="fa6-regular:clock" width={22}/>
-          <span className="truncate">10:40:57</span>
+          <span className="truncate">{`${days}d ${hours}h ${minutes}m ${seconds}s`}</span>
         </div>
 
         <section className="flex gap-[6px]">
@@ -97,11 +246,11 @@ const Card = () => {
           <button className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60">
             <Icon icon="ph:heart-bold" width={22} className="text-[#2B6EC8]"/>
           </button>
-          <button onClick={() => router.push("/asdfasdfasdf")} className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
+          <button onClick={() => router.push(`/${id}`)} className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
         </section>
       </section>
 
-      <div className="px-2 py-[1px] rounded-lg top-0 right-3 -translate-y-1/2 absolute bg-[#FFE7E4] text-[#FF6A55] text-[12px] font-bold">5%</div>
+      <div className="px-2 py-[1px] rounded-lg top-0 right-3 -translate-y-1/2 absolute bg-[#FFE7E4] text-[#FF6A55] text-[12px] font-bold">{hardcap > 0 ? Number(formatEther(fundsRaised))*100/Number(formatEther(hardcap)) : 0}%</div>
     </div>
   )
 };

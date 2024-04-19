@@ -119,18 +119,14 @@ const WalletConnectButton = () => {
                     }
                     <div className="pl-2 pr-3 truncate md:inline hidden">{chain.name}</div>
                   </button>
-                  <Popover 
-                    className='dark:border-none'
+                  <Popover
+                    className='profile-popup'
                     content={
                       <div className='flex flex-col gap-2 dark:bg-[#1F2937] bg-white border border-gray-200 rounded-lg dark:border-none'>
                         <div className='px-3 py-2 border-b border-gray-200 dark:border-gray-700'>
                           <span className="block text-sm">{ isAuthenticated && user ? '@' + user.fullName : '@Vulcan Pad' }</span>
                         </div>
-                        { 
-                          isConnected && 
-                          <div onClick={handleProfile}className='flex gap-2 items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="material-symbols:lab-profile-outline" width={20} height={20}/>Profile</div>
-                          
-                        }
+                        { _renderSignActions () }
                         <div onClick={openAccountModal} className='flex gap-2 rounded-b-md items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]'><Icon icon="tabler:logout"  width={20} height={20}/>Disconnect</div>
                       </div>
                     } 

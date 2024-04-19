@@ -27,7 +27,7 @@ const Input = ({title, className, onChange, value, placeholder, message, isInval
         onChange={onChange}
         value={value}
       />
-      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isInvalid && !value ) ? message : '' }</p>
+      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isInvalid ) ? message : '' }</p>
     </div>
   )
 };

@@ -13,7 +13,7 @@ const Evangilists = () => {
   const [fullName, setFullName] = React.useState<string>("");
   const [link, setLink] = React.useState<string>("");
   const [bio, setBio] = React.useState<string>("");
-  const [isValid, setIsValid] = React.useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
 
   const _renderItem = () => (
     <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-1 w1080:grid-cols-[40%_60%] gap-3 mt-5 border-t border-[#EFEFEF] pt-5 dark:border-[#efefef1f]">

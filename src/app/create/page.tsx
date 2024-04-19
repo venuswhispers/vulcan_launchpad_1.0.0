@@ -11,6 +11,7 @@ import dynamic from "next/dynamic";
 import Deployer from '@/components/dashboard/create/deployer';
 import DetailEditor from '@/components/dashboard/create/detailsEditor';
 import Depositer from '@/components/dashboard/create/depositer';
+import Success from '@/components/dashboard/create/success';
 
 const Preview = dynamic(() => import("@/components/dashboard/create/preview"), { ssr: false });
 const Stepper = dynamic(() => import("@/components/dashboard/create/stepper"), { ssr: false });
@@ -29,6 +30,7 @@ const Create = () => {
           { step === 0 && <DetailEditor step={step} setStep={setStep}/> }
           { step === 1 && <Deployer step={step} setStep={setStep}/> }
           { step === 2 && <Depositer step={step} setStep={setStep}/> }
+          { step === 3 && <Success step={step} setStep={setStep}/> }
         </div>
         <Preview/>
       </div>

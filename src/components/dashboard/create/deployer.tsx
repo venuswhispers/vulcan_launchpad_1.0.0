@@ -1,90 +1,257 @@
 "use client";
 import React from "react";
-import Header from "@/components/dashboard/header";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
-import InputCap from "@/components/dashboard/create/atoms/capInput";
-import InputDecimal from "@/components/dashboard/create/atoms/decimalInput";
-import InfoShower from '@/components/dashboard/create/atoms/infoShower';
-
+import InputToken from "@/components/dashboard/create/atoms/tokenAddressInput";
+import InfoShower from "@/components/dashboard/create/atoms/infoShower";
+import { reduceAmount, parseNumber } from "@/utils";
 import { Dropdown } from "flowbite-react";
-
-import Datepicker from "@/components/dashboard/create/atoms/datePicker";
-import Description from "@/components/dashboard/create/atoms/descriptionInput";
-import Image from "next/image";
 import { useAtom } from "jotai";
-import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
-// import Croper from "@/components/dashboard/create/croper";
+import { useReadContracts, useReadContract } from "wagmi";
+import { Contract, ethers } from "ethers";
+//hooks
 import useToastr from "@/hooks/useToastr";
 import useAuth from "@/hooks/useAuth";
-
+//abis
+import ERC20 from "@/constants/abis/erc20.json";
+import FACTORY from "@/constants/abis/factory.json";
+import DAI from "@/constants/abis/dai.json";
+//addresses
+import { FACTORY_ADDRESSES, DAI_ADDRESSES } from "@/constants/constants";
+//progress Modal
+import Progress from "@/components/dashboard/create/progress";
+//methods
+import { uploadToPinata, uploadToIPFS } from "@/utils";
+//constants
+import { cyptoSIDAO } from '@/constants/config';
+ 
 import {
+  walletAtom,
+  previewAtom,
+  tokenAddressAtom,
   titleAtom,
+  descriptionAtom,
   hardCapAtom,
   softCapAtom,
-  youtubeLinkAtom,
+  youtubeLinkAtom, 
+  endTimeAtom, 
+  twitterAtom, 
+  facebookAtom,
+  instagramAtom,
+  linkedinAtom,
+  farcasterAtom,
+  lensAtom,
   tokenPriceAtom,
-  endTimeAtom,
-  descriptionAtom,
-  walletAtom,
-  checkedAtom,
-  previewAtom,
-  nameAtom,
-  symbolAtom,
-  decimalAtom,
-  addressAtom,
-  priceAtom
+  icoAtom,
+  amountAtom
 } from "@/store";
-import { Yuji_Boku } from "next/font/google";
-import Preview from "./preview";
-import { SetStateAction } from "jotai/vanilla";
+import { formatEther, formatUnits, parseEther, parseUnits, toEventHash } from "viem";
+import useActiveWeb3 from "@/hooks/useActiveWeb3";
 
 interface IProps {
-  step: number,
-  setStep: React.Dispatch<SetStateAction<number>>
+  step: number;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Create = ({ step, setStep }: IProps) => {
   //atoms
-  const [name, setName] = useAtom(nameAtom);
-  const [symbol, setSymbol] = useAtom(symbolAtom);
-  const [decimal, setDecimal] = useAtom(decimalAtom);
-  const [price, setPrice] = useAtom(priceAtom);
-  const [amount, setAmount] = useAtom(hardCapAtom);
-  const [address, setAddress] = useAtom(addressAtom);
+  const [preview] = useAtom(previewAtom);
+  const [price, setPrice] = useAtom(tokenPriceAtom);
+
+  const [tokenAddress, setTokenAddress] = useAtom(tokenAddressAtom);
   const [wallet, setWallet] = useAtom(walletAtom);
+  const [title,] = useAtom(titleAtom);
+  const [hardCap,] = useAtom(hardCapAtom);
+  const [softCap,] = useAtom(softCapAtom);
+  const [youtubeLink,] = useAtom(youtubeLinkAtom);
+  const [endTime,] = useAtom(endTimeAtom);
+  const [description,] = useAtom(descriptionAtom);
+  const [twitter,] = useAtom<string>(twitterAtom);
+  const [linkedin,] = useAtom<string>(linkedinAtom);
+  const [facebook,] = useAtom<string>(facebookAtom);
+  const [instagram,] = useAtom<string>(instagramAtom);
+  const [farcaster,] = useAtom<string>(farcasterAtom);
+  const [lens,] = useAtom<string>(lensAtom);
+  const [ico, setIco] = useAtom<string>(icoAtom);
+  const [amount, setAmount] = useAtom<string>(amountAtom);
   //states
-  const [isValid, setIsValid] = React.useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
+  const [isInvalidTokenAddress, setIsInvalidTokenAddress] = React.useState<boolean>(false);
+  const [changedTokenAddress, setChangedTokenAddress] = React.useState<boolean>(false);
   const [checked, setChecked] = React.useState<boolean>(false);
-  //toastr
-  const { showToast } = useToastr ();
-  //hooks
-  const { user, isAuthenticated } = useAuth (); 
-  //currency
+  const [isPayingSpamFilterFee, setIsPayingSpamFilterFee] = React.useState<boolean>(false);
+  const [showProgressModal, setShowProgressModal] = React.useState<boolean>(false);
+  const [percent, setPercent] = React.useState<number>(0);
   const [currency, setCurrency] = React.useState<string>("ETH");
+  const [stepper, setStepper] = React.useState<number>(0);
+  const [paid, setPaid] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  //hooks
+  const { showToast } = useToastr();
+  const { user, isAuthenticated } = useAuth();
+  //web3
+  const { address, chainId, signer } = useActiveWeb3();
+  //eth price
+  const [ethPrice, setEthPrice] = React.useState<number | undefined>(undefined);
+  //useContracts
+  const { data: token, isPending: tokenPending } = useReadContracts({
+    contracts: [
+      {
+        address: `0x${tokenAddress.substring(2, tokenAddress.length)}`,
+        abi: ERC20,
+        functionName: "name",
+      },
+      {
+        address: `0x${tokenAddress.substring(2, tokenAddress.length)}`,
+        abi: ERC20,
+        functionName: "symbol",
+      },
+      {
+        address: `0x${tokenAddress.substring(2, tokenAddress.length)}`,
+        abi: ERC20,
+        functionName: "decimals",
+      },
+      {
+        address: `0x${tokenAddress.substring(2, tokenAddress.length)}`,
+        abi: ERC20,
+        functionName: "totalSupply",
+      },
+    ],
+  });
+  // @dev current DAI balance
+  const _daiBalance = useReadContract({
+    address: chainId ? `0x${DAI_ADDRESSES[chainId]}` : undefined,
+    abi: DAI,
+    functionName: "balanceOf",
+    args: [address],
+  });
+  const daiBalance = React.useMemo(() => {
+    if (!_daiBalance.isPending && _daiBalance.isSuccess) {
+      return formatEther(BigInt(String(_daiBalance.data)));
+    } else {
+      return 0;
+    }
+  }, [_daiBalance]);
+  // @dev token infos
+  const [name, symbol, decimals, totalSupply] = token || [];
+  //contracts
+  const [contractDAI, setContractDAI] = React.useState<Contract | undefined>(
+    undefined
+  );
+  const [contractFactory, setContractFactory] = React.useState<
+    Contract | undefined
+  > (undefined);
 
-
-  const handleChangeDecimal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
+  React.useEffect(() => {
+    if (
+      name &&
+      symbol &&
+      decimals &&
+      totalSupply &&
+      name.status === "success" &&
+      symbol.status === "success" &&
+      decimals.status === "success" &&
+      totalSupply.status === "success"
+    ) {
+      setIsInvalidTokenAddress(false);
+    } else {
+      setIsInvalidTokenAddress(true);
+    }
+  }, [name, symbol, decimals, totalSupply]);
+  /**
+   * get ETH price from chainbase
+   */
+  React.useEffect(() => {
+    fetch("/api/utils/eth-price")
+      .then(async (response) => {
+        const {
+          payload: { amount },
+        } = await response.json();
+        setEthPrice(amount);
+      })
+      .catch((err) => {
+        console.log("failed to fetch eth price");
+      });
+  }, []);
+  /**
+   * get Contract data when first load
+   */
+  React.useEffect(() => {
+    if (!address || !chainId || !signer) {
       return;
     }
-    setDecimal(value ? String(parseInt(value)) : "0");
+    const _contractDAI = new Contract(DAI_ADDRESSES[chainId], DAI, signer);
+    setContractDAI(_contractDAI);
+    const _contractFactory = new Contract(
+      FACTORY_ADDRESSES[chainId],
+      FACTORY,
+      signer
+    );
+    setContractFactory(_contractFactory);
+  }, [address, chainId, signer]);
+  /**
+   * pay spamFilterFee as 100DAI
+   */
+  const handlePaySpamFilterFee = async () => {
+
+    const _isPaid = await contractFactory?.paidSpamFilterFee(address);
+    setPaid (_isPaid);
+
+    if (_isPaid) {
+      showToast ("You have already paid spam filter fee.", "success");
+      return;
+    }
+
+    try {
+      setIsPayingSpamFilterFee(true);
+      if (!contractDAI || !contractFactory) throw "";
+
+      const _approveTx = await contractDAI.approve(
+        FACTORY_ADDRESSES[Number(chainId)],
+        parseEther("100")
+      );
+      await _approveTx.wait();
+      const _spamFilterFeeTx = await contractFactory.paySpamFilterFee();
+      await _spamFilterFeeTx.wait();
+      setPaid (true);
+      showToast(
+        "You have successfully paid for your spam filter fee with 100 DAI.",
+        "warning"
+      );
+    } catch (err) {
+      if (String(err).includes("user rejected transaction")) {
+        showToast("User rejected transaction.", "warning");
+      } else {
+        showToast("Failed Transaction", "error");
+      }
+      console.log(err);
+    } finally {
+      setIsPayingSpamFilterFee(false);
+    }
   };
+
+  const handleConfirm = () => {
+
+    if (stepper < 4 && !isLoading) {
+      setShowProgressModal (false);
+    } else if (stepper === 4 && !isLoading) {
+      setShowProgressModal (false);
+      setStep (2);
+    }
+  }
 
   const handleSave = () => {
 
-    if (!isAuthenticated) {
-      return showToast ("Connect your wallet first", "warning");
-    }     
-
-    setIsValid (true);
-    let valid: boolean = true;
     try {
-      
-      
-      if (!address) {
-        showToast("Token address is required.", "warning"); 
+      if (!isAuthenticated) throw "Connect your wallet first.";
+      if (!paid)
+        throw "You must pay 100 DAI of spam filter fee.";
+
+      setIsInvalid(true);
+      let valid: boolean = true;
+
+      if (isInvalidTokenAddress) {
+        showToast("Invalid token address.", "warning");
         valid = false;
       }
       if (!wallet) {
@@ -96,72 +263,198 @@ const Create = ({ step, setStep }: IProps) => {
         valid = false;
       }
 
-      if (valid) {
-        setStep (2);
+      if (valid && preview) {
+        handleSubmit();
       }
     } catch (err) {
-      // showToast(String(err), "warning");
+      showToast(String(err), "warning");
       // console.log(err)
     }
-  }
+  };
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
+  const handleSubmit = async () => {
+
+
+    if (!decimals || !totalSupply || !name || !symbol) return;
+
+    const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
+    
+    const _price =  parseEther(_priceRaw.toFixed(20));
+    const _totalSupply = BigInt(String(totalSupply.result));
+    const _hardcap = parseEther(hardCap);
+    const _decimals = BigInt(String(decimals.result));
+    const _softcap = parseEther(softCap);
+
+    
+    
+    console.log({ _price, _totalSupply, _decimals, _hardcap });
+    console.log(_price * _totalSupply / parseUnits ("1", Number(_decimals)), _hardcap);
+    if (_price * _totalSupply / parseUnits ("1", Number(_decimals)) < _hardcap ) {
+      showToast ("Can't reach hardcap with this price and totalSupply", "warning");
       return;
     }
-    setAmount(value);
-  }
+    
+    const _amount = _hardcap * parseUnits ("1", Number(_decimals)) / _price;
+    setAmount (String(_amount));
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
-      return;
+    setShowProgressModal(true);
+    setIsLoading(true);
+    try {
+      // @step1 upload logo to PINATA
+      setStepper (1);
+      setPercent (0);
+      const _logoURI = await uploadToPinata(
+        preview?.data as string,
+        ({ loaded, total }: { loaded: number; total: number }) => {
+          console.log(Math.floor((loaded * 100) / total));
+          setPercent(Math.floor((loaded * 100) / total));
+        }
+      ).catch((err) => {
+        console.log(err);
+        throw "File upload failed to IPFS. Please retry.";
+      });
+      console.log("@logoURI: ", _logoURI);
+      setStepper(2);
+      setPercent(0);
+
+      // @step2 upload project info to PINATA
+      const _projectInfo = JSON.stringify({
+        title,
+        description: description,
+        logo: _logoURI,
+        twitter,
+        instagram,
+        linkedin,
+        facebook,
+        farcaster,
+        lens
+      });
+      const _projectURI = await uploadToIPFS(
+        //@ts-ignore
+        new File(
+          [
+            _projectInfo
+          ], "metadata.json"
+        ),
+        ({ loaded, total }: { loaded: number; total: number }) => {
+          setPercent(Math.floor((loaded * 100) / total));
+        }
+      ).catch(err => {
+        console.log(err);
+        throw "Project Data upload failed to IPFS. Please retry.";
+      });
+      console.log("@projectURI: ", _projectURI);
+      setStepper (3);
+      setPercent (0);
+
+      const _tx = await contractFactory?.launchNewICO (
+        _projectURI,
+        _softcap,
+        _hardcap,
+        BigInt(Math.floor(new Date(endTime).getTime()/1000)),
+        name.result,
+        symbol.result,
+        _price,
+        _decimals,
+        _totalSupply,
+        tokenAddress,
+        cyptoSIDAO
+      );
+
+      await _tx.wait();
+      setPaid (false);
+      showToast ("ICO successfully launched.", "success");
+
+      const _vulcans = await contractFactory?.getVulcans ();
+      setIco (_vulcans[_vulcans.length - 1]);
+      
+      setStepper(4);
+      setPercent(0);
+    } catch (err) {
+      if (String(err).includes("user rejected transaction")) {
+        showToast("Reject transation", "warning");
+      } else {
+        showToast (String(err), "warning");
+        console.log(err);
+      }
+      setShowProgressModal (false);
+    } finally {
+      setIsLoading (false);
     }
-    setPrice(value);
-  }
+  };
 
   return (
     <div className="w-full">
-      
-      <h2 className="">* Pays non-refundable Spam filter fee - $100 DAI to launch ICO, and Depoly contract</h2>
-      <button className="py-2 text-white flex items-center gap-1 mt-3 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
-        <Icon icon="ph:currency-eth-duotone" /> Pay Spam Filter 
-      </button>
-      <InputInfo
+      {showProgressModal && (
+        <Progress
+          stepper={stepper}
+          percent={percent}
+          confirm={handleConfirm}
+          hash={ico}
+        />
+      )}
+      <h2 className="">
+        * Pays non-refundable Spam filter fee - $100 DAI to launch ICO, and
+        Depoly contract
+      </h2>
+      <div className="flex gap-2 items-end">
+        <button
+          onClick={handlePaySpamFilterFee}
+          className="py-2 text-white flex items-center gap-1 mt-3 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4"
+        >
+          {isPayingSpamFilterFee ? (
+            <>
+              <Icon icon="mingcute:loading-fill" className="spin" /> Processing
+            </>
+          ) : (
+            <>
+              <Icon icon="ph:currency-eth-duotone" /> Pay Spam Filter Fee
+            </>
+          )}
+        </button>
+        {paid && <Icon icon="pajamas:check" width={30} />}
+      </div>
+      <h3 className="mt-1 px-1 text-xs">*Your DAI balance: {daiBalance}</h3>
+      <InputToken
         title="Token Address"
         className="mt-10"
-        placeholder="*Enter your address of your token"
-        value={address}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
-        isValid={isValid}
-        message="Input token address"
+        placeholder="*token address"
+        info="*What' the address of your token for ICO?"
+        value={tokenAddress}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setTokenAddress(e.target.value);
+          setChangedTokenAddress(true);
+        }}
+        isInvalid={isInvalidTokenAddress && (changedTokenAddress || isInvalid)}
+        message="Invalid ERC20 token address"
       />
       <InputInfo
         title="Wallet Address"
-        className=""
-        placeholder="*Enter wallet address that sale proceeds will go to"
+        className="mt-2"
+        placeholder="*wallet address"
+        info="*What' wallet address that sale proceeds will go to?"
         value={wallet}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setWallet(e.target.value)
         }
-        isValid={isValid}
+        isInvalid={isInvalid}
         message="input wallet address"
       />
-      <div className="flex gap-1 w-full items-center">
+      <div className="flex gap-1 w-full items-center mt-2">
         <InputInfo
           title="Token Price"
           className="w-full"
-          placeholder="*Enter token price for ICO"
+          placeholder="*token price"
+          info="What' token price for ICO?"
           value={price}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setPrice(e.target.value)
           }
-          isValid={isValid}
-          message="input wallet address"
+          isInvalid={isInvalid}
+          message="input token price"
         />
-        <Dropdown 
-          label="Dropdown button" 
+        <Dropdown
+          label="Dropdown button"
           renderTrigger={() => (
             <div className="w-[100px] mt-[18px]">
               <div className="bg-[#F0F8FF] flex justify-between items-center cursor-pointer transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border">
@@ -174,103 +467,75 @@ const Create = ({ step, setStep }: IProps) => {
           <Dropdown.Item onClick={() => setCurrency("USD")}>USD</Dropdown.Item>
         </Dropdown>
       </div>
-      <h2 className="text-lg font-bold mt-10">*Token Information</h2>
+      <div className="flex flex-row-reverse justify-between">
+        <h3 className="px-1 text-sm">( 1 ETH = {ethPrice} USD )</h3>
+        {ethPrice && (
+          <h3 className="px-1 text-sm">
+            ( ={" "}
+            {currency === "ETH"
+              ? reduceAmount(Number(price) * ethPrice)
+              : reduceAmount(Number(price) / ethPrice)}{" "}
+            {currency === "ETH" ? "USD" : "ETH"} )
+          </h3>
+        )}
+      </div>
+      <h2 className="text-lg font-bold mt-12 mb-2">*Token Information</h2>
       <div
         id="information"
         className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2"
       >
         <InfoShower
           title="Token Name"
-          value={"Dreams Evolving Wildly"}
+          info="*what' your token's name?"
+          value={
+            name?.status === "success" ? String(name.result) : "*token name"
+          }
         />
         <InfoShower
           title="Token Symbol"
-          value={"DEW"}
+          info="*what' your token's symbol?"
+          value={
+            symbol?.status === "success"
+              ? String(symbol.result)
+              : "*token symbol"
+          }
         />
         <InfoShower
           title="Token Decimal"
-          value={"18"}
+          info="*what' your token's decimal?"
+          value={
+            decimals?.status === "success"
+              ? String(decimals.result)
+              : "*token decimal"
+          }
         />
         <InfoShower
           title="Total Supply"
-          value={"80000000000"}
+          info="*what' your token's totalSupply?"
+          value={
+            totalSupply?.status === "success"
+              ? formatUnits(
+                  BigInt(String(totalSupply.result)),
+                  Number(decimals?.result)
+                )
+              : "*totalsupply"
+          }
         />
       </div>
-      {/* <div
-        id="information"
-        className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 mt-5"
-      >
-        <InputInfo
-          title="Token Name"
-          placeholder="*Enter your token name"
-          value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setName(e.target.value)
-          }
-          isValid={isValid}
-          message="input token name"
-        />
-        <InputInfo
-          title="Token Symbol"
-          placeholder="*Enter your token symbol"
-          value={symbol}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSymbol(e.target.value)
-          }
-          isValid={isValid}
-          message="input token symbol"
-        />
-        <InputCap
-          title="Token Price"
-          placeholder="*Enter your token price"
-          value={price}
-          onChange={handlePriceChange}
-          isValid={isValid}
-          message="Input token price for ICO"
-        />
-        <InputCap
-          title="Amount for ICO"
-          placeholder="*Enter your amount to rise"
-          value={amount}
-          onChange={handleAmountChange}
-          isValid={isValid}
-          message="Input token amount for ICO"
-        />
-        <InputDecimal
-          title="Token Decimal"
-          placeholder="*Enter your token decimal"
-          value={decimal}
-          onChange={handleChangeDecimal}
-          isValid={isValid}
-          message="decimal field is required"
-        />
-      </div>
-      <InputInfo
-        title="Token Address"
-        className="mt-10"
-        placeholder="*Enter your address of your token"
-        value={address}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
-        isValid={isValid}
-        message="Input token address"
-      />
-      <InputInfo
-        title="Wallet Address"
-        className=""
-        placeholder="*Enter wallet address that sale proceeds will go to"
-        value={wallet}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setWallet(e.target.value)
-        }
-        isValid={isValid}
-        message="input wallet address"
-      /> */}
-     
+
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">
-        <button onClick={handleSave} className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
-          Save
+        <button
+          onClick={handleSave}
+          className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4"
+        >
+          Deploy
         </button>
-        <div onClick={() => setStep(0)} className="flex cursor-pointer hover:opacity-60 gap-2 items-center hover:underline"><Icon icon="ion:arrow-undo-sharp" /> Previous</div>
+        <div
+          onClick={() => setStep(0)}
+          className="flex cursor-pointer hover:opacity-60 gap-2 items-center hover:underline"
+        >
+          <Icon icon="ion:arrow-undo-sharp" /> Previous
+        </div>
       </div>
     </div>
   );

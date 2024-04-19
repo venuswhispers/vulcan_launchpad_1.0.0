@@ -38,7 +38,7 @@ const Evangilists = () => {
   const [avatar, setAvatar] = React.useState<string>("");
   const [bio, setBio] = React.useState<string>("");
   const [preview, setPreview] = React.useState<string>("");
-  const [isValid, setIsValid] = React.useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   //atoms
@@ -98,6 +98,7 @@ const Evangilists = () => {
   const _updateProfile = async () => {
     try {
       setIsLoading (true);
+      console.log(preview)
       const _avatar = preview ? await uploadToPinata(preview) : "";
       const { data } = await api.put("/user", { avatar: _avatar, bio, company, fullName, website, twitter, facebook, instagram, farcaster, lens, linkedin });
       setUser({ address: String(user?.address), avatar: _avatar, bio, company, fullName, website, twitter, facebook, instagram, farcaster, lens, linkedin });
@@ -114,7 +115,7 @@ const Evangilists = () => {
 
     if (isLoading) return;
     
-    setIsValid (true);
+    setIsInvalid (true);
     
     let valid = true;
     
@@ -207,7 +208,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFullName (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input fullName"
           />
         </section>
@@ -219,7 +220,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setCompany (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input your company name"
           />
           <InputInfo
@@ -229,7 +230,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setInstagram (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input Instagram link"
           />
         </section>
@@ -242,7 +243,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setWebsite (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input your Website link"
           />
           <InputInfo
@@ -252,7 +253,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setLinkedin (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input Linkedin link"
           />
         </section>
@@ -265,7 +266,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setTwitter (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input your Twitter link"
           />
           <InputInfo
@@ -275,7 +276,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFacebook (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input your Facebook link"
           />
         </section>
@@ -287,7 +288,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFarcaster (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input your Farcaster link"
           />
           <InputInfo
@@ -297,7 +298,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setLens (e.target.value)
             }
-            isValid={isValid}
+            isInvalid={isInvalid}
             message="Input your lens link"
           />
         </section>
@@ -306,9 +307,10 @@ const Evangilists = () => {
           title="Bio"
           className="mt-5 bio"
           placeholder="*Enter Bio..."
+          info="what&apos; your short description"
           value={bio}
           onChange={(value: string) => setBio(value)}
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your Bio"
         />
 

@@ -19,14 +19,17 @@ import {
   hardCapAtom,
   softCapAtom,
   youtubeLinkAtom,
-  tokenPriceAtom,
   endTimeAtom,
   descriptionAtom,
-  walletAtom,
   checkedAtom,
-  previewAtom
+  previewAtom,
+  twitterAtom,
+  facebookAtom,
+  linkedinAtom,
+  farcasterAtom,
+  lensAtom,
+  instagramAtom
 } from "@/store";
-import { Yuji_Boku } from "next/font/google";
 import Preview from "./preview";
 import { SetStateAction } from "jotai/vanilla";
 
@@ -46,32 +49,26 @@ const Create = ({ step, setStep }: IProps) => {
   const [description, setDescription] = useAtom(descriptionAtom);
   // const [wallet, setWallet] = useAtom(walletAtom);
   const [checked, setChecked] = useAtom(checkedAtom);
-  const [preview, ] = useAtom (previewAtom);
-  const [isValid, setIsValid] = React.useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   //toastr
   const { showToast } = useToastr ();
   //hooks
   const { user, isAuthenticated } = useAuth ();
   //socials
-  const [twitter, setTwitter] = React.useState<string>("");
-  const [linkedin, setLinkedin] = React.useState<string>("");
-  const [facebook, setFacebook] = React.useState<string>("");
-  const [instagram, setInstagram] = React.useState<string>("");
-  const [farcaster, setFarcaster] = React.useState<string>("");
-  const [lens, setLens] = React.useState<string>("");
-
-
-  const handleChangeEndTime = (date: Date) => {
-    setEndTime(date.toLocaleDateString());
-  };
+  const [twitter, setTwitter] = useAtom<string>(twitterAtom);
+  const [linkedin, setLinkedin] = useAtom<string>(linkedinAtom);
+  const [facebook, setFacebook] = useAtom<string>(facebookAtom);
+  const [instagram, setInstagram] = useAtom<string>(instagramAtom);
+  const [farcaster, setFarcaster] = useAtom<string>(farcasterAtom);
+  const [lens, setLens] = useAtom<string>(lensAtom);
 
   const handleSave = () => {
     
     if (!user || !isAuthenticated) {
-      return showToast ("Connect your wallet first", "warning");
+      return showToast ("Connect and Signin with your wallet", "warning");
     }     
 
-    setIsValid (true);
+    setIsInvalid (true);
     let valid: boolean = true;
     try {
       if (!title) {
@@ -122,6 +119,11 @@ const Create = ({ step, setStep }: IProps) => {
         showToast("lens account is required.", "warning");
         valid = false;
       }
+
+      if (new Date(endTime) <= new Date()) {
+        showToast("The end time must be in the future.", "warning");
+        valid = false;
+      }
      
 
       if (valid) {
@@ -158,7 +160,7 @@ const Create = ({ step, setStep }: IProps) => {
         Drag or choose your file to upload
       </h5>
 
-      <Uploader isValid={isValid}/>
+      <Uploader isInvalid={isInvalid}/>
       
       <div
         id="information"
@@ -166,46 +168,51 @@ const Create = ({ step, setStep }: IProps) => {
       >
         <InputInfo
           title="Project Title"
-          placeholder="*What is the name of your project?"
+          placeholder="*title"
+          info="*What&apos;s the name of your project?"
           value={title}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTitle(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input title"
         />
         <InputCap
           title="Amount To Rise"
-          placeholder="*What’s the total you wish to raise in Eth"
+          placeholder="*hardcap"
+          info="*What&apos;s the total you wish to raise in Eth"
           value={hardCap}
           onChange={handleHardcapChange}
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input hardcap"
         />
         <InputCap
           title="Softcap Amount"
-          placeholder="*Whats the minimum you’ll accept before distributing tokens?"
+          placeholder="*softcap"
+          info="*What&apos;s the minimum you&apos;ll accept before distributing tokens?"
           value={softCap}
           onChange={handleSoftcapChange}
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input softcap"
         />
         <InputInfo
           title="Video Link"
-          placeholder="*Link to a video describing your project in greater detail"
+          info="*Link to a video describing your project in greater detail"
+          placeholder="*video link"
           value={youtubeLink}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setYoutubeLink(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input youtube video link"
         />
         <Datepicker
           title="End Time"
+          info="*select endTime"
           placeholder="*When do you want your project fundraising to conclude?"
           value={endTime}
           onChange={(value: string) => setEndTime (value)}
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="select end time"
         />
       </div>
@@ -217,85 +224,80 @@ const Create = ({ step, setStep }: IProps) => {
       >
         <InputInfo
           title="Twitter"
-          placeholder="*Input your twitter link"
+          placeholder="*twitter"
+          info="*What&apos;s your Twitter link?"
           value={twitter}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTwitter(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your twitter link"
         />
         <InputInfo
           title="Facebook"
-          placeholder="*Input your facebook link"
+          placeholder="*facebook"
+          info="*What&apos;s your Facebook link?"
           value={facebook}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFacebook(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your facebook link"
         />
         <InputInfo
           title="Instagram"
-          placeholder="*Input your Instagram link"
+          placeholder="*instagram"
+          info="*What&apos;s your Instagram link?"
           value={instagram}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setInstagram(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your instagram link"
         />
         <InputInfo
           title="Linkedin"
-          placeholder="*Input your Linkedin link"
+          placeholder="*linkedin"
+          info="*What&apos;s your Linkedin link?"
           value={linkedin}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setLinkedin(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your Linkedin link"
         />
         <InputInfo
           title="Farcaster"
-          placeholder="*Input your farcaster link"
+          placeholder="*farcaster"
+          info="*What&apos;s your farcaster link?"
           value={farcaster}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFarcaster(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your farcaster link"
         />
         <InputInfo
           title="Lens"
-          placeholder="*Input your Lens link"
+          placeholder="*lens"
+          info="*What&apos;s your Lens link?"
           value={lens}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setLens(e.target.value)
           }
-          isValid={isValid}
+          isInvalid={isInvalid}
           message="input your Lens link"
         />
       </div>
 
-      {/* <InputInfo
-        title="Wallet Address"
-        className="mt-10"
-        placeholder="*Enter wallet address that sale proceeds will go to"
-        value={wallet}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setWallet(e.target.value)
-        }
-        isValid={isValid}
-        message="input wallet address"
-      /> */}
-
       <Description
         title="Description"
         className="mt-10"
-        placeholder="*Enter your token's description..."
+        placeholder="*Enter your description..."
+        info="*Input your project's description"
         value={description}
         onChange={(value: string) => setDescription(value)}
-        isValid={isValid}
+        isInvalid={isInvalid}
         message="input project description"
       />
 
@@ -303,9 +305,9 @@ const Create = ({ step, setStep }: IProps) => {
       <div className="py-4 flex gap-4 -mt-2">
         <div className="flex gap-2 items-center">
           <input
-            // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            //   setChecked(e.target.checked)
-            // }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setChecked(prev => prev)
+            }
             checked={checked}
             type="checkbox"
             value=""
@@ -316,12 +318,11 @@ const Create = ({ step, setStep }: IProps) => {
         </div>
         <div className="flex gap-2 items-center">
           <input
-            // checked={!checked}
-            // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            //   setChecked(!e.target.checked)
-            // }
-            type="checkbox"
             checked={!checked}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setChecked(prev => prev)
+            }
+            type="checkbox"
             name="bordered-checkbox"
             className="w-5 h-5 cursor-pointer  opacity-40 text-blue-600 bg-gray-100 border-gray-300 rounded dark:border-gray-600"
           />

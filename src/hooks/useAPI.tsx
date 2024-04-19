@@ -4,6 +4,7 @@ import useAuth from "./useAuth";
 import { useAtom } from "jotai";
 import { userAtom, isAuthenticatedAtom } from "@/store/user";
 import { useRouter } from "next/navigation";
+import { baseURL } from "@/constants/config";
 
 const useAPI = () => {
   const router = useRouter ();
@@ -11,8 +12,7 @@ const useAPI = () => {
   const [, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
   
   const api = axios.create({
-    // baseURL: 'http://localhost:5050/api',
-    baseURL: 'https://vulcan-launchpad-1-0-0-backend.onrender.com/api',
+    baseURL: baseURL,
     headers: {
       'Content-Type': 'application/json',
     },

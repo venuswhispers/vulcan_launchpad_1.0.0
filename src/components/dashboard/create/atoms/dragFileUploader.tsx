@@ -2,8 +2,6 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
-import Image from "next/image";
-import { useDropzone} from 'react-dropzone';
 import Dropzone from 'react-dropzone';
 import { useAtom } from "jotai";
 import { previewAtom } from "@/store";
@@ -19,7 +17,7 @@ const acceptables = [
   'image/webp'
 ]
 
-const Uploader = ({isValid}: {isValid: boolean}) => {
+const Uploader = ({isInvalid}: {isInvalid: boolean}) => {
 
   const { showToast } = useToastr ();
   const [preview, setPreview] = useAtom(previewAtom);
@@ -65,7 +63,7 @@ const Uploader = ({isValid}: {isValid: boolean}) => {
                 </p>
             </div>
           </div>
-          <p className="text-red-800 text-[11px] px-2 h-3">{ ( isValid && !preview ) ? 'Select logo Image for your project' : '' }</p>
+          <p className="text-red-800 text-[11px] px-2 h-3">{ ( isInvalid && !preview ) ? 'Select logo Image for your project' : '' }</p>
         </div>
       )}
       

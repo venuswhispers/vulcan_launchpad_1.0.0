@@ -15,7 +15,7 @@ export const uploadToPinata = async (data: string, onProgress?: any) => {
           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
           Authorization: `Bearer ${PINATA_KEY}`,
         },
-        // onUploadProgress: onProgress,
+        onUploadProgress: onProgress,
       });
     return Promise.resolve(`https://ipfs.io/ipfs/${res.IpfsHash}`);
   } catch (err) {

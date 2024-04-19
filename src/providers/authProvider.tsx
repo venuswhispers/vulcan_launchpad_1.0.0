@@ -14,6 +14,7 @@ import jwt from 'jsonwebtoken';
 import useToastr from "@/hooks/useToastr";
 import { useRouter } from "next/navigation";
 import useAPI from "@/hooks/useAPI";
+import { setAutomine } from "viem/actions";
 
 
 interface IContext {
@@ -93,28 +94,6 @@ const AuthProvider = ({
       }
       console.log(err);
     }
-    // const { message }: any = await requestChallengeAsync({
-    //   address: address as string,
-    //   chainId: chain.id,
-    // });
-    // const message = "asdfasdfasdfsdaf";
-
-    // const signature = await signMessageAsync({ message });
-
-    // console.log(signature)
-
-    // redirect user after success authentication to '/user' page
-    // const { url } = await signIn("moralis-auth", {
-    //   message,
-    //   signature,
-    //   redirect: false,
-    //   callbackUrl: "/user",
-    // });
-    /**
-     * instead of using signIn(..., redirect: "/user")
-     * we get the url from callback and push it to the router to avoid page refreshing
-     */
-    // push(url);
   };
 
   const signUp = async (user: TRegister) => {
@@ -159,7 +138,7 @@ const AuthProvider = ({
 
   React.useEffect(() => {
     if (isConnected) {
-      signIn ();
+      // signIn ();
     } else {
       setUser (undefined);
       setIsAuthenticated (false);
