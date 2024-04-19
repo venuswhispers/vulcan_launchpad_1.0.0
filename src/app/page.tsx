@@ -39,8 +39,6 @@ export default function Home() {
     if (!address || !chainId || !signer || !FACTORY_ADDRESSES[chainId]) {
       return;
     }
-    // const _contractDAI = new Contract(DAI_ADDRESSES[chainId], DAI, signer);
-    // setContractDAI(_contractDAI);
     const _contractFactory = new Contract(
       FACTORY_ADDRESSES[chainId],
       FACTORY,
