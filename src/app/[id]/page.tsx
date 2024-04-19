@@ -74,6 +74,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   React.useEffect(() => {
     if (!contract) return;
     _getICOInfo ();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contract]);
 
   const _getICOInfo = async () => {
@@ -119,7 +120,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         clearInterval(timerRef.current);
       }
     }, 1000);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
       //@ts-ignore
       clearInterval(timerRef.current);
@@ -200,7 +200,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               style={{
                 borderRadius: 17,
               }}
-              light={<img src='/images/spade.png' alt='Thumbnail' />}
+              light={<Image src='/images/spade.png' alt='Thumbnail' />}
             />
           </div>
 

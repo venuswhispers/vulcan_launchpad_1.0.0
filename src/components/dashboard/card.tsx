@@ -59,6 +59,7 @@ const Card = ({ id }: IProps) => {
   React.useEffect(() => {
     if (!contract) return;
     _getICOInfo ();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contract]);
 
   const _getICOInfo = async () => {

@@ -7,7 +7,7 @@ interface IProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default ({ step, setStep }: IProps) => {
+const Success =  ({ step, setStep }: IProps) => {
   return (
     <div className="flex justify-center pt-10 flex-col items-center">
       <Image src={"/images/logo.dark.svg"} alt="" width={150} height={50} />
@@ -17,3 +17,5 @@ export default ({ step, setStep }: IProps) => {
     </div>
   );
 };
+
+export default Success;
