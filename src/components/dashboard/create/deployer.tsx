@@ -294,7 +294,7 @@ const Create = ({ step, setStep }: IProps) => {
       return;
     }
     
-    const _amount = _hardcap * parseUnits ("1", Number(_decimals)) / _price;
+    const _amount = _hardcap / _price;
     setAmount (String(_amount));
 
     setShowProgressModal(true);
