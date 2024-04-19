@@ -160,9 +160,17 @@ const Card = ({ id }: IProps) => {
             controls
           >
             <source src={project ? project.logo : '/images/spade.png'}/>
-          </video> :
+          </video> : mediaType === "image" ? 
           <Image
             src={project ? project.logo : '/images/spade.png'}
+            // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
+            width={0}
+            alt=''
+            height={0}
+            sizes="100vw"
+            className='w-full h-full aspect-[2/1] rounded-[19px]'
+          /> : <Image
+            src={'/images/spade.png'}
             // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
             width={0}
             alt=''
