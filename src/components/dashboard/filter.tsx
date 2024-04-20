@@ -4,6 +4,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { Dropdown } from "flowbite-react";
 import { title } from "process";
 import { IVulcan } from "@/types";
+import { useAtom } from "jotai";
+import { vulcansAtom, keywordAtom } from "@/store/icos";
 
 interface IProps {
   data: IVulcan[],
@@ -40,6 +42,7 @@ const Filter = ( { data, onChange }: IProps ) => {
   const [chain, setChain] = React.useState<string>("All");
   const [sort, setSort] = React.useState<ISort>({ key: 'created', label: 'Created' });
   const [keyword, setKeyword] = React.useState<string>("");
+  const [mainKeyword,] = useAtom<string>(keywordAtom);
 
 
   React.useEffect(() => {
@@ -53,6 +56,10 @@ const Filter = ( { data, onChange }: IProps ) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, keyword]);
 
+  React.useEffect(() => {
+    setKeyword (mainKeyword);
+  }, [mainKeyword])
+
   const _renderSearch = () => (
     <div className="relative w-full">
       <svg xmlns="http://www.w3.org/2000/svg" className="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 -translate-y-2/4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,6 +68,7 @@ const Filter = ( { data, onChange }: IProps ) => {
       <input
         className="peer bg-white text-sm !text-[11px] w-full h-full bg-transparent pl-10 rounded-lg text-blue-gray-700 font-sans font-normal outline-none border-none disabled:bg-blue-gray-50 x-3 py-[10px]  !pr-9  border-gray-200"
         placeholder="*Search ICO..." 
+        value={keyword}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
       />
     </div>

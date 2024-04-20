@@ -17,7 +17,6 @@ import { Contract, ethers } from "ethers";
 
 import { IVulcan } from "@/types";
 import { formatEther } from "viem";
-import { vulcansAtom } from "@/store/icos";
 
 export default function Home() {
   
@@ -25,6 +24,7 @@ export default function Home() {
   const { address, chainId, signer } = useActiveWeb3();
   const [icos, setICOs] = React.useState<string[]>([]);
   const [metaData, setMetaData] = React.useState<IVulcan[]>([]);
+  
 
   const fetchMetaData = async (ids: string[]) => {
     const _icos: IVulcan[] = await Promise.all(ids.map(async (_id: string) => {
