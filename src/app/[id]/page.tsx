@@ -164,7 +164,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               style={{
                 borderRadius: 17,
               }}
-              // light={<Image width={150} height={150} src='/favicon.svg' alt='Thumbnail'/>}
             />
           </div>
 
