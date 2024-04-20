@@ -13,9 +13,12 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import ICO from '@/constants/abis/ICO.json';
 import axios from 'axios';
 import { reduceAmount } from "@/utils";
-
+// atoms
+import { ethPriceAtom } from "@/store/icos";
 // types
 import { IUser, IProject, IToken } from "@/types";
+// jotai
+import { useAtom } from "jotai";
 
 interface IProps {
   id: string
@@ -34,6 +37,8 @@ const Card = ({ id }: IProps) => {
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [mediaType, setMediaType] = React.useState<string>("");
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
+
+  const [ ethPrice ] = useAtom<number>(ethPriceAtom);
 
   React.useEffect(() => {
     if (!contract) return;
@@ -187,7 +192,7 @@ const Card = ({ id }: IProps) => {
           alt='mini-logo'
           className="rounded-full"
         />
-        <span className="text-[15px] font-bold text-[#1BA9F8]">9.04 USDT</span>
+        <span className="text-[15px] font-bold text-[#1BA9F8]">{ token?.price ? reduceAmount(Number(formatEther(BigInt(String(token.price)))) * ethPrice) : 0} USDT</span>
       </section>
 
       <section id="progress" className="mt-3 text-[#868686]">

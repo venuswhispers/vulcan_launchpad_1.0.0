@@ -41,7 +41,7 @@ export const copyToClipboard = async (text: string) => {
  * @returns string
  *
  */
-export const reduceAmount = (number: number | string | unknown, len = 2) => {
+export const reduceAmount = (number: number | string | unknown | bigint, len = 2) => {
   try {
     if (isNaN(number as number)) throw "0";
     const num = Math.floor(number as number);

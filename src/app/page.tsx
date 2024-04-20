@@ -1,22 +1,23 @@
 "use client"
 import React from "react";
-import Image from "next/image";
 import Header from '@/components/dashboard/header';
 import Filter from "@/components/dashboard/filter";
 import dynamic from "next/dynamic";
 const Card = dynamic(() => import("@/components/dashboard/card"), {ssr: false});
-//hooks
-import useToastr from "@/hooks/useToastr";
+// hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
-//abis
+// abis
 import FACTORY from "@/constants/abis/factory.json";
 import ICO from "@/constants/abis/ICO.json";
-//addresses
+// addresses
 import { FACTORY_ADDRESSES, DAI_ADDRESSES } from "@/constants/constants";
 import { Contract, ethers } from "ethers";
+// atoms
+import { ethPriceAtom } from "@/store/icos";
 
 import { IVulcan } from "@/types";
 import { formatEther } from "viem";
+import { useAtom } from "jotai";
 
 export default function Home() {
   
@@ -24,6 +25,8 @@ export default function Home() {
   const { address, chainId, signer } = useActiveWeb3();
   const [icos, setICOs] = React.useState<string[]>([]);
   const [metaData, setMetaData] = React.useState<IVulcan[]>([]);
+
+  const [ethPrice, setEthPrice] = useAtom<number>(ethPriceAtom);
   
 
   const fetchMetaData = async (ids: string[]) => {
@@ -87,6 +90,20 @@ export default function Home() {
     );
     setContractFactory(_contractFactory);
   }, [address, chainId, signer]);
+
+  React.useEffect(() => {
+    fetch("/api/utils/eth-price")
+    .then(async (response) => {
+      const {
+        payload: { amount },
+      } = await response.json();
+      setEthPrice(amount);
+    })
+    .catch((err) => {
+      console.log("failed to fetch eth price");
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex w-full flex-col gap-4">
