@@ -165,3 +165,7 @@ body {
 .spin {
   animation: spin 1s linear infinite;
 }
+
+.react-player video {
+  border-radius: 20px;
+}
