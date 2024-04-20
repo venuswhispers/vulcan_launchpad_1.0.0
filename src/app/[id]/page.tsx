@@ -15,12 +15,14 @@ import axios from 'axios';
 import { baseURL } from "@/constants/config";
 // types
 import { IUser, IProject, IToken } from "@/types";
+import { reduceAmount } from "@/utils";
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
 
   const { address, chainId, signer } = useActiveWeb3();
   const [contract, setContract] = React.useState<Contract | undefined> (undefined);
   const [token, setToken] = React.useState<IToken|undefined>(undefined);
+  const [price, setPrice] = React.useState<bigint>(BigInt("0"));
   const [project, setProject] = React.useState<IProject|undefined>(undefined);
   const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
   const [softcap, setSoftcap] = React.useState<bigint>(BigInt("0"));
@@ -40,7 +42,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const _getICOInfo = async () => {
     const _token = await contract?.tokenInfo ();
     setToken (_token);
-
+    setPrice(_token.price);
     
     const _hardcap = await contract?.hardcap();
     setHardcap (_hardcap);
@@ -196,6 +198,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
             </div>
+            { _renderItem ("Token Price", reduceAmount(formatEther(price))) }
             { _renderCoolDownItem ("Ending Date", new Date(endTime*1000).toDateString(), true) }
             { _renderCoolDownItem ("Time Remaining", `${days}d ${hours}h ${minutes}m ${seconds}s`, false) }
             
