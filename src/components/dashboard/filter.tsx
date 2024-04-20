@@ -3,12 +3,55 @@ import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Dropdown } from "flowbite-react";
 import { title } from "process";
+import { IVulcan } from "@/types";
 
-const Filter = () => {
+interface IProps {
+  data: IVulcan[],
+  onChange: (ids: string[]) => void 
+}
 
-  const [filter, setFilter] = React.useState<string>("All");
+interface ISort { 
+  label: string, 
+  key: string 
+}
+interface IFilter { 
+  label: string, 
+  key: number[] 
+}
+// "Created", "Funds Raised", "Softcap", "Hardcap"
+const _sorts: ISort[] =[
+  { key: 'created', label: 'Created' },
+  { key: 'fundsRaised', label: 'Funds Raised' },
+  { key: 'softcap', label: 'Softcap' },
+  { key: 'endTime', label: 'End Time' },
+  { key: 'hardcap', label: 'Hardcap' }
+]
+
+const _filters: IFilter[] = [
+  { label: "All", key: [0, 1, 2, 3] },
+  { label: "Progress", key: [0] },
+  { label: "Failed", key: [1] },
+  { label: "Success", key: [2, 3] },
+]
+
+const Filter = ( { data, onChange }: IProps ) => {
+
+  const [filter, setFilter] = React.useState<IFilter>({ label: "All", key: [0, 1, 2, 3] });
   const [chain, setChain] = React.useState<string>("All");
-  const [sort, setSort] = React.useState<string>("Alphabet");
+  const [sort, setSort] = React.useState<ISort>({ key: 'created', label: 'Created' });
+  const [keyword, setKeyword] = React.useState<string>("");
+
+
+  React.useEffect(() => {
+    const _sort = (_prev: IVulcan, _cur: IVulcan) => {
+      //@ts-ignore
+      const _value = _prev[sort.key] > _cur[sort.key];
+      return _value ? -1 : 1;
+    }
+    const _data = data.filter((_item: IVulcan) => _item.title.toLowerCase().includes(keyword.toLowerCase())).filter((_item: IVulcan) => filter.key.includes(_item.status)).sort(_sort).map((_item: IVulcan) => _item.address);
+    onChange (_data);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, sort, keyword]);
 
   const _renderSearch = () => (
     <div className="relative w-full">
@@ -18,41 +61,41 @@ const Filter = () => {
       <input
         className="peer bg-white text-sm !text-[11px] w-full h-full bg-transparent pl-10 rounded-lg text-blue-gray-700 font-sans font-normal outline-none border-none disabled:bg-blue-gray-50 x-3 py-[10px]  !pr-9  border-gray-200"
         placeholder="*Search ICO..." 
-        // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
       />
     </div>
   )
 
   const _renderFilter = () => (
     <Dropdown label="Dropdown button" renderTrigger={() => 
-      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[105px]">
+      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
         <h4 className="text-xs px-1">Filters</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter }</span><Icon icon="bxs:down-arrow" /></div>
+        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter.label }</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-    { ["All", "Progress", "Success", "Failed"].map((item: string) => <Dropdown.Item onClick={() => setFilter(item)} key={item} className={`${filter === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
+    { _filters.map((_item: IFilter) => <Dropdown.Item onClick={() => setFilter(_item)} key={_item.label} className={`${filter === _item && 'font-bold'} text-xs`}>{_item.label}</Dropdown.Item>) }
     </Dropdown>
   )
 
   const _renderSort = () => (
     <Dropdown label="Dropdown button" renderTrigger={() => 
-      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[105px]">
+      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
         <h4 className="text-xs px-1">Sort by</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ sort }</span><Icon icon="bxs:down-arrow" /></div>
+        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ sort.label }</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-      { ["Alphabet", "Created", "Softcap", "HardCap"].map((item: string) => <Dropdown.Item onClick={() => setSort(item)} key={item} className={`${sort === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
+      { _sorts.map((_item: ISort) => <Dropdown.Item onClick={() => setSort(_item)} key={_item.key} className={`${sort === _item && 'font-bold'} text-xs`}>{_item.label}</Dropdown.Item>) }
     </Dropdown>
   )
 
   const _renderChainFilter = () => (
     <Dropdown label="Dropdown button" renderTrigger={() => 
-      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[105px]">
+      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
         <h4 className="text-xs px-1">Chains</h4>
         <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{chain}</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-      { ["All", "Sepolia", "Arbitrum"].map((item: string) => <Dropdown.Item onClick={() => setChain(item)} key={item} className={`${chain === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
+      { ["All", "Sepolia"].map((item: string) => <Dropdown.Item onClick={() => setChain(item)} key={item} className={`${chain === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
     </Dropdown>
   )
 

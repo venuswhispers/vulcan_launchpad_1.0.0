@@ -141,7 +141,7 @@ const Card = ({ id }: IProps) => {
             height={0}
             sizes="100vw"
             className='w-full h-full aspect-[1.5/1] rounded-[19px]'
-          /> : <div className="dark:bg-black bg-gray-300 w-full h-full aspect-[1.5/1] rounded-[19px]"></div>
+          /> : <div className="dark:bg-black bg-gray-300 w-full h-full aspect-[1.5/1] rounded-[19px] animate-pulse"></div>
         }
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
           {
