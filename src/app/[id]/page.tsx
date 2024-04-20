@@ -4,58 +4,17 @@ import Header from '@/components/dashboard/header';
 import Image from "next/image";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Displayer from "@/components/dashboard/create/atoms/quillDisplayer";
-
 import { Contract } from "ethers";
 import { formatEther, formatUnits } from  'viem';
 import ReactPlayer from 'react-player';
 //hooks
-import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 //abis
 import ICO from '@/constants/abis/ICO.json';
-
 import axios from 'axios';
-import { reduceAmount } from "@/utils";
-
 import { baseURL } from "@/constants/config";
-
-interface IToken {
-  name: string;
-  symbol: string;
-  totalSupply: bigint;
-  tokenAddress: string;
-  decimal: bigint;
-  price: bigint;
-}
-
-interface IProject {
-  title: string,
-  description: string,
-  logo: string,
-  twitter?: string,
-  instagram?: string,
-  linkedin?: string,
-  facebook?: string,
-  farcaster?: string,
-  lens?: string,
-  youtubeLink?: string
-}
-
-interface IUser {
-  _id: string;
-  wallet: string;
-  fullName: string,
-  company: string,
-  avatar: string,
-  bio: string,
-  website: string,
-  twitter: string,
-  linkedin: string,
-  facebook: string,
-  instagram: string,
-  farcaster: string,
-  lens: string,
-};
+// types
+import { IUser, IProject, IToken } from "@/types";
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
 

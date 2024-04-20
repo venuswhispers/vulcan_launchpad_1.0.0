@@ -73,12 +73,11 @@ const Create = ({ step, setStep }: IProps) => {
   const [farcaster,] = useAtom<string>(farcasterAtom);
   const [lens,] = useAtom<string>(lensAtom);
   const [ico, setIco] = useAtom<string>(icoAtom);
-  const [amount, setAmount] = useAtom<string>(amountAtom);
+  const [, setAmount] = useAtom<string>(amountAtom);
   //states
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   const [isInvalidTokenAddress, setIsInvalidTokenAddress] = React.useState<boolean>(false);
   const [changedTokenAddress, setChangedTokenAddress] = React.useState<boolean>(false);
-  const [checked, setChecked] = React.useState<boolean>(false);
   const [isPayingSpamFilterFee, setIsPayingSpamFilterFee] = React.useState<boolean>(false);
   const [showProgressModal, setShowProgressModal] = React.useState<boolean>(false);
   const [percent, setPercent] = React.useState<number>(0);
@@ -132,16 +131,12 @@ const Create = ({ step, setStep }: IProps) => {
       return 0;
     }
   }, [_daiBalance]);
-  // @dev token infos
+  // @token infos
   const [name, symbol, decimals, totalSupply] = token || [];
-  //contracts
-  const [contractDAI, setContractDAI] = React.useState<Contract | undefined>(
-    undefined
-  );
-  const [contractFactory, setContractFactory] = React.useState<
-    Contract | undefined
-  > (undefined);
-
+  // @contracts
+  const [contractDAI, setContractDAI] = React.useState< Contract | undefined > ( undefined );
+  const [contractFactory, setContractFactory] = React.useState< Contract | undefined > (undefined);
+  // @validate valid token address
   React.useEffect(() => {
     if (
       name &&
@@ -158,9 +153,8 @@ const Create = ({ step, setStep }: IProps) => {
       setIsInvalidTokenAddress(true);
     }
   }, [name, symbol, decimals, totalSupply]);
-  /**
-   * get ETH price from chainbase
-   */
+
+  // @get ETH price from chainbase
   React.useEffect(() => {
     fetch("/api/utils/eth-price")
       .then(async (response) => {
@@ -173,9 +167,8 @@ const Create = ({ step, setStep }: IProps) => {
         console.log("failed to fetch eth price");
       });
   }, []);
-  /**
-   * get Contract data when first load
-   */
+
+  // @dev load contract from start
   React.useEffect(() => {
     if (!address || !chainId || !signer) {
       return;
@@ -189,9 +182,8 @@ const Create = ({ step, setStep }: IProps) => {
     );
     setContractFactory(_contractFactory);
   }, [address, chainId, signer]);
-  /**
-   * pay spamFilterFee as 100DAI
-   */
+
+  // @dev pay 100DAI of spam filter fee
   const handlePaySpamFilterFee = async () => {
 
     const _isPaid = await contractFactory?.paidSpamFilterFee(address);
@@ -230,8 +222,8 @@ const Create = ({ step, setStep }: IProps) => {
     }
   };
 
+  // @user click progress modal's close button
   const handleConfirm = () => {
-
     if (stepper < 4 && !isLoading) {
       setShowProgressModal (false);
     } else if (stepper === 4 && !isLoading) {
@@ -240,12 +232,11 @@ const Create = ({ step, setStep }: IProps) => {
     }
   }
 
+  // @when user click next button
   const handleSave = () => {
-
     try {
       if (!isAuthenticated) throw "Connect your wallet first.";
-      if (!paid)
-        throw "You must pay 100 DAI of spam filter fee.";
+      if (!paid) throw "You must pay 100 DAI of spam filter fee.";
 
       setIsInvalid(true);
       let valid: boolean = true;
@@ -262,41 +253,38 @@ const Create = ({ step, setStep }: IProps) => {
         showToast("Token Price is required.", "warning");
         valid = false;
       }
-
       if (valid && preview) {
         handleSubmit();
       }
     } catch (err) {
       showToast(String(err), "warning");
-      // console.log(err)
+      console.log(err);
     }
   };
 
+  // @deploy smart contract with informations
   const handleSubmit = async () => {
-
-
     if (!decimals || !totalSupply || !name || !symbol) return;
 
     const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
-    
     const _price =  parseEther(_priceRaw.toFixed(20));
     const _totalSupply = BigInt(String(totalSupply.result));
     const _hardcap = parseEther(hardCap);
     const _decimals = BigInt(String(decimals.result));
     const _softcap = parseEther(softCap);
 
-    
-    
-    console.log({ _price, _totalSupply, _decimals, _hardcap });
     console.log(_price * _totalSupply / parseUnits ("1", Number(_decimals)), _hardcap);
+    // test if totalSupply and tokenPrice is valid
     if (_price * _totalSupply / parseUnits ("1", Number(_decimals)) < _hardcap ) {
       showToast ("Can't reach hardcap with this price and totalSupply", "warning");
       return;
     }
-    
-    const _amount = _hardcap / _price;
+
+    // set amount
+    const _amount = _hardcap / _price ;
     setAmount (String(_amount));
 
+    // progress Modal show
     setShowProgressModal(true);
     setIsLoading(true);
     try {
@@ -348,6 +336,7 @@ const Create = ({ step, setStep }: IProps) => {
       setStepper (3);
       setPercent (0);
 
+      // @step3 deploy smart contract to chain
       const _tx = await contractFactory?.launchNewICO (
         _projectURI,
         _softcap,
@@ -361,7 +350,6 @@ const Create = ({ step, setStep }: IProps) => {
         tokenAddress,
         cyptoSIDAO
       );
-
       await _tx.wait();
       setPaid (false);
       showToast ("ICO successfully launched.", "success");
@@ -376,7 +364,7 @@ const Create = ({ step, setStep }: IProps) => {
         showToast("Reject transation", "warning");
       } else {
         showToast (String(err), "warning");
-        console.log(err);
+        // console.log(err);
       }
       setShowProgressModal (false);
     } finally {

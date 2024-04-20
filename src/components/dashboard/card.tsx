@@ -6,43 +6,22 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter } from "next/navigation";
 import { Contract } from "ethers";
 import { formatEther, formatUnits } from  'viem';
-import ReactPlayer from 'react-player';
+import { baseURL } from "@/constants/config";
 //hooks
-import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 //abis
 import ICO from '@/constants/abis/ICO.json';
-
+import axios from 'axios';
 import { reduceAmount } from "@/utils";
 
+// types
+import { IUser, IProject, IToken } from "@/types";
 
 interface IProps {
   id: string
 }
 
-interface IToken {
-  name: string;
-  symbol: string;
-  totalSupply: bigint;
-  tokenAddress: string;
-  decimal: bigint;
-  price: bigint;
-}
-
-interface IProject {
-  title: string,
-  description: string,
-  logo: string,
-  twitter?: string,
-  instagram?: string,
-  linkedin?: string,
-  facebook?: string,
-  farcaster?: string,
-  lens?: string,
-}
-
 const Card = ({ id }: IProps) => {
-
   const { address, chainId, signer } = useActiveWeb3();
   const [contract, setContract] = React.useState<Contract | undefined> (undefined);
   const [token, setToken] = React.useState<IToken|undefined>(undefined);
@@ -54,6 +33,7 @@ const Card = ({ id }: IProps) => {
   const [distance, setDistance] = React.useState<number>(0);
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [mediaType, setMediaType] = React.useState<string>("");
+  const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
 
   React.useEffect(() => {
     if (!contract) return;
@@ -62,27 +42,31 @@ const Card = ({ id }: IProps) => {
   }, [contract]);
 
   const _getICOInfo = async () => {
+    // token data
     const _token = await contract?.tokenInfo ();
     setToken (_token);
-
-    
+    // hardcap
     const _hardcap = await contract?.hardcap();
     setHardcap (_hardcap);
-
+    // softcap
     const _softcap = await contract?.softcap();
     setSoftcap (_softcap);
-    
+    // funds raised
     const _fundsRaised = await contract?.fundsRaised ();
     setFundsRaised (_fundsRaised);
-    
+    // ico endtime
     const _endTime = await contract?.endTime ();
     setEndTime (Number(_endTime));
-
+    // project data
     const _projectURI = await contract?.projectURI ();
     const response = await fetch(_projectURI);
     const _project = await response.json();
     setProject(_project);
-
+    // creator data
+    const _creator = await contract?.creator ();
+    const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
+    setCreator (user);
+    // test if log is video or pic
     fetch(_project.logo)
     .then(response => response.blob())
     .then(blob => {
@@ -143,51 +127,35 @@ const Card = ({ id }: IProps) => {
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
       <section id="logo" className="relative w-full rounded-2xl">
         {
-          // <ReactPlayer
-          //   className='react-player rounded-[19px]'
-          //   url={project?.logo}
-          //   width='100%'
-          //   height='100%'
-          //   style={{
-          //     borderRadius: 17,
-
-          //   }}
-          //   light={<img src='/images/spade.png' alt='Thumbnail' />}
-          // />
           mediaType === "video" ?
           <video 
-            className='w-full h-full aspect-[2/1] rounded-[19px]'
+            className='w-full h-full aspect-[1.5/1] rounded-[19px]'
             controls
           >
-            <source src={project ? project.logo : '/images/spade.png'}/>
+            <source src={project?.logo + ""}/>
           </video> : mediaType === "image" ? 
           <Image
-            src={project ? project.logo : '/images/spade.png'}
-            // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
+            src={project?.logo + ""}
             width={0}
             alt=''
             height={0}
             sizes="100vw"
-            className='w-full h-full aspect-[2/1] rounded-[19px]'
-          /> : <Image
-            src={'/images/spade.png'}
-            // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
-            width={0}
-            alt=''
-            height={0}
-            sizes="100vw"
-            className='w-full h-full aspect-[2/1] rounded-[19px]'
-          />
+            className='w-full h-full aspect-[1.5/1] rounded-[19px]'
+          /> : <div className="dark:bg-black bg-gray-300 w-full h-full aspect-[1.5/1] rounded-[19px]"></div>
         }
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
-          <Image
-            src={'/images/mini-avatar.png'}
-            width={0}
-            height={0}
-            alt='mini-logo'
-            sizes="100vw"
-            className='w-full h-full rounded-[30%]'
-          />
+          {
+            creator?.avatar ?
+              <Image
+              src={creator.avatar}
+              width={0}
+              height={0}
+              alt='mini-logo'
+              sizes="100vw"
+              className='w-full h-full aspect-square rounded-[30%]'
+            /> :
+            <div className='w-full h-full rounded-[30%] aspect-square dark:bg-gray-700 bg-gray-300'></div>
+          }
         </div>
         <div className="absolute flex gap-1 items-center p-2 left-3 bottom-3 rounded-full bg-[#00000069] backdrop-filter backdrop-blur-[5px]">
           <Image

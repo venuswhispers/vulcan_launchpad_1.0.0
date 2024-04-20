@@ -1,11 +1,13 @@
 "use client";
 import React from "react";
-import ThemeProvider from "@/providers/themeProvider";
-import JotaiProvider from "@/providers/jotaiProvider";
-import ToastProvider from "@/providers/toastProvider";
-import ActiveWeb3Provider from "@/providers/web3Provider";
-import RainbowProvider from "@/providers/rainbowProvider";
-import AuthProvider from "@/providers/authProvider";
+import dynamic from "next/dynamic";
+
+const JotaiProvider = dynamic(() => import("@/providers/jotaiProvider"), { ssr: false });
+const RainbowProvider = dynamic(() => import("@/providers/rainbowProvider"), { ssr: false });
+const ThemeProvider = dynamic(() => import("@/providers/themeProvider"), { ssr: false });
+const ToastProvider = dynamic(() => import("@/providers/toastProvider"), { ssr: false });
+const AuthProvider = dynamic(() => import("@/providers/authProvider"), { ssr: false });
+const ActiveWeb3Provider = dynamic(() => import("@/providers/web3Provider"), { ssr: false });
 
 const ThemeClient = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (

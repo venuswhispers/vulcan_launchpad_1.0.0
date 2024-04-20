@@ -3,8 +3,8 @@ import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { Dropdown } from "flowbite-react";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import WalletConnectButton from "@/components/layouts/header/atoms/walletConnect";
+import dynamic from "next/dynamic";
+const WalletConnectButton = dynamic(() => import("@/components/layouts/header/atoms/walletConnect"), {ssr: false});
 
 const Header = () => {
 
@@ -35,8 +35,6 @@ const Header = () => {
             // onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
           />
         </div>
-        {/* {  _renderWalletConnectButton () } */}
-        {/* <ConnectButton/> */}
         <WalletConnectButton/>
       </div>
 

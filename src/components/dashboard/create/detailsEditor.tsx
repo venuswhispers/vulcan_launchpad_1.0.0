@@ -1,19 +1,16 @@
 "use client";
 import React from "react";
-import Header from "@/components/dashboard/header";
-import { Icon } from "@iconify/react/dist/iconify.js";
+//components
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputCap from "@/components/dashboard/create/atoms/capInput";
-
 import Datepicker from "@/components/dashboard/create/atoms/datePicker";
 import Description from "@/components/dashboard/create/atoms/descriptionInput";
-import Image from "next/image";
-import { useAtom } from "jotai";
 import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
-// import Croper from "@/components/dashboard/create/croper";
+//hooks
 import useToastr from "@/hooks/useToastr";
 import useAuth from "@/hooks/useAuth";
-
+//jotai
+import { useAtom } from "jotai";
 import {
   titleAtom,
   hardCapAtom,
@@ -30,31 +27,27 @@ import {
   lensAtom,
   instagramAtom
 } from "@/store";
-import Preview from "./preview";
-import { SetStateAction } from "jotai/vanilla";
+
 
 interface IProps {
   step: number,
-  setStep: React.Dispatch<SetStateAction<number>>
+  setStep: React.Dispatch<React.SetStateAction<number>>
 }
 
 const Create = ({ step, setStep }: IProps) => {
-  //atoms
+  // validation test
+  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
+  // toastr
+  const { user, isAuthenticated } = useAuth ();
+  const { showToast } = useToastr ();
+  // atoms
   const [title, setTitle] = useAtom(titleAtom);
   const [hardCap, setHardCap] = useAtom(hardCapAtom);
   const [softCap, setSoftCap] = useAtom(softCapAtom);
   const [youtubeLink, setYoutubeLink] = useAtom(youtubeLinkAtom);
-  // const [tokenPrice, setTokenPrice] = useAtom(tokenPriceAtom);
   const [endTime, setEndTime] = useAtom(endTimeAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
-  // const [wallet, setWallet] = useAtom(walletAtom);
   const [checked, setChecked] = useAtom(checkedAtom);
-  const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
-  //toastr
-  const { showToast } = useToastr ();
-  //hooks
-  const { user, isAuthenticated } = useAuth ();
-  //socials
   const [twitter, setTwitter] = useAtom<string>(twitterAtom);
   const [linkedin, setLinkedin] = useAtom<string>(linkedinAtom);
   const [facebook, setFacebook] = useAtom<string>(facebookAtom);
@@ -62,79 +55,7 @@ const Create = ({ step, setStep }: IProps) => {
   const [farcaster, setFarcaster] = useAtom<string>(farcasterAtom);
   const [lens, setLens] = useAtom<string>(lensAtom);
 
-  const handleSave = () => {
-    
-    if (!user || !isAuthenticated) {
-      return showToast ("Connect and Signin with your wallet", "warning");
-    }     
-
-    setIsInvalid (true);
-    let valid: boolean = true;
-    try {
-      if (!title) {
-        showToast("Project title field is required.", "warning");
-        valid = false;
-      } 
-      if (!hardCap || hardCap === "0") {
-        showToast("Project hardcap field is required.", "warning"); 
-        valid = false;
-      } 
-      if (!softCap || softCap === "0") {
-        showToast("Project softcap field is required.", "warning"); 
-        valid = false;
-      } 
-      if (!endTime) {
-        showToast("ICO duraction field is required.", "warning"); 
-        valid = false;
-      } 
-      if (!description || description === '<p><br></p>') {
-        showToast("Project description field is required.", "warning"); 
-        valid = false;
-      }
-      if (Number(hardCap) < Number(softCap)) {
-        showToast("Invalid softcap and hardcap configuration.", "warning");
-        valid = false;
-      }
-      if (!twitter) {
-        showToast("Twitter account is required.", "warning");
-        valid = false;
-      }
-      if (!facebook) {
-        showToast("facebook account is required.", "warning");
-        valid = false;
-      }
-      if (!instagram) {
-        showToast("instagram account is required.", "warning");
-        valid = false;
-      }
-      if (!linkedin) {
-        showToast("linkedin account is required.", "warning");
-        valid = false;
-      }
-      if (!farcaster) {
-        showToast("farcaster account is required.", "warning");
-        valid = false;
-      }
-      if (!lens) {
-        showToast("lens account is required.", "warning");
-        valid = false;
-      }
-
-      if (new Date(endTime) <= new Date()) {
-        showToast("The end time must be in the future.", "warning");
-        valid = false;
-      }
-     
-
-      if (valid) {
-        setStep (1);
-      }
-    } catch (err) {
-      // showToast(String(err), "warning");
-      // console.log(err)
-    }
-  }
-
+  // @when user type softcap
   const handleSoftcapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
@@ -142,7 +63,8 @@ const Create = ({ step, setStep }: IProps) => {
     }
     setSoftCap(value);
   }
-
+  
+  // @dev user type hardcap
   const handleHardcapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (Number(value) < 0 || isNaN(Number(value)) || value.length > 10) {
@@ -150,18 +72,81 @@ const Create = ({ step, setStep }: IProps) => {
     }
     setHardCap(value);
   }
+  
+  // @dev when user click nex button
+  const handleNext = () => {
+    if (!user || !isAuthenticated) {
+      return showToast ("Connect and Signin with your wallet", "warning");
+    }     
+    setIsInvalid (true);
+    let valid: boolean = true;
+    
+    if (!title) {
+      showToast("Project title field is required.", "warning");
+      valid = false;
+    } 
+    if (!hardCap || hardCap === "0") {
+      showToast("Project hardcap field is required.", "warning"); 
+      valid = false;
+    } 
+    if (!softCap || softCap === "0") {
+      showToast("Project softcap field is required.", "warning"); 
+      valid = false;
+    } 
+    if (!endTime) {
+      showToast("ICO duraction field is required.", "warning"); 
+      valid = false;
+    } 
+    if (!description || description === '<p><br></p>') {
+      showToast("Project description field is required.", "warning"); 
+      valid = false;
+    }
+    if (Number(hardCap) < Number(softCap)) {
+      showToast("Invalid softcap and hardcap configuration.", "warning");
+      valid = false;
+    }
+    if (!twitter) {
+      showToast("Twitter account is required.", "warning");
+      valid = false;
+    }
+    if (!facebook) {
+      showToast("facebook account is required.", "warning");
+      valid = false;
+    }
+    if (!instagram) {
+      showToast("instagram account is required.", "warning");
+      valid = false;
+    }
+    if (!linkedin) {
+      showToast("linkedin account is required.", "warning");
+      valid = false;
+    }
+    if (!farcaster) {
+      showToast("farcaster account is required.", "warning");
+      valid = false;
+    }
+    if (!lens) {
+      showToast("lens account is required.", "warning");
+      valid = false;
+    }
 
+    if (new Date(endTime) <= new Date()) {
+      showToast("The end time must be in the future.", "warning");
+      valid = false;
+    }
 
+    if (valid) {
+      setStep (1);
+    }
+  }
+  
   return (
     <div className="w-full">
-
       <h3 className="font-bold">Upload File</h3>
       <h5 className="text-[#777E90] text-xs py-1">
         Drag or choose your file to upload
       </h5>
-
       <Uploader isInvalid={isInvalid}/>
-      
       <div
         id="information"
         className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2 mt-8"
@@ -216,8 +201,6 @@ const Create = ({ step, setStep }: IProps) => {
           message="select end time"
         />
       </div>
-
-
       <div
         id="information"
         className="w-full grid grid-cols-1 sm:grid-cols-3 gap-1 mt-8"
@@ -289,7 +272,6 @@ const Create = ({ step, setStep }: IProps) => {
           message="input your Lens link"
         />
       </div>
-
       <Description
         title="Description"
         className="mt-10"
@@ -300,7 +282,6 @@ const Create = ({ step, setStep }: IProps) => {
         isInvalid={isInvalid}
         message="input project description"
       />
-
       <h4 className="mt-3 font-bold text-gray-700">*Require KYC <span className="text-sm opacity-60">(coming soon)</span></h4>
       <div className="py-4 flex gap-4 -mt-2">
         <div className="flex gap-2 items-center">
@@ -329,9 +310,8 @@ const Create = ({ step, setStep }: IProps) => {
           <span className="text-gray-700">No</span>
         </div>
       </div>
-
-      <button onClick={handleSave} className="py-2 text-white rounded-lg mt-3 hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
-        Save
+      <button onClick={handleNext} className="py-2 text-white rounded-lg mt-3 hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
+        Next
       </button>
     </div>
   );

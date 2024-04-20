@@ -14,7 +14,6 @@ import jwt from 'jsonwebtoken';
 import useToastr from "@/hooks/useToastr";
 import { useRouter } from "next/navigation";
 import useAPI from "@/hooks/useAPI";
-import { setAutomine } from "viem/actions";
 
 
 interface IContext {
@@ -138,7 +137,7 @@ const AuthProvider = ({
 
   React.useEffect(() => {
     if (isConnected) {
-      signIn ();
+      // signIn ();
     } else {
       setUser (undefined);
       setIsAuthenticated (false);

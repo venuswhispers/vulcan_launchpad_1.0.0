@@ -25,7 +25,6 @@ export default function Home() {
   const [icos, setICOs] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-
     if (!contractFactory) return;
     contractFactory.getVulcans().then((_icos: any) => {
       setICOs(_icos);

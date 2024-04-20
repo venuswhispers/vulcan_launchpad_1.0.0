@@ -1,3 +1,4 @@
+"use client"
 import { ReactElement, createContext } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";

@@ -45,7 +45,7 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 const RainbowProvider = ({ children }: { children: React.ReactNode }) => {
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <WagmiProvider config={config}>

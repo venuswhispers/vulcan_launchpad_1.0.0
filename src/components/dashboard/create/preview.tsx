@@ -11,29 +11,23 @@ import {
   hardCapAtom,
   softCapAtom,
   youtubeLinkAtom,
-  tokenPriceAtom,
   endTimeAtom,
   descriptionAtom,
-  walletAtom,
-  checkedAtom,
 } from "@/store";
 
 
 const Preview = () => {
-
+  // atoms
   const [preview] = useAtom(previewAtom);
-
-  const [title, setTitle] = useAtom(titleAtom);
-  const [hardCap, setHardCap] = useAtom(hardCapAtom);
-  const [softCap, setSoftCap] = useAtom(softCapAtom);
-  const [youtubeLink, setYoutubeLink] = useAtom(youtubeLinkAtom);
-  const [tokenPrice, setTokenPrice] = useAtom(tokenPriceAtom);
-  const [endTime, setEndTime] = useAtom(endTimeAtom);
-  const [description, setDescription] = useAtom(descriptionAtom);
-  const [wallet, setWallet] = useAtom(walletAtom);
-  const [checked, setChecked] = useAtom(checkedAtom);
-
+  const [title, ] = useAtom(titleAtom);
+  const [hardCap, ] = useAtom(hardCapAtom);
+  const [softCap, ] = useAtom(softCapAtom);
+  const [youtubeLink, ] = useAtom(youtubeLinkAtom);
+  const [endTime, ] = useAtom(endTimeAtom);
+  const [description, ] = useAtom(descriptionAtom);
+  // timer
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+  // states
   const [distance, setDistance] = React.useState<number>(0);
   const [collapseDescription, setCollapseDescription] = React.useState<boolean>(true);
 
@@ -196,8 +190,6 @@ const Preview = () => {
           <div className="w-full h-full animate-pulse rounded-full bg-white dark:bg-[#1d1b3965]"></div>
         </div>
       }
-      {/* <h5 className="text-[#777E90] text-xs py-1">Drag or choose your file to upload</h5>
-      <div className="w-full text-wrap break-all" dangerouslySetInnerHTML={{__html: description}}></div> */}
     </div>
   )
 };

@@ -2,21 +2,19 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Tooltip } from 'flowbite-react';
-import ClipboardCopier from "@/components/share/clipCopier";
-
 import Image from "next/image";
-import { useAtom } from "jotai";
-// import Croper from "@/components/dashboard/create/croper";
-import useToastr from "@/hooks/useToastr";
+// hooks
 import useAuth from "@/hooks/useAuth";
-import { copyToClipboard } from "@/utils";
+import useToastr from "@/hooks/useToastr";
+// components
+import ClipboardCopier from "@/components/share/clipCopier";
 import QRcode from "react-qr-code";
-
+// utils
+import { copyToClipboard } from "@/utils";
+// jotai
+import { useAtom } from "jotai";
 import {
   icoAtom,
-  hardCapAtom,
-  priceAtom,
-  decimalAtom,
   amountAtom
 } from "@/store";
 
@@ -26,12 +24,13 @@ interface IProps {
 }
 
 const Create = ({ step, setStep }: IProps) => {
-  const [ico, setICO] = useAtom(icoAtom);
-  const [amount, setAmount] = useAtom(amountAtom);
-  const { showToast } = useToastr ();
+  //atoms
+  const [ico, ] = useAtom(icoAtom);
+  const [amount, ] = useAtom(amountAtom);
   //hooks
+  const { showToast } = useToastr ();
   const { user, isAuthenticated } = useAuth ();
-
+  
   const handleSave = () => {
     if (!isAuthenticated) {
       return showToast ("Connect your wallet first", "warning");
