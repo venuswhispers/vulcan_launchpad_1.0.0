@@ -261,9 +261,10 @@ const Create = ({ step, setStep }: IProps) => {
       console.log(err);
     }
   };
-
+  //@dev deposit token amount to reach softcap
   const _depositAmountToSoftcap = React.useMemo(() => {
     const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
+    if(isNaN(_priceRaw)) return BigInt("0");
     const _price =  parseEther(_priceRaw.toFixed(20));
     
     if (String(_price) === "0") return BigInt("0");
@@ -273,9 +274,10 @@ const Create = ({ step, setStep }: IProps) => {
 
     return _amount + BigInt("1");
   }, [currency, price, ethPrice, softCap]);
-
+  //@dev deposit token amount to reach hardcap
   const _depositAmountToHardcap = React.useMemo(() => {
     const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
+    if(isNaN(_priceRaw)) return BigInt("0");
     const _price =  parseEther(_priceRaw.toFixed(20));
     
     if (String(_price) === "0") return BigInt("0");
@@ -285,7 +287,7 @@ const Create = ({ step, setStep }: IProps) => {
 
     return _amount + BigInt("1");
   }, [currency, price, ethPrice, hardCap]);
-
+  // @dev totalSupply
   const _totalSupply = React.useMemo(() => {
     if (totalSupply?.status !== 'success' || totalSupply === undefined || decimals?.status !== 'success' || decimals === undefined) {
       return BigInt("0");
@@ -299,6 +301,7 @@ const Create = ({ step, setStep }: IProps) => {
 
   // @deploy smart contract with informations
   const handleSubmit = async () => {
+
     if (!decimals || !totalSupply || !name || !symbol) return;
 
     const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
@@ -371,12 +374,25 @@ const Create = ({ step, setStep }: IProps) => {
       setStepper (3);
       setPercent (0);
 
-      // @step3 deploy smart contract to chain
+      ///@step3 deploy smart contract to chain
+      console.log({
+        _projectURI,
+        _softcap,
+        _hardcap,
+        time: BigInt(Math.floor(Number(endTime)/1000)),
+        name: name.result,
+        symbol: symbol.result,
+        _price,
+        _decimals,
+        _totalSupply,
+        tokenAddress,
+        cyptoSIDAO
+      })
       const _tx = await contractFactory?.launchNewICO (
         _projectURI,
         _softcap,
         _hardcap,
-        BigInt(Math.floor(new Date(endTime).getTime()/1000)),
+        BigInt(Math.floor(Number(endTime)/1000)),
         name.result,
         symbol.result,
         _price,

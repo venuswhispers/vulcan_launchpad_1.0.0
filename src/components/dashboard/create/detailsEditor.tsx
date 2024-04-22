@@ -100,6 +100,11 @@ const Create = ({ step, setStep }: IProps) => {
       showToast("ICO duraction field is required.", "warning"); 
       valid = false;
     } 
+    console.log(Number(endTime), new Date().getTime())
+    if (new Date(Number(endTime)).getTime() <= new Date().getTime()) {
+      showToast("End time must be in the future.", "warning"); 
+      valid = false;
+    } 
     if (!description || description === '<p><br></p>') {
       showToast("Project description field is required.", "warning"); 
       valid = false;
