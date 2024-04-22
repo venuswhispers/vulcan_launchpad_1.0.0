@@ -152,9 +152,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       <Header/>
       
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">All Launchpads</h1>
-      <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl grid grid-cols-1 gap-12 w1300:gap-8 w1300:grid-cols-[55%_calc(45%-32px)]" >
+      <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-2xl grid grid-cols-1 gap-12 w1300:gap-8 w1300:grid-cols-[55%_calc(45%-32px)]" >
         <section>
-          <div className="w-full min-h-[230px] bg-black rounded-xl flex items-center">
+          <div className="w-full min-h-[230px] bg-black rounded-2xl flex items-center">
             <ReactPlayer
               controls
               className='react-player rounded-[19px]'
