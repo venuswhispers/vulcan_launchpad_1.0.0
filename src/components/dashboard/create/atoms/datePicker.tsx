@@ -27,29 +27,24 @@ const Input = ({
   message,
   info,
 }: IProps) => {
-  const [selectedDate, setSelectedDate] = React.useState<any>(new Date());
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
   const [show, setShow] = React.useState<boolean>(false);
 
   const setEndTimeAfter = (month: number) => {
     const currentDate = new Date();
     currentDate.setMonth(currentDate.getMonth() + month);
-    onChange(currentDate.toLocaleDateString());
+    setSelectedDate (currentDate);
   };
 
   const handleClear = () => {
-    onChange("");
+    setSelectedDate(new Date());
   };
 
-  // React.useEffect(() => {
-  //   if (!selectedDate) return;
-  //   onChange(selectedDate.toLocaleDateString());
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedDate]);
-
-  const handleChange = (date: Date) => {
-    onChange (date.toLocaleDateString());
-  }
-
+  React.useEffect(() => {
+    const _date = selectedDate.getTime ();
+    onChange(String(_date));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
 
   return (
     <div className={className}>
@@ -66,7 +61,7 @@ const Input = ({
         className="bg-[#F0F8FF] relative transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border"
         placeholder={placeholder}
         onClick={() => setShow(true)}
-        value={value}
+        value={selectedDate.toDateString()}
         onChange={() => {}}
       />
       {
@@ -76,11 +71,11 @@ const Input = ({
           <div className="pt-5 dark:bg-black bg-white z-50 relative p-4 border dark:border-gray-900 border-gray-200 rounded-xl shadow-lg">
             <DayPicker
               mode="single"
-              selected={value ? new Date(value) : new Date()}
-              onMonthChange={handleChange}
-              onSelect={(date: any) => handleChange(new Date(date))}
+              selected={selectedDate}
+              onMonthChange={setSelectedDate}
+              onSelect={(date: any) => setSelectedDate(date)}
               showOutsideDays
-              month={value ? new Date(value) : new Date()}
+              month={selectedDate}
               className="border-0"
               classNames={{
                 caption: "flex justify-center py-2 mb-4 relative items-center",

@@ -127,34 +127,34 @@ const Evangilists = () => {
       showToast ("Input your company name", "warning");
       valid = false;
     }
-    if (!website) {
-      showToast ("Input your website link", "warning");
-      valid = false;
-    }
-    if (!twitter) {
-      showToast ("Input your twitter link", "warning");
-      valid = false;
-    }
-    if (!facebook) {
-      showToast ("Input your facebook link", "warning");
-      valid = false;
-    }
-    if (!instagram) {
-      showToast ("Input your instagram link", "warning");
-      valid = false;
-    }
-    if (!linkedin) {
-      showToast ("Input your linkedin link", "warning");
-      valid = false;
-    }
-    if (!farcaster) {
-      showToast ("Input your farcaster link", "warning");
-      valid = false;
-    }
-    if (!lens) {
-      showToast ("Input your lens link", "warning");
-      valid = false;
-    }
+    // if (!website) {
+    //   showToast ("Input your website link", "warning");
+    //   valid = false;
+    // }
+    // if (!twitter) {
+    //   showToast ("Input your twitter link", "warning");
+    //   valid = false;
+    // }
+    // if (!facebook) {
+    //   showToast ("Input your facebook link", "warning");
+    //   valid = false;
+    // }
+    // if (!instagram) {
+    //   showToast ("Input your instagram link", "warning");
+    //   valid = false;
+    // }
+    // if (!linkedin) {
+    //   showToast ("Input your linkedin link", "warning");
+    //   valid = false;
+    // }
+    // if (!farcaster) {
+    //   showToast ("Input your farcaster link", "warning");
+    //   valid = false;
+    // }
+    // if (!lens) {
+    //   showToast ("Input your lens link", "warning");
+    //   valid = false;
+    // }
     if (!bio) {
       showToast ("Input your Bio", "warning");
       valid = false;
@@ -230,7 +230,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setInstagram (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input Instagram link"
           />
         </section>
@@ -243,7 +243,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setWebsite (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input your Website link"
           />
           <InputInfo
@@ -253,7 +253,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setLinkedin (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input Linkedin link"
           />
         </section>
@@ -266,7 +266,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setTwitter (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input your Twitter link"
           />
           <InputInfo
@@ -276,7 +276,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFacebook (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input your Facebook link"
           />
         </section>
@@ -288,7 +288,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFarcaster (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input your Farcaster link"
           />
           <InputInfo
@@ -298,7 +298,7 @@ const Evangilists = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setLens (e.target.value)
             }
-            isInvalid={isInvalid}
+            isInvalid={false}
             message="Input your lens link"
           />
         </section>

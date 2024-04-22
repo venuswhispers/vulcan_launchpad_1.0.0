@@ -34,7 +34,7 @@ const Preview = () => {
   React.useEffect(() => {
     timerRef.current = setInterval(async () => {
       const _now = new Date().getTime();
-      const _distance = new Date(endTime).getTime() - _now;
+      const _distance = new Date(Number(endTime)).getTime() - _now;
       setDistance(_distance);
       if ((_distance < 0 || isNaN(_distance)) && timerRef.current) {
         clearInterval(timerRef.current);
@@ -162,7 +162,7 @@ const Preview = () => {
         endTime ? 
         <div className="flex h-12 justify-between items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
           <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">Ending Time</h2>
-          <h2 className="text-[15px] truncate max-w-[150px] text-nowrap font-bold dark:text-[#B4B4B7] text-[#101010]">{ endTime }</h2>
+          <h2 className="text-[15px] truncate max-w-[150px] text-nowrap font-bold dark:text-[#B4B4B7] text-[#101010]">{ new Date(Number(endTime)).toLocaleDateString() }</h2>
         </div> : 
         <div className="flex h-12 justify-between items-center py-2">
           <div className="w-full h-full animate-pulse rounded-full bg-white dark:bg-[#1d1b3965]"></div>
