@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Displayer from "@/components/dashboard/create/atoms/quillDisplayer";
 import { Contract } from "ethers";
-import { formatEther, formatUnits } from  'viem';
+import { formatEther, formatUnits, parseUnits } from  'viem';
 import ReactPlayer from 'react-player';
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
@@ -27,11 +27,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
   const [softcap, setSoftcap] = React.useState<bigint>(BigInt("0"));
   const [fundsRaised, setFundsRaised] = React.useState<bigint>(BigInt("0"));
+  const [startTime, setStartTime] = React.useState<number>(0);
   const [endTime, setEndTime] = React.useState<number>(0);
   const [distance, setDistance] = React.useState<number>(0);
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [mediaType, setMediaType] = React.useState<string>("");
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
+  const [balance, setBalance] = React.useState<string>("0");
 
   React.useEffect(() => {
     if (!contract) return;
@@ -41,11 +43,15 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
   const _getICOInfo = async () => {
     const _token = await contract?.tokenInfo ();
+    if (!_token) return;
     setToken (_token);
     setPrice(_token.price);
     
     const _hardcap = await contract?.hardcap();
     setHardcap (_hardcap);
+
+    const _startTime = await contract?.startTime();
+    setStartTime (Number(_startTime));
 
     const _softcap = await contract?.softcap();
     setSoftcap (_softcap);
@@ -55,6 +61,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     
     const _endTime = await contract?.endTime ();
     setEndTime (Number(_endTime));
+
+    const _decimals = Number(_token.decimal);
+   
+    const _balance = await contract?.tokensAvailable ();
+    setBalance(formatUnits(_balance, _decimals));
+    // setBalance (String(parseUnits(String(Number(_balance)), 18)));
 
     const _projectURI = await contract?.projectURI ();
     const response = await fetch(_projectURI);
@@ -197,7 +209,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
             </div>
+            { _renderCoolDownItem ("Charged Tokens", balance, true) }
             { _renderItem ("Token Price", reduceAmount(formatEther(price))) }
+            { _renderCoolDownItem ("Start Date", new Date(startTime*1000).toDateString(), true) }
             { _renderCoolDownItem ("Ending Date", new Date(endTime*1000).toDateString(), true) }
             { _renderCoolDownItem ("Time Remaining", `${days}d ${hours}h ${minutes}m ${seconds}s`, false) }
             

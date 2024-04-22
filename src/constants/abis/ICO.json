@@ -124,6 +124,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "distributor_",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "fundsRaised_",
         "type": "uint256"
@@ -145,6 +151,12 @@
         "internalType": "uint256",
         "name": "creatorFee_",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp_",
+        "type": "uint256"
       }
     ],
     "name": "FeeDistributed",
@@ -161,9 +173,15 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "msg_",
-        "type": "string"
+        "internalType": "address",
+        "name": "caller_",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp_",
+        "type": "uint256"
       }
     ],
     "name": "FundsRefunded",
@@ -194,6 +212,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "amount_",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp_",
         "type": "uint256"
       }
     ],
@@ -263,6 +287,19 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "distributed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -341,12 +378,12 @@
   },
   {
     "inputs": [],
-    "name": "getContributorNumber",
+    "name": "getContributors",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address[]",
         "name": "",
-        "type": "uint256"
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -373,7 +410,7 @@
         "type": "address"
       }
     ],
-    "name": "getInvestorAmount",
+    "name": "getInvestAmount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -386,12 +423,12 @@
   },
   {
     "inputs": [],
-    "name": "getInvestorNumber",
+    "name": "getInvestors",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address[]",
         "name": "",
-        "type": "uint256"
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -552,7 +589,33 @@
   },
   {
     "inputs": [],
+    "name": "refunded",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "softcap",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "startTime",
     "outputs": [
       {
         "internalType": "uint256",
