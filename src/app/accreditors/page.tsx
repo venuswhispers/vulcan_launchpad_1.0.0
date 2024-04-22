@@ -74,7 +74,7 @@ const Evangilists = () => {
       <h1 className="text-lg px-1">Elons Endorsements</h1>
 
       <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
-        Coming
+        Coming Soon
       </div>
       
       {/* <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
