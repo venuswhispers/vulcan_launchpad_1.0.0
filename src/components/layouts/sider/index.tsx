@@ -76,7 +76,7 @@ const Sider = () => {
   const _renderNavItem = ({ title, icon, url, soon }: INav) => (
     <li key={title} onClick={() => _gotoURL(url)} className={`w-full px-1 flex justify-between gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === url && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
       <div className="flex gap-2"><Icon icon={icon} width={22}/> {title}</div>
-      { soon && <span className={`text-[9px] text-center text-[#0776DA] bg-[#E5F6FF] dark:bg-[#e5f6ff13] rounded-full px-2 py-1 ${pathname === url && 'text-white'}`}>Coming Soon</span> }
+      { soon && <span className={`text-[9px] text-center text-[#0776DA] bg-[#E5F6FF] dark:bg-[#e5f6ff13] rounded-full px-2 py-1 ${pathname === url && 'dark:text-white text-blue-600'}`}>Coming Soon</span> }
     </li>
   )
 
