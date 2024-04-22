@@ -49,11 +49,10 @@ const Evangilists = () => {
 
       if (!event.target.files) throw "no files";
       const file: File = event.target.files[0];
-      setAvatar (file);
-
       if (!file) throw "Emptry file";
       if (!acceptables.includes(file.type)) throw "Invalid Image file.";
-      if (file.size > 1024*1024*1024) throw "Overflow maximum file size (1GB).";
+      if (file.size > 32*1024*1024) throw "Overflow maximum file size (32MB).";
+      setAvatar (file);
       const reader = new window.FileReader()
       reader.readAsDataURL(file);
       reader.onloadend = () => {
