@@ -112,3 +112,7 @@ export const reduceAddress = (
     address.substr(address.length - length, length)
   );
 };
+// @dev generate random number
+export const _randomNumber = () => {
+  return Math.floor(Math.random() * 1000000000);
+}

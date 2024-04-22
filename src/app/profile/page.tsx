@@ -11,6 +11,7 @@ import { useSignMessage } from "wagmi";
 import useAPI from "@/hooks/useAPI";
 import { useAtom } from "jotai";
 import { uploadToPinata } from "@/utils";
+import { IMGBB_API_KEY } from "@/constants/config";
 
 import { TMsg } from "@/types/user";
 import { SERVER_URL } from '@/constants/config';
@@ -35,11 +36,12 @@ const Evangilists = () => {
   const [instagram, setInstagram] = React.useState<string>("");
   const [farcaster, setFarcaster] = React.useState<string>("");
   const [lens, setLens] = React.useState<string>("");
-  const [avatar, setAvatar] = React.useState<string>("");
+  const [avatar, setAvatar] = React.useState<File|undefined>(undefined);
   const [bio, setBio] = React.useState<string>("");
   const [preview, setPreview] = React.useState<string>("");
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
 
   //atoms
   const [, setUser] = useAtom(userAtom);
@@ -54,6 +56,7 @@ const Evangilists = () => {
     try {
       if (!event.target.files) throw "no files";
       const file: File = event.target.files[0];
+      setAvatar (file);
 
       if (!file) throw "Emptry file";
       if (!acceptables.includes(file.type)) throw "Invalid Image file.";
@@ -95,10 +98,27 @@ const Evangilists = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
+  // function base64ToBlob(base64, type = 'application/octet-stream') {
+  //   return fetch(data:${type};base64,${base64}).then(res => res.blob());
+  // }
+
   const _updateProfile = async () => {
     try {
       setIsLoading (true);
-      const _avatar = preview ? await uploadToPinata(preview) : "";
+      // const _avatar = preview ? await uploadToPinata(preview) : "";
+      const formData = new FormData();
+      //@ts-ignore
+      formData.append("image", avatar);
+
+      const { data: { url: _avatar } } = await fetch(
+        // "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
+        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, 
+        {
+          method: "POST",
+          body: formData
+        }
+      ).then(res => res.json());
+
       const { data } = await api.put("/user", { avatar: _avatar, bio, company, fullName, website, twitter, facebook, instagram, farcaster, lens, linkedin });
       setUser({ address: String(user?.address), avatar: _avatar, bio, company, fullName, website, twitter, facebook, instagram, farcaster, lens, linkedin });
       showToast ("Updated profile successfully", "success");

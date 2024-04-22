@@ -3,3 +3,4 @@ export const PINATA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3Jt
 export const cyptoSIDAO = "0x5B98a0c38d3684644A9Ada0baaeAae452aE3267B"
 // export const baseURL = 'http://localhost:5050/api';
 export const baseURL = 'https://vulcan-launchpad-1-0-0-backend.onrender.com/api';
+export const IMGBB_API_KEY = 'cef3855d197b6e623e08088e854ed444';

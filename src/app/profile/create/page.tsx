@@ -12,6 +12,7 @@ import { useSignMessage } from "wagmi";
 import { uploadToPinata } from "@/utils";
 const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
 import { useRouter } from "next/navigation";
+import { IMGBB_API_KEY } from "@/constants/config";
 
 const acceptables = [
   'image/png',
@@ -31,9 +32,9 @@ const Evangilists = () => {
   const [instagram, setInstagram] = React.useState<string>("");
   const [farcaster, setFarcaster] = React.useState<string>("");
   const [lens, setLens] = React.useState<string>("");
-  const [avatar, setAvatar] = React.useState<string>("");
   const [bio, setBio] = React.useState<string>("");
   const [preview, setPreview] = React.useState<string>("");
+  const [avatar, setAvatar] = React.useState<File|undefined>(undefined);
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { showToast } = useToastr ();
@@ -48,6 +49,7 @@ const Evangilists = () => {
 
       if (!event.target.files) throw "no files";
       const file: File = event.target.files[0];
+      setAvatar (file);
 
       if (!file) throw "Emptry file";
       if (!acceptables.includes(file.type)) throw "Invalid Image file.";
@@ -71,7 +73,20 @@ const Evangilists = () => {
   const _submitRegister = async () => {
     try {
       setIsLoading (true);
-      const _avatar = preview ? await uploadToPinata(preview) : "";
+      // const _avatar = preview ? await uploadToPinata(preview) : "";
+      const formData = new FormData();
+      //@ts-ignore
+      formData.append("image", avatar);
+
+      const { data: { url: _avatar } } = await fetch(
+        // "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
+        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, 
+        {
+          method: "POST",
+          body: formData
+        }
+      ).then(res => res.json());
+
       const data = { fullName, company, website, twitter, facebook, instagram, farcaster, lens, bio, linkedin, avatar: _avatar };
       await signUp (data);
       router.push("/profile");
