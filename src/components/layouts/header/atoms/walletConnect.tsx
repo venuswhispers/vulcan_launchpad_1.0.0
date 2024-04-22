@@ -178,6 +178,7 @@ const WalletConnectButton = () => {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={user.avatar}
+                          key={user.avatar}
                           width={32}
                           height={32}
                           alt={"wallet avatar"}

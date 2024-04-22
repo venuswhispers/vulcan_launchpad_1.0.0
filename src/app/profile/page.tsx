@@ -2,7 +2,7 @@
 import React from "react";
 import Header from "@/components/dashboard/header";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Description from "@/components/dashboard/create/atoms/descriptionInput";
+import Description from "@/components/dashboard/create/atoms/multiTextInput";
 import Image from "next/image";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import useToastr from "@/hooks/useToastr";
@@ -98,7 +98,6 @@ const Evangilists = () => {
   const _updateProfile = async () => {
     try {
       setIsLoading (true);
-      console.log(preview)
       const _avatar = preview ? await uploadToPinata(preview) : "";
       const { data } = await api.put("/user", { avatar: _avatar, bio, company, fullName, website, twitter, facebook, instagram, farcaster, lens, linkedin });
       setUser({ address: String(user?.address), avatar: _avatar, bio, company, fullName, website, twitter, facebook, instagram, farcaster, lens, linkedin });

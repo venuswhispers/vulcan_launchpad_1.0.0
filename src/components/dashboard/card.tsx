@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import React from "react";
 import Image from "next/image";
@@ -139,8 +140,9 @@ const Card = ({ id }: IProps) => {
           >
             <source src={project?.logo + ""}/>
           </video> : mediaType === "image" ? 
-          <Image
+          <img
             src={project?.logo + ""}
+            key={project?.logo + ""}
             width={0}
             alt=''
             height={0}
@@ -151,7 +153,8 @@ const Card = ({ id }: IProps) => {
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
           {
             creator?.avatar ?
-              <Image
+            <img
+              key={creator.avatar}
               src={creator.avatar}
               width={0}
               height={0}

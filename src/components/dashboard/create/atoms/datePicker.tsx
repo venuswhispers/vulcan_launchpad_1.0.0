@@ -41,7 +41,7 @@ const Input = ({
   };
 
   React.useEffect(() => {
-    const _date = selectedDate.getTime ();
+    const _date = selectedDate ? selectedDate.getTime () : "";
     onChange(String(_date));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
@@ -61,7 +61,7 @@ const Input = ({
         className="bg-[#F0F8FF] relative transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border"
         placeholder={placeholder}
         onClick={() => setShow(true)}
-        value={selectedDate.toDateString()}
+        value={selectedDate ? selectedDate.toDateString() : ""}
         onChange={() => {}}
       />
       {

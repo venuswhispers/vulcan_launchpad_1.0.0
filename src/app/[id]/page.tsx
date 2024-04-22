@@ -171,10 +171,10 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1">
               <h3 className="dark:text-[#CCCCCC] text-[#101010] text-lg font-bold">{project?.title} #001</h3>
               <div className="flex gap-1 items-center">
-                <a href={project?.facebook ?? "https://turbotrade.tech"} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="iconoir:facebook" width={15} height={15}/></a>
-                <a href={project?.linkedin ?? "https://turbotrade.tech"} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="streamline:linkedin" width={15} height={15}/></a>
-                <a href={project?.instagram ?? "https://turbotrade.tech"} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="fa6-brands:instagram" width={15} height={15}/></a>
-                <a href={project?.twitter ?? "https://turbotrade.tech"} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="iconoir:twitter" width={15} height={15}/></a>
+                { project?.facebook && <a href={project.facebook} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="iconoir:facebook" width={15} height={15}/></a> }
+                { project?.linkedin && <a href={project.linkedin} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="streamline:linkedin" width={15} height={15}/></a> }
+                { project?.instagram && <a href={project.instagram} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="fa6-brands:instagram" width={15} height={15}/></a> }
+                { project?.twitter && <a href={project.twitter} target="_blank" className="p-2 cursor-pointer hover:opacity-60 rounded-full bg-[#EFEFEF]"><Icon icon="iconoir:twitter" width={15} height={15}/></a> }
               </div>
             </div>
             { _renderItem ("HardCap", formatEther(hardcap)) }

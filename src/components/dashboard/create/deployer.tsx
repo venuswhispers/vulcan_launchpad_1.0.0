@@ -262,6 +262,41 @@ const Create = ({ step, setStep }: IProps) => {
     }
   };
 
+  const _depositAmountToSoftcap = React.useMemo(() => {
+    const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
+    const _price =  parseEther(_priceRaw.toFixed(20));
+    
+    if (String(_price) === "0") return BigInt("0");
+    
+    const _softcap = parseEther(softCap);
+    const _amount = _softcap / _price;
+
+    return _amount + BigInt("1");
+  }, [currency, price, ethPrice, softCap]);
+
+  const _depositAmountToHardcap = React.useMemo(() => {
+    const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
+    const _price =  parseEther(_priceRaw.toFixed(20));
+    
+    if (String(_price) === "0") return BigInt("0");
+    
+    const _hardcap = parseEther(hardCap);
+    const _amount = _hardcap / _price;
+
+    return _amount + BigInt("1");
+  }, [currency, price, ethPrice, hardCap]);
+
+  const _totalSupply = React.useMemo(() => {
+    if (totalSupply?.status !== 'success' || totalSupply === undefined || decimals?.status !== 'success' || decimals === undefined) {
+      return BigInt("0");
+    } else {
+      return BigInt(formatUnits(
+        BigInt(String(totalSupply.result)),
+        Number(decimals?.result)
+      ));
+    }
+  }, [totalSupply, decimals])
+
   // @deploy smart contract with informations
   const handleSubmit = async () => {
     if (!decimals || !totalSupply || !name || !symbol) return;
@@ -468,6 +503,18 @@ const Create = ({ step, setStep }: IProps) => {
           </h3>
         )}
       </div>
+
+      <div className="px-2 pt-2 text-sm">
+        <h3 className="flex gap-2">
+          <span>*You need to deposit <span className="underline text-[15px] font-bold">{ String(_depositAmountToSoftcap) }</span> tokens to reach softcap </span>
+          { _depositAmountToHardcap > _totalSupply ? <>( <span className="text-red-600">&gt; totalSupply</span> )</> : <>( &lt; totalSupply )</> }
+        </h3>
+        <h3 className="flex gap-2">
+          <span>*You need to deposit <span className="underline text-[15px] font-bold">{ String(_depositAmountToHardcap) }</span> tokens to reach hardcap </span>
+          { _depositAmountToHardcap > _totalSupply ? <>( <span className="text-red-600">&gt; totalSupply</span> )</> : <>( &lt; totalSupply )</> }
+        </h3>
+      </div>
+
       <h2 className="text-lg font-bold mt-12 mb-2">*Token Information</h2>
       <div
         id="information"
@@ -501,14 +548,7 @@ const Create = ({ step, setStep }: IProps) => {
         <InfoShower
           title="Total Supply"
           info="*what' your token's totalSupply?"
-          value={
-            totalSupply?.status === "success"
-              ? formatUnits(
-                  BigInt(String(totalSupply.result)),
-                  Number(decimals?.result)
-                )
-              : "*totalsupply"
-          }
+          value={String(_totalSupply)}
         />
       </div>
 

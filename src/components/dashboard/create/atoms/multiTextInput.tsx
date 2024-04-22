@@ -1,12 +1,8 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import dynamic from "next/dynamic";
-import { Quill } from "react-quill";
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-//@ts-ignore
-import ImageUploader from "quill-image-uploader";
 import { Tooltip } from "flowbite-react";
-Quill.register("modules/imageUploader", ImageUploader);
 
 interface IProps {
   className?: string,
@@ -20,46 +16,18 @@ interface IProps {
 }
 
 const modules = {
-  // #3 Add "image" to the toolbar
-  toolbar: [
-    [{ header: [1, 2, false] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" }
-    ],
-    ["link", "image"],
-    ["clean"]
-  ],
-  // # 4 Add module and upload function
-  // imageUploader: {
-  //   upload: (file: any) => {
-  //     return new Promise((resolve, reject) => {
-  //       const formData = new FormData();
-  //       formData.append("image", file);
-
-  //       fetch(
-  //         "https://api.imgbb.com/1/upload?key=334ecea9ec1213784db5cb9a14dac265",
-  //         {
-  //           method: "POST",
-  //           body: formData
-  //         }
-  //       )
-  //         .then((response) => response.json())
-  //         .then((result) => {
-  //           console.log(result);
-  //           resolve(result.data.url);
-  //         })
-  //         .catch((error) => {
-  //           reject("Upload failed");
-  //           console.error("Error:", error);
-  //         });
-  //     });
-  //   }
-  // }
-}
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ size: [] }],
+      [{ font: [] }],
+      [{ align: ["right", "center", "justify"] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      [{ color: ["red", "#785412"] }],
+      [{ background: ["red", "#785412"] }]
+    ]
+  };
   
   const formats = [
     "header",
@@ -81,6 +49,7 @@ const modules = {
 
 const Input = ({title, className, onChange, value, placeholder, isInvalid, message, info}: IProps) => {
 
+  const [code, setCode] = React.useState("hellllo");
   const handleProcedureContentChange = (content:any, delta:any, source:any, editor:any) => {
     onChange(content);
   };

@@ -111,6 +111,7 @@ const Sider = () => {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={user.avatar}
+                  key={user.avatar}
                   width={70}
                   height={70}
                   alt={"avatar"}  
@@ -143,7 +144,7 @@ const Sider = () => {
             <ul className="mt-4 p-6">
               {
                 isAuthenticated &&
-                <li key={"profile"} onClick={() => _gotoURL("/profile")} className={`w-full px-2 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname.includes("/profile") && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
+                <li key={"profile"} onClick={() => _gotoURL("/profile")} className={`w-full px-1 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === '/profile' && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
                   <Icon icon="flowbite:profile-card-solid" width={22}/> Profile
                 </li>
               }

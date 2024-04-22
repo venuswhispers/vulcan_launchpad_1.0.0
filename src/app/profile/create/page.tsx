@@ -2,7 +2,6 @@
 import React from "react";
 import Header from "@/components/dashboard/header";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Description from "@/components/dashboard/create/atoms/descriptionInput";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
@@ -11,10 +10,7 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useAuth from "@/hooks/useAuth";
 import { useSignMessage } from "wagmi";
 import { uploadToPinata } from "@/utils";
-import axios from 'axios';
-
-import { TMsg } from "@/types/user";
-import { SERVER_URL } from '@/constants/config';
+const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
 import { useRouter } from "next/navigation";
 
 const acceptables = [

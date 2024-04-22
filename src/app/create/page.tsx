@@ -1,11 +1,6 @@
 "use client"
 import React from "react";
 import Header from "@/components/dashboard/header";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import Input from "@/components/dashboard/create/atoms/infoInput";
-import Datepicker from "@/components/dashboard/create/atoms/datePicker";
-import Description from '@/components/dashboard/create/atoms/descriptionInput';
-import Image from "next/image";
 import dynamic from "next/dynamic";
 
 import Deployer from '@/components/dashboard/create/deployer';
