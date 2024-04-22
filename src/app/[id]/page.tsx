@@ -170,7 +170,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             <ReactPlayer
               controls
               className='react-player rounded-[19px]'
-              url={project?.youtubeLink ? project?.youtubeLink : "/introduction.mp4"}
+              url={project?.youtubeLink ? project.youtubeLink : "/introduction.mp4"}
               width='100%'
               height='100%'
               style={{
