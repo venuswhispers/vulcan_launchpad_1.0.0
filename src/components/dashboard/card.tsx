@@ -87,13 +87,10 @@ const Card = ({ id }: IProps) => {
     .then(response => response.blob())
     .then(blob => {
       const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
-    
       setMediaType (type);
     })
     .catch(error => console.error('Error fetching media:', error));
-
    
-
     console.log({
       _token, 
       _hardcap, 
@@ -103,7 +100,7 @@ const Card = ({ id }: IProps) => {
       _tokensFullyCharged,
       user,
       _project
-    })
+    }) ;
   }
 
   React.useEffect(() => {
@@ -206,7 +203,7 @@ const Card = ({ id }: IProps) => {
           >
             <source src={project?.logo + ""}/>
           </video> : mediaType === "image" ? 
-          <img
+          <Image
             src={project?.logo + ""}
             key={project?.logo + ""}
             width={0}
@@ -219,7 +216,7 @@ const Card = ({ id }: IProps) => {
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
           {
             creator?.avatar ?
-            <img
+            <Image
               key={creator.avatar}
               src={creator.avatar}
               width={0}
