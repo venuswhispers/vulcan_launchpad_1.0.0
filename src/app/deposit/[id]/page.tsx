@@ -153,10 +153,14 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         </span>
       </div>
       <h2 className="text-lg font-bold text-center dark:text-white mt-20">
-        ** You need to deposit <span className="text-lg text-green-600 font-bold">{ String(_depositAmountToHardcap - balance) } tokens</span> to reach your hard cap and start this ICO. **
+        { 
+          _depositAmountToHardcap > balance ? 
+          <>** You need to deposit <span className="text-lg text-green-600 font-bold">{ String(_depositAmountToHardcap - balance) } tokens</span> to reach your hard cap and start this ICO. **</> :
+          <>** ICO have been started **</> 
+        }
       </h2>
 
-      <h3 className="text-center text-sm mt-5">( charged { balance } tokens )</h3>
+      <h3 className="text-center dark:text-white text-sm mt-5">( charged { balance } tokens )</h3>
 
       <div className="dark:text-white text-black text-sm mt-8 flex gap-1 items-center justify-center">
         <span
