@@ -181,7 +181,7 @@ const Card = ({ id }: IProps) => {
       )
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, tokensFullyCharged]);
   const _renderStatus = React.useMemo(() => {
     if ( status === 0 && !tokensFullyCharged ) {
       return "Await Deposit"
@@ -193,7 +193,7 @@ const Card = ({ id }: IProps) => {
       return "Success"
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, tokensFullyCharged]);
   
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
