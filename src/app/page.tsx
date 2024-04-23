@@ -25,9 +25,7 @@ export default function Home() {
   const { address, chainId, signer } = useActiveWeb3();
   const [icos, setICOs] = React.useState<string[]>([]);
   const [metaData, setMetaData] = React.useState<IVulcan[]>([]);
-
   const [ethPrice, setEthPrice] = useAtom<number>(ethPriceAtom);
-  
 
   const fetchMetaData = async (ids: string[]) => {
     const _icos: IVulcan[] = await Promise.all(ids.map(async (_id: string) => {
@@ -36,8 +34,7 @@ export default function Home() {
         ICO,
         signer
       );
-      // token data
-      const _token = await _contract.tokenInfo ();
+
       // ICO status
       const _status = await _contract.getICOState ();
       // hardcap

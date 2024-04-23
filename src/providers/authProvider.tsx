@@ -30,7 +30,6 @@ const AuthProvider = ({
 }: Readonly<{ children: React.ReactNode }>) => {
   //hooks
   const { address, chain, signer, isConnected, isConnecting, isReconnecting, connector, isDisconnected, chainId } = useActiveWeb3();
-  const { requestChallengeAsync } = useAuthRequestChallengeEvm();
   const { signMessageAsync } = useSignMessage();
   const { showToast } = useToastr ();
   const api = useAPI ();
@@ -105,7 +104,7 @@ const AuthProvider = ({
       const { id, message, profileId }: TMsg = msgData;
       
       if (!id || !message || !profileId) { 
-        throw "not defined message"
+        throw "Not Defined Message"
       }
       
       const signature = await signMessageAsync({ message });
@@ -137,7 +136,7 @@ const AuthProvider = ({
 
   React.useEffect(() => {
     if (isConnected) {
-      signIn ();
+      // signIn ();
     } else {
       setUser (undefined);
       setIsAuthenticated (false);

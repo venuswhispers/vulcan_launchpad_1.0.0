@@ -21,7 +21,7 @@ export const CHAIN_IDS = {
 
 export const FACTORY_ADDRESSES = {
   [CHAIN_IDS.AVALANCHE]: "", //verified
-  [CHAIN_IDS.SEPOLIA]: "0xA60a7b19c334f36b902FBCA973aD2AaeBcD0eFF0", //verified
+  [CHAIN_IDS.SEPOLIA]: "0xa11A30D20969364442b4D1ec219CdC50afD3d5b9", //verified
 };
 // export const FACTORY_ADDRESSES = {
 //   [CHAIN_IDS.AVALANCHE]: "", //verified

@@ -522,14 +522,13 @@ const Create = ({ step, setStep }: IProps) => {
 
       <div className="px-2 pt-2 text-sm">
         <h3 className="flex gap-2">
-          <span>*You need to deposit <span className="underline text-[15px] font-bold">{ String(_depositAmountToSoftcap) }</span> tokens to reach softcap </span>
-          { _depositAmountToHardcap > _totalSupply ? <>( <span className="text-red-600">&gt; totalSupply</span> )</> : <>( &lt; totalSupply )</> }
+          <span>* You need to deposit <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToHardcap) } tokens</span> to reach your hard cap and start this ICO.</span>
         </h3>
         <h3 className="flex gap-2">
-          <span>*You need to deposit <span className="underline text-[15px] font-bold">{ String(_depositAmountToHardcap) }</span> tokens to reach hardcap </span>
-          { _depositAmountToHardcap > _totalSupply ? <>( <span className="text-red-600">&gt; totalSupply</span> )</> : <>( &lt; totalSupply )</> }
+          <span>* If you reach your soft cap, you will distribute <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToSoftcap) } tokens</span> and <span className="text-[15px] text-red-600 font-bold">{String(_depositAmountToHardcap - _depositAmountToSoftcap)} tokens</span> will be returned.</span>
         </h3>
       </div>
+      { _depositAmountToHardcap > _totalSupply && <span className="text-red-600 text-sm mt-10 px-3">You can&apos;t reach hard cap with this token price and totalSupply.</span> }
 
       <h2 className="text-lg font-bold mt-12 mb-2">*Token Information</h2>
       <div

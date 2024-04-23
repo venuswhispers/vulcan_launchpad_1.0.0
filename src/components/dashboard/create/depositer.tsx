@@ -6,6 +6,7 @@ import Image from "next/image";
 // hooks
 import useAuth from "@/hooks/useAuth";
 import useToastr from "@/hooks/useToastr";
+import { useRouter } from "next/navigation";
 // components
 import ClipboardCopier from "@/components/share/clipCopier";
 import QRcode from "react-qr-code";
@@ -30,6 +31,8 @@ const Create = ({ step, setStep }: IProps) => {
   //hooks
   const { showToast } = useToastr ();
   const { user, isAuthenticated } = useAuth ();
+  //router
+  const router  = useRouter ();
   
   const handleSave = () => {
     if (!isAuthenticated) {
@@ -74,8 +77,11 @@ const Create = ({ step, setStep }: IProps) => {
       </div>
      
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">
+        <button onClick={() => router.push("/")} className="py-2 text-white flex items-center gap-1 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
+          <Icon icon="icon-park-solid:back" width={15} height={15} /> Return to Vulcan Pad
+        </button>
         <button onClick={handleSave} className="py-2 text-white flex items-center gap-1 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4">
-          <Icon icon="solar:square-transfer-vertical-line-duotone" width={20} height={20} /> Next
+          <Icon icon="solar:square-transfer-vertical-line-duotone" width={20} height={20} /> SAVE
         </button>
       </div>
     </div>

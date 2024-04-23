@@ -3,6 +3,7 @@ import { Datepicker } from "flowbite-react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "flowbite-react";
 import { Tooltip } from "flowbite-react";
+import useToastr from "@/hooks/useToastr";
 
 import { DayPicker } from "react-day-picker";
 
@@ -29,6 +30,7 @@ const Input = ({
 }: IProps) => {
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
   const [show, setShow] = React.useState<boolean>(false);
+  const { showToast } = useToastr ();
 
   const setEndTimeAfter = (month: number) => {
     const currentDate = new Date();
@@ -40,11 +42,15 @@ const Input = ({
     setSelectedDate(new Date());
   };
 
-  React.useEffect(() => {
-    const _date = selectedDate ? selectedDate.getTime () : "";
-    onChange(String(_date));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate]);
+  const handleAccept = () => {
+    if (!selectedDate) {
+      showToast("Please select end Time!", "warning");
+    } else {
+      const _date = selectedDate.getTime ();
+      onChange(String(_date));
+      setShow (false);
+    }
+  }
 
   return (
     <div className={className}>
@@ -101,7 +107,7 @@ const Input = ({
                 day_hidden: "invisible",
               }}
             />
-            <div className="w-full grid grid-cols-3 gap-1 mt-5">
+            <div className="w-full grid grid-cols-2 gap-2 mt-5">
               <button
                 className="w-full text-sm p-2 font-bold rounded-lg !bg-transparent text-gray-600 dark:text-gray-300 shadow-md dark:shadow-gray-900"
                 onClick={() => setEndTimeAfter(1)}
@@ -115,7 +121,13 @@ const Input = ({
                 3 months
               </button>
               <button
-                className="w-full text-sm p-2 font-bold rounded-lg !bg-transparent text-gray-600 dark:text-gray-300 shadow-md dark:shadow-gray-900"
+                className="w-full text-xs p-2 font-bold rounded-lg bg-green-300 hover:opacity-60 dark:bg-green-900 text-gray-600 dark:text-gray-300 shadow-md dark:shadow-gray-900"
+                onClick={handleAccept}
+              >
+                ACCEPT
+              </button>
+              <button
+                className="w-full text-xs p-2 font-bold rounded-lg !bg-transparent text-gray-600 dark:text-gray-300 shadow-md dark:shadow-gray-900"
                 onClick={handleClear}
               >
                 CLEAR

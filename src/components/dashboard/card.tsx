@@ -39,6 +39,7 @@ const Card = ({ id }: IProps) => {
   const [mediaType, setMediaType] = React.useState<string>("");
   const [status, setStatus] = React.useState<number>(0);
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
+  const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
 
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
 
@@ -69,6 +70,9 @@ const Card = ({ id }: IProps) => {
     const response = await fetch(_projectURI);
     const _project = await response.json();
     setProject(_project);
+    // test if tokens are fully charged
+    const _tokensFullyCharged = await contract?.tokensFullyCharged ();
+    setTokensFullyCharged (_tokensFullyCharged);
     // ICO status
     const _status = await contract?.getICOState ();
     setStatus (Number(_status));
@@ -84,6 +88,17 @@ const Card = ({ id }: IProps) => {
       setMediaType (type);
     })
     .catch(error => console.error('Error fetching media:', error));
+
+    console.log({
+      _token, 
+      _hardcap, 
+      _softcap,
+      _fundsRaised,
+      _status,
+      _tokensFullyCharged,
+      user,
+      _project
+    })
   }
 
   React.useEffect(() => {
@@ -134,10 +149,16 @@ const Card = ({ id }: IProps) => {
   const router = useRouter ();
 
   const _renderStatusText = React.useMemo(() => {
-    if ( status === 0 ) {
+    if ( status === 0 && !tokensFullyCharged ) {
       return (
         <div className="ribbon bg-gradient-to-r from-[#55739b] to-[#03b1cf] shadow-lg">
-          <span className="font-bold text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">Live</span>
+          <span className="font-bold text-sm text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">AWAIT</span>
+        </div>
+      )
+    } else if ( status === 0 && tokensFullyCharged ) {
+      return (
+        <div className="ribbon bg-gradient-to-r from-[#cfb377] to-[#c4b585] shadow-lg">
+          <span className="font-bold text-sm text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">Live</span>
         </div>
       )
     } else if (status === 1) {

@@ -35,7 +35,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "user",
+        "name": "creator_",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "ico_",
         "type": "address"
       },
       {
@@ -54,6 +60,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "hardcap",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "startTime",
         "type": "uint256"
       },
       {
@@ -213,6 +225,15 @@
       { "internalType": "address", "name": "daoAddress_", "type": "address" }
     ],
     "name": "setDAOAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "owner_", "type": "address" }
+    ],
+    "name": "setOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
