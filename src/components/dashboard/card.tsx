@@ -44,41 +44,41 @@ const Card = ({ id }: IProps) => {
 
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
 
-  React.useEffect(() => {
-    if (!contract) return;
-    _getICOInfo ();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contract]);
+  // React.useEffect(() => {
+  //   if (!contract) return;
+    
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [contract]);
 
-  const _getICOInfo = async () => {
+  const _getICOInfo = async (_contract: Contract) => {
     // token data
-    const _token = await contract?.tokenInfo ();
+    const _token = await _contract.tokenInfo ();
     setToken (_token);
     // hardcap
-    const _hardcap = await contract?.hardcap();
+    const _hardcap = await _contract.hardcap();
     setHardcap (_hardcap);
     // softcap
-    const _softcap = await contract?.softcap();
+    const _softcap = await _contract.softcap();
     setSoftcap (_softcap);
     // funds raised
-    const _fundsRaised = await contract?.fundsRaised ();
+    const _fundsRaised = await _contract.fundsRaised ();
     setFundsRaised (_fundsRaised);
     // ico endtime
-    const _endTime = await contract?.endTime ();
+    const _endTime = await _contract.endTime ();
     setEndTime (Number(_endTime));
     // project data
-    const _projectURI = await contract?.projectURI ();
+    const _projectURI = await _contract.projectURI ();
     const response = await fetch(_projectURI);
     const _project = await response.json();
     setProject(_project);
     // test if tokens are fully charged
-    const _tokensFullyCharged = await contract?.tokensFullyCharged ();
+    const _tokensFullyCharged = await _contract.tokensFullyCharged ();
     setTokensFullyCharged (_tokensFullyCharged);
     // ICO status
-    const _status = await contract?.getICOState ();
+    const _status = await _contract.getICOState ();
     setStatus (Number(_status));
     // creator data
-    const _creator = await contract?.creator ();
+    const _creator = await _contract.creator ();
     setOwner (_creator);
     const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
     setCreator (user);
@@ -87,9 +87,12 @@ const Card = ({ id }: IProps) => {
     .then(response => response.blob())
     .then(blob => {
       const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
+    
       setMediaType (type);
     })
     .catch(error => console.error('Error fetching media:', error));
+
+   
 
     console.log({
       _token, 
@@ -145,6 +148,7 @@ const Card = ({ id }: IProps) => {
       ICO,
       signer
     );
+    _getICOInfo (_contract); 
     setContract(_contract);
   }, [address, chainId, signer, id]);
 

@@ -34,7 +34,6 @@ export default function Home() {
         ICO,
         signer
       );
-
       // ICO status
       const _status = await _contract.getICOState ();
       // hardcap
@@ -45,6 +44,8 @@ export default function Home() {
       const _fundsRaised = await _contract.fundsRaised ();
       // ico endtime
       const _endTime = await _contract.endTime ();
+      // ico startTime
+      const _startTime = await _contract.startTime ();
       // project data
       const _projectURI = await _contract.projectURI ();
       const response = await fetch(_projectURI);
@@ -55,6 +56,7 @@ export default function Home() {
         softcap: Number(formatEther(_softcap)),
         fundsRaised: Number(formatEther(_fundsRaised)),
         endTime: Number(_endTime) * 1000,
+        startTime: Number(_startTime) * 1000,
         hardcap: Number(formatEther(_hardcap)),
         title: _project.title,
         address: _id

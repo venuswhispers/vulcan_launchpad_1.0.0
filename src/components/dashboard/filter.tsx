@@ -22,7 +22,7 @@ interface IFilter {
 }
 // "Created", "Funds Raised", "Softcap", "Hardcap"
 const _sorts: ISort[] =[
-  { key: 'created', label: 'Created' },
+  { key: 'startTime', label: 'Created' },
   { key: 'fundsRaised', label: 'Funds Raised' },
   { key: 'softcap', label: 'Softcap' },
   { key: 'endTime', label: 'End Time' },
