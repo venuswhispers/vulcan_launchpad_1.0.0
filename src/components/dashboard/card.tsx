@@ -37,6 +37,7 @@ const Card = ({ id }: IProps) => {
   const [distance, setDistance] = React.useState<number>(0);
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [mediaType, setMediaType] = React.useState<string>("");
+  const [status, setStatus] = React.useState<number>(0);
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
 
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
@@ -68,6 +69,9 @@ const Card = ({ id }: IProps) => {
     const response = await fetch(_projectURI);
     const _project = await response.json();
     setProject(_project);
+    // ICO status
+    const _status = await contract?.getICOState ();
+    setStatus (Number(_status));
     // creator data
     const _creator = await contract?.creator ();
     const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
@@ -128,6 +132,29 @@ const Card = ({ id }: IProps) => {
   }, [address, chainId, signer, id]);
 
   const router = useRouter ();
+
+  const _renderStatusText = React.useMemo(() => {
+    if ( status === 0 ) {
+      return (
+        <div className="ribbon bg-gradient-to-r from-[#55739b] to-[#03b1cf] shadow-lg">
+          <span className="font-bold text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">Live</span>
+        </div>
+      )
+    } else if (status === 1) {
+      return (
+        <div className="ribbon bg-gradient-to-r from-[#ff3c00] to-[#cc2b2b] shadow-lg">
+          <span className="font-bold text-black text-sm [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">FAILED</span>
+        </div>
+      )
+    } else {
+      return (
+        <div className="ribbon bg-gradient-to-r from-[#a5d23b] to-[#857538] shadow-lg">
+          <span className="font-bold text-sm text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">SUCCESS</span>
+        </div>
+      )
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
   
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
@@ -175,6 +202,7 @@ const Card = ({ id }: IProps) => {
           />
           <span className="text-xs text-white pr-2">{ token ? reduceAmount(formatEther(token.price)) : "0" } ETH</span>
         </div>
+        { _renderStatusText }
       </section>
 
       <section id="live" className="mt-5 flex">
