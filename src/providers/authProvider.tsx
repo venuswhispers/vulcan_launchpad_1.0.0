@@ -136,7 +136,7 @@ const AuthProvider = ({
 
   React.useEffect(() => {
     if (isConnected) {
-      // signIn ();
+      signIn ();
     } else {
       setUser (undefined);
       setIsAuthenticated (false);

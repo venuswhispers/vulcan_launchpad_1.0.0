@@ -49,7 +49,7 @@ const Create = ({ step, setStep }: IProps) => {
   
   return (
     <div className="w-full">
-      <h2 className="text-lg font-bold text-center">** Please send at least {amount} tokens to the following address **</h2>
+      <h2 className="text-lg font-bold text-center">** Please send at least { amount } tokens to the following address **</h2>
 
       <div className="dark:text-white text-black text-sm mt-8 flex gap-1 items-center justify-center">
         <span onClick={handleCopyAddress} className="hover:underline cursor-pointer w-[100px] xs:w-auto truncate" >{ico}</span> 

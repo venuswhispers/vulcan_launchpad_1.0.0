@@ -105,7 +105,7 @@ const ProgressModal = ({ confirm, stepper, percent, hash }: IProps) => {
               <Icon
                 onClick={confirm}
                 icon="ic:sharp-close"
-                className="cursor-pointer hover:opacity-50"
+                className="cursor-pointer text-black dark:text-white hover:opacity-50"
                 width={30}
               />
             </div>

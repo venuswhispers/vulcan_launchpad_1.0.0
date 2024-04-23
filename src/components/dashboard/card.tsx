@@ -39,6 +39,7 @@ const Card = ({ id }: IProps) => {
   const [mediaType, setMediaType] = React.useState<string>("");
   const [status, setStatus] = React.useState<number>(0);
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
+  const [owner, setOwner] = React.useState<string>("");
   const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
 
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
@@ -78,6 +79,7 @@ const Card = ({ id }: IProps) => {
     setStatus (Number(_status));
     // creator data
     const _creator = await contract?.creator ();
+    setOwner (_creator);
     const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
     setCreator (user);
     // test if log is video or pic
@@ -176,6 +178,18 @@ const Card = ({ id }: IProps) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
+  const _renderStatus = React.useMemo(() => {
+    if ( status === 0 && !tokensFullyCharged ) {
+      return "Await Deposit"
+    } else if ( status === 0 && tokensFullyCharged ) {
+      return "Live";
+    } else if (status === 1) {
+      return "Failed"
+    } else {
+      return "Success"
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
   
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
@@ -226,11 +240,17 @@ const Card = ({ id }: IProps) => {
         { _renderStatusText }
       </section>
 
-      <section id="live" className="mt-5 flex">
+      <section id="live" className="mt-5 flex gap-2">
         <div className="text-xs flex gap-3 items-center bg-[#D2FAE5] dark:bg-black dark:text-white px-3 py-[6px] rounded-full">
-          <span>Sale Live</span>
+          <span>{ _renderStatus }</span>
           <div className="w-2 h-2 bg-[#0CAF60] rounded-full"></div>
         </div>
+        {
+          address === owner && status === 0 && !tokensFullyCharged &&
+          <div onClick={() => router.push(`/deposit/${id}`)} className="text-xs flex gap-3 items-center bg-[#48916a] text-white cursor-pointer hover:opacity-60 dark:text-white px-3 py-[6px] rounded-full">
+            Deposit Token
+          </div>
+        }
       </section>
 
       <h2 className="mt-2 font-bold text-black dark:text-white text-[15px]">{project?.title}</h2>
