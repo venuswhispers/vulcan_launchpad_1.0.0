@@ -93,74 +93,74 @@ const Sider = () => {
     <>
       { !isCollapse && <div onClick={handleCollapse} className="fixed md:hidden top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-[10px] z-10"></div> }
       <div className={`fixed ${isCollapse ? '-left-[260px]' : 'left-4'} transition-all duration-200 bottom-4 z-20 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[260px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}>
-        <div className="w-full h-full overflow-y-scroll vulcan-sider">
-          <section id="sider-info" className="">
-            <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">
-              <Image
-                src={ theme !== "dark" ? "/images/logo.dark.svg" : "/images/logo.svg" }
-                width={110}
-                height={110}
-                alt={"sun"}   
-                priority={true}    
-              />
-            </div>
-            <div className="flex justify-center items-center flex-col mt-4">
-              { 
-                user && user.avatar ?
-                // <Avatar img={user.avatar} className="h-[70px] w-[70px]" /> :
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={user.avatar}
-                  key={user.avatar}
-                  width={70}
-                  height={70}
-                  alt={"avatar"}  
-                  className="rounded-xl aspect-square" 
-                  // priority={true}  
-                /> :
-                <Icon icon="flowbite:user-solid" width={70} height={70} className="rounded-3xl bg-[#46455367] dark:bg-[#919097e0] opacity-50"/>
-              }
-              <h3 className="text-black font-sans dark:text-white font-bold mt-3 text-lg">{ user && user.fullName ? user.fullName : "Unknown" }</h3>
-              <div className="text-sm text mt-1 flex items-center gap-1">
-              { 
-                isAuthenticated ? 
-                <>
-                  <span>verified</span>
-                  <Icon className="text-[#0CAF60] text-[18px]" icon="ic:baseline-verified" />
-                </> :
-                <>
-                  <span>Not Verified</span>
-                  <Icon className="text-[#0CAF60] text-[18px]" icon="octicon:unverified-24" />
-                </>
-              }  
+        <div className="w-full h-full overflow-y-scroll overflow-x-hidden vulcan-sider">
+          <div className="w-[260px]">
+            <section id="sider-info" className="">
+              <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">
+                <Image
+                  src={ theme !== "dark" ? "/images/logo.dark.svg" : "/images/logo.svg" }
+                  width={110}
+                  height={110}
+                  alt={"sun"}   
+                  priority={true}    
+                />
               </div>
-              {
-                address &&
-                <div className="dark:text-white text-black text-xs mt-5 flex gap-1">
-                  <span onClick={handleCopyAddress} className="hover:underline cursor-pointer">{address.substring(0, 10) + "...." + address.substr(address.length - 10, 10)}</span> <Icon className='cursor-pointer' width={15} onClick={() => window.open("https://sepolia.etherscan.io/address/" + address)} height={15} icon="fluent:open-16-filled"/>
+              <div className="flex justify-center items-center flex-col mt-4">
+                { 
+                  user && user.avatar ?
+                  // <Avatar img={user.avatar} className="h-[70px] w-[70px]" /> :
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.avatar}
+                    key={user.avatar}
+                    width={70}
+                    height={70}
+                    alt={"avatar"}  
+                    className="rounded-xl aspect-square" 
+                    // priority={true}  
+                  /> :
+                  <Icon icon="flowbite:user-solid" width={70} height={70} className="rounded-3xl bg-[#46455367] dark:bg-[#919097e0] opacity-50"/>
+                }
+                <h3 className="text-black font-sans dark:text-white font-bold mt-3 text-lg">{ user && user.fullName ? user.fullName : "Unknown" }</h3>
+                <div className="text-sm text mt-1 flex items-center gap-1">
+                { 
+                  isAuthenticated ? 
+                  <>
+                    <span>verified</span>
+                    <Icon className="text-[#0CAF60] text-[18px]" icon="ic:baseline-verified" />
+                  </> :
+                  <>
+                    <span>Not Verified</span>
+                    <Icon className="text-[#0CAF60] text-[18px]" icon="octicon:unverified-24" />
+                  </>
+                }  
                 </div>
-              }
-            </div>
-            <ul className="mt-4 p-6">
-              {
-                isAuthenticated &&
-                <li key={"profile"} onClick={() => _gotoURL("/profile")} className={`w-full px-1 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === '/profile' && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
-                  <Icon icon="flowbite:profile-card-solid" width={22}/> Profile
-                </li>
-              }
-              { navs.map((_nav: INav) => _renderNavItem(_nav)) }
-            </ul>
-          </section>
-
-          <section id="theme-switcher" className="p-6">
-            { _renderThemeSwitch() }
-            <h2 className="text mt-2 px-2">Insigts</h2>
-            <div className="flex justify-between items-center mt-3 px-1">
-              <div className="text flex gap-2 items-center"><Icon icon="tabler:message-circle" width={30} hFlip/><span>Inbox</span></div>
-              <div className="p-1 px-2 rounded-md text-white bg-[#FF3E46]">8</div>
-            </div>
-          </section>
-
+                {
+                  address &&
+                  <div className="dark:text-white text-black text-xs mt-5 flex gap-1">
+                    <span onClick={handleCopyAddress} className="hover:underline cursor-pointer">{address.substring(0, 10) + "...." + address.substr(address.length - 10, 10)}</span> <Icon className='cursor-pointer' width={15} onClick={() => window.open("https://sepolia.etherscan.io/address/" + address)} height={15} icon="fluent:open-16-filled"/>
+                  </div>
+                }
+              </div>
+              <ul className="mt-4 p-6">
+                {
+                  isAuthenticated &&
+                  <li key={"profile"} onClick={() => _gotoURL("/profile")} className={`w-full px-1 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${pathname === '/profile' && 'bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1'}  rounded-2xl cursor-pointer hover:font-bold`}>
+                    <Icon icon="flowbite:profile-card-solid" width={22}/> Profile
+                  </li>
+                }
+                { navs.map((_nav: INav) => _renderNavItem(_nav)) }
+              </ul>
+            </section>
+            <section id="theme-switcher" className="p-6">
+              { _renderThemeSwitch() }
+              <h2 className="text mt-2 px-2">Insigts</h2>
+              <div className="flex justify-between items-center mt-3 px-1">
+                <div className="text flex gap-2 items-center"><Icon icon="tabler:message-circle" width={30} hFlip/><span>Inbox</span></div>
+                <div className="p-1 px-2 rounded-md text-white bg-[#FF3E46]">8</div>
+              </div>
+            </section>
+          </div>
         </div>
         <Icon onClick={handleCollapse} icon="material-symbols:arrow-forward-ios" width={30} className={`absolute cursor-pointer hover:opacity-60 right-0 top-1/2 translate-x-full -translate-y-1/2 !z-50 md:hidden dark:text-white ${!isCollapse && 'hidden'}`}/>
       </div>

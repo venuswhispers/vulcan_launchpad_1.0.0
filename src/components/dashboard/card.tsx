@@ -41,14 +41,8 @@ const Card = ({ id }: IProps) => {
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
   const [owner, setOwner] = React.useState<string>("");
   const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
-
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
 
-  // React.useEffect(() => {
-  //   if (!contract) return;
-    
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [contract]);
 
   const _getICOInfo = async (_contract: Contract) => {
     // token data

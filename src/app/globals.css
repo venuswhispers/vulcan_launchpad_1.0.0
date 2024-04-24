@@ -61,6 +61,29 @@ body {
   border-radius: 4px;
 }
 
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: #36364993 #ffffff00;
+}
+
+.dark :root {
+  scrollbar-width: thin;
+  scrollbar-color: #363649 #ffffff00;
+}
+
+.dark .vulcan-sider {
+  scrollbar-color: #36364993 #ffffff00;
+}
+
+.vulcan-sider {
+  scrollbar-width: none;
+  scrollbar-color: #363649 #ffffff00;
+}
+
+.vulcan-sider:hover{
+  scrollbar-width: thin;
+}
+
 
 .vulcan-sider::-webkit-scrollbar {
   width: 4px;
