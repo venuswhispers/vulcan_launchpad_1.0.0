@@ -43,7 +43,8 @@ import {
   lensAtom,
   tokenPriceAtom,
   icoAtom,
-  amountAtom
+  amountAtom,
+  nameAtom
 } from "@/store";
 import { formatEther, formatUnits, parseEther, parseUnits, toEventHash } from "viem";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
@@ -74,6 +75,7 @@ const Create = ({ step, setStep }: IProps) => {
   const [lens,] = useAtom<string>(lensAtom);
   const [ico, setIco] = useAtom<string>(icoAtom);
   const [, setAmount] = useAtom<string>(amountAtom);
+  const [, setTokenName] = useAtom<string>(nameAtom); 
   //states
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   const [isInvalidTokenAddress, setIsInvalidTokenAddress] = React.useState<boolean>(false);
@@ -153,6 +155,13 @@ const Create = ({ step, setStep }: IProps) => {
       setIsInvalidTokenAddress(true);
     }
   }, [name, symbol, decimals, totalSupply]);
+
+  React.useEffect(() => {
+    if (symbol && symbol?.status === "success") {
+      setTokenName (String(symbol.result));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [symbol])
 
   // @get ETH price from chainbase
   React.useEffect(() => {
@@ -403,7 +412,7 @@ const Create = ({ step, setStep }: IProps) => {
       );
       await _tx.wait();
       setPaid (false);
-      showToast ("ICO successfully launched.", "success");
+      showToast ("ICO ready to launch, please now deposit tokens to be distributed.", "success");
 
       const _vulcans = await contractFactory?.getVulcans ();
       setIco (_vulcans[_vulcans.length - 1]);
@@ -433,28 +442,7 @@ const Create = ({ step, setStep }: IProps) => {
           hash={ico}
         />
       )}
-      <h2 className="">
-        * Pays non-refundable Spam filter fee - $100 DAI to launch ICO, and
-        Depoly contract
-      </h2>
-      <div className="flex gap-2 items-end">
-        <button
-          onClick={handlePaySpamFilterFee}
-          className="py-2 text-white flex items-center gap-1 mt-3 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4"
-        >
-          {isPayingSpamFilterFee ? (
-            <>
-              <Icon icon="mingcute:loading-fill" className="spin" /> Processing
-            </>
-          ) : (
-            <>
-              <Icon icon="ph:currency-eth-duotone" /> Pay Spam Filter Fee
-            </>
-          )}
-        </button>
-        {paid && <Icon icon="pajamas:check" width={30} />}
-      </div>
-      <h3 className="mt-1 px-1 text-xs">*Your DAI balance: {daiBalance}</h3>
+      
       <InputToken
         title="Token Address"
         className="mt-10"
@@ -567,7 +555,30 @@ const Create = ({ step, setStep }: IProps) => {
         />
       </div>
 
-      <div className="flex gap-2 justify-between items-center pr-3 mt-5">
+      <h2 className="mt-10 font-bold">
+        * Pays non-refundable Spam filter fee - $100 DAI to launch ICO, and
+        Depoly contract
+      </h2>
+      <div className="flex gap-2 items-end">
+        <button
+          onClick={handlePaySpamFilterFee}
+          className="py-2 text-white flex items-center gap-1 mt-3 rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4"
+        >
+          {isPayingSpamFilterFee ? (
+            <>
+              <Icon icon="mingcute:loading-fill" className="spin" /> Processing
+            </>
+          ) : (
+            <>
+              <Icon icon="ph:currency-eth-duotone" /> Pay Spam Filter Fee
+            </>
+          )}
+        </button>
+        {paid && <Icon icon="pajamas:check" width={30} />}
+      </div>
+      <h3 className="mt-1 px-1 text-xs">*Your DAI balance: {daiBalance}</h3>
+
+      <div className="flex gap-2 justify-between items-center pr-3 mt-10">
         <button
           onClick={handleSave}
           className="py-2 text-white rounded-lg hover:bg-blue-700 transition-all hover:ring-1 hover:ring-white hover bg-blue-500 text-sm font-bold px-4"

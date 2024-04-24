@@ -110,7 +110,7 @@ const Create = ({ step, setStep }: IProps) => {
       valid = false;
     }
     if (Number(hardCap) < Number(softCap)) {
-      showToast("Invalid softcap and hardcap configuration.", "warning");
+      showToast("Hard cap must be greater than soft cap.", "warning");
       valid = false;
     }
     if (!preview) {

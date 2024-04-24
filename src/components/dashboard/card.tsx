@@ -100,6 +100,7 @@ const Card = ({ id }: IProps) => {
   async function _tokensFullyCharged (_contract: Contract) {
     try {
       const __tokensFullyCharged = await _contract.tokensFullyCharged ();
+      console.log("------------------------------", __tokensFullyCharged)
       setTokensFullyCharged (__tokensFullyCharged);
     } catch ( err ) { console.log("failed to test if ICO is fully charged with tokens") }
   }
@@ -368,14 +369,17 @@ const Card = ({ id }: IProps) => {
           <span className="truncate">{`${days}d ${hours}h ${minutes}m ${seconds}s`}</span>
         </div>
 
-        <section className="flex gap-[6px]">
+        <section className="flex gap-[3px]">
           <button className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60">
             <Icon icon="mdi:bell-outline" width={22} className="text-[#2B6EC8]"/>
           </button>
           <button className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60">
             <Icon icon="ph:heart-bold" width={22} className="text-[#2B6EC8]"/>
           </button>
-          <button onClick={() => router.push(`/${id}`)} className="rounded-2xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
+          <button onClick={() => router.push(`/${id}`)} className="rounded-xl truncate bg-[#2B6EC8] px-5 text-white py-3">View</button>
+          <a href={`https://sepolia.etherscan.io/address/${id}`} target="_blank" className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60 flex justify-center items-center">
+            <Icon icon="ic:twotone-travel-explore" width={22} className="text-[#2B6EC8]"/>
+          </a>
         </section>
       </section>
 
