@@ -115,6 +115,7 @@ const AuthProvider = ({
       
       if (status === "SUCCESS") {
         const { data: _user }: any = jwt.decode(payload);
+        console.log(_user);
         if (_user) {
           _setAuth (_user, payload);
           showToast ("Profile created Successfully.", "success");

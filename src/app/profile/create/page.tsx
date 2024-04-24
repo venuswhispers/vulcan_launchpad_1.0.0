@@ -9,7 +9,7 @@ import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useAuth from "@/hooks/useAuth";
 import { useSignMessage } from "wagmi";
-const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
+const Description = dynamic(() => import("@/components/dashboard/create/atoms/multiTextInput"), { ssr: false });
 import { useRouter } from "next/navigation";
 import { IMGBB_API_KEY } from "@/constants/config";
 
@@ -111,7 +111,7 @@ const Create = () => {
       showToast ("Input your company name", "warning");
       valid = false;
     }
-    
+
     if (!bio) {
       showToast ("Input your Bio", "warning");
       valid = false;
