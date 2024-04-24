@@ -93,7 +93,7 @@ const Create = ({ step, setStep }: IProps) => {
   //web3
   const { address, chainId, signer } = useActiveWeb3();
   //eth price
-  const [ethPrice, setEthPrice] = React.useState<number | undefined>(undefined);
+  const [ethPrice, setEthPrice] = React.useState<number>(3000);
   //useContracts
   const { data: token, isPending: tokenPending } = useReadContracts({
     contracts: [
@@ -262,6 +262,15 @@ const Create = ({ step, setStep }: IProps) => {
         showToast("Token Price is required.", "warning");
         valid = false;
       }
+      if (!decimals || !totalSupply || !name || !symbol) {
+        showToast ("Invalid token information", "warning");
+        valid = false;
+      };
+    
+      if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
+        showToast("Invalid Token price.", "warning");
+        valid = false;
+      } 
       if (valid && preview) {
         handleSubmit();
       }
@@ -272,11 +281,13 @@ const Create = ({ step, setStep }: IProps) => {
   };
   //@dev deposit token amount to reach softcap
   const _depositAmountToSoftcap = React.useMemo(() => {
-    const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
-    if(isNaN(_priceRaw)) return BigInt("0");
-    const _price =  parseEther(_priceRaw.toFixed(20));
-    
-    if (String(_price) === "0") return BigInt("0");
+    if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
+      return BigInt("0");
+    } 
+    const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
+    if (_price === BigInt("0")) {
+      return BigInt("0");
+    }
     
     const _softcap = parseEther(softCap);
     const _amount = _softcap / _price;
@@ -285,11 +296,16 @@ const Create = ({ step, setStep }: IProps) => {
   }, [currency, price, ethPrice, softCap]);
   //@dev deposit token amount to reach hardcap
   const _depositAmountToHardcap = React.useMemo(() => {
-    const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
-    if(isNaN(_priceRaw)) return BigInt("0");
-    const _price =  parseEther(_priceRaw.toFixed(20));
+
+    if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
+      return BigInt("0");
+    } 
+
+    const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
     
-    if (String(_price) === "0") return BigInt("0");
+    if (_price === BigInt("0")) {
+      return BigInt("0");
+    }
     
     const _hardcap = parseEther(hardCap);
     const _amount = _hardcap / _price;
@@ -313,14 +329,13 @@ const Create = ({ step, setStep }: IProps) => {
 
     if (!decimals || !totalSupply || !name || !symbol) return;
 
-    const _priceRaw: number = currency === "ETH" ? Number(price) : Number(price) / Number(ethPrice);
-    const _price =  parseEther(_priceRaw.toFixed(20));
+    const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
     const _totalSupply = BigInt(String(totalSupply.result));
     const _hardcap = parseEther(hardCap);
     const _decimals = BigInt(String(decimals.result));
     const _softcap = parseEther(softCap);
 
-    console.log(_price * _totalSupply / parseUnits ("1", Number(_decimals)), _hardcap);
+    
     // test if totalSupply and tokenPrice is valid
     if (_price * _totalSupply / parseUnits ("1", Number(_decimals)) < _hardcap ) {
       showToast ("Can't reach hardcap with this price and totalSupply", "warning");
@@ -328,8 +343,13 @@ const Create = ({ step, setStep }: IProps) => {
     }
 
     // set amount
-    const _amount = _hardcap / _price ;
+    const _amount = _hardcap / _price + BigInt("1");
     setAmount (String(_amount));
+    console.log("setting", {
+      _amount,
+      _price,
+      _hardcap
+    });
 
     // progress Modal show
     setShowProgressModal(true);
@@ -432,6 +452,14 @@ const Create = ({ step, setStep }: IProps) => {
     }
   };
 
+  const onChangeTokenPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (Number(value) < 0 || isNaN(Number(value)) || value.length > 18) {
+      return;
+    }
+    setPrice(value)
+  }
+
   return (
     <div className="w-full">
       {showProgressModal && (
@@ -475,9 +503,7 @@ const Create = ({ step, setStep }: IProps) => {
           placeholder="*token price"
           info="What' token price for ICO?"
           value={price}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setPrice(e.target.value)
-          }
+          onChange={onChangeTokenPrice}
           isInvalid={isInvalid}
           message="input token price"
         />

@@ -82,7 +82,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     const _decimals = Number(_token.decimal);
 
     const _balance = await contract?.tokensAvailable();
-    setBalance(Number(formatUnits(_balance, _decimals)));
+    setBalance(Math.floor(Number(formatUnits(_balance, _decimals))));
     // setBalance (String(parseUnits(String(Number(_balance)), 18)));
 
     const _projectURI = await contract?.projectURI();
@@ -135,8 +135,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     } else {
       const _amount =  hardcap / price;
       // return _amount;
-      console.log(price, hardcap, _amount)
-      return Number(_amount);
+      console.log({ price, hardcap, _amount })
+      return Math.ceil(Number(_amount));
     }
   }, [price, hardcap]);
 
@@ -156,7 +156,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         { 
           _depositAmountToHardcap > balance ? 
           <>** You need to deposit <span className="text-lg text-green-600 font-bold">{ String(_depositAmountToHardcap - balance) } tokens</span> to reach your hard cap and start this ICO. **</> :
-          <>** ICO have been started **</> 
+          <>** ICO has been started **</> 
         }
       </h2>
 
