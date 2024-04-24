@@ -2,7 +2,6 @@
 "use client"
 import { ReactElement, createContext } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import img from "next/img";
 
 interface IToastContext {
   showToast: (type: string, str: string) => void;
