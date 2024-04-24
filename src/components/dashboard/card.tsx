@@ -100,7 +100,7 @@ const Card = ({ id }: IProps) => {
   async function _tokensFullyCharged (_contract: Contract) {
     try {
       const __tokensFullyCharged = await _contract.tokensFullyCharged ();
-      setEndTime (__tokensFullyCharged);
+      setTokensFullyCharged (__tokensFullyCharged);
     } catch ( err ) { console.log("failed to test if ICO is fully charged with tokens") }
   }
   /**
