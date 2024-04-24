@@ -168,6 +168,7 @@ const Card = ({ id }: IProps) => {
     _status (_contract);
     // creator data
     _user (_contract);
+
     const _end = Date.now () / 1000;
     console.log("time consuming---->", _end - _start);
   }
@@ -249,6 +250,9 @@ const Card = ({ id }: IProps) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, tokensFullyCharged]);
+  /**
+   * render ICO status text
+   */
   const _renderStatus = React.useMemo(() => {
     if ( status === 0 && !tokensFullyCharged ) {
       return "Await Deposit"

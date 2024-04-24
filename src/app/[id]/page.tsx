@@ -34,57 +34,151 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [mediaType, setMediaType] = React.useState<string>("");
   const [creator, setCreator] = React.useState<IUser|undefined>(undefined);
   const [balance, setBalance] = React.useState<string>("0");
+  const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
+  const [status, setStatus] = React.useState<number>(0);
+  const [owner, setOwner] = React.useState<string>("");
 
-  React.useEffect(() => {
-    if (!contract) return;
-    _getICOInfo ();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contract]);
-
-  const _getICOInfo = async () => {
-    const _token = await contract?.tokenInfo ();
-    if (!_token) return;
-    setToken (_token);
-    setPrice(_token.price);
+  /**
+   * get token data
+   * @param _contract Contract
+   */
+    async function _token (_contract: Contract) {
+      try {
+        const __token = await _contract.tokenInfo ();
+        setToken (__token);
+        setPrice (__token.price);
+        const _decimals = Number(__token.decimal);
+        const _balance = await _contract.tokensAvailable ();
+        setBalance(formatUnits(_balance, _decimals));
+      } catch ( err ) { console.log("failed fetch token data") }
+    }
+    /**
+     * get ICO hardcap
+     * @param _contract 
+     */
+    async function _hardcap (_contract: Contract) {
+      try {
+        const __hardcap = await _contract.hardcap ();
+        setHardcap (__hardcap);
+      } catch ( err ) { console.log("failed fetch ICO hardcap") }  
+    }
+    /**
+     * get ICO softcap
+     * @param _contract 
+     */
+    async function _softcap (_contract: Contract) {
+      try {
+        const __softcap = await _contract.softcap ();
+        setSoftcap (__softcap);
+      } catch ( err ) { console.log("failed fetch ICO softcap") }
+    }
+    /**
+     * get ICO fundsRaised
+     * @param _contract 
+     */
+    async function _fundsRaised (_contract: Contract) {
+      try {
+        const __fundsRaised = await _contract.fundsRaised ();
+        setFundsRaised (__fundsRaised);
+      } catch ( err ) { console.log("failed fetch ICO fundsRaised") }
+    }
+    /**
+     * fetch ICO startTime
+     * @param _contract 
+     */
+    async function _startTime (_contract: Contract) {
+      try {
+        const __startTime = await _contract.startTime ();
+        setStartTime (__startTime);
+      } catch ( err ) { console.log("failed fetch ICO startTime") }
+    }
+    /**
+     * fetch ICO endTime
+     * @param _contract 
+     */
+    async function _endTime (_contract: Contract) {
+      try {
+        const __endTime = await _contract.endTime ();
+        setEndTime (__endTime);
+      } catch ( err ) { console.log("failed fetch ICO endTime") }
+    }
+    /**
+     * test if ICO is fully charged to reach hardcap and start
+     * @param _contract 
+     */
+    async function _tokensFullyCharged (_contract: Contract) {
+      try {
+        const __tokensFullyCharged = await _contract.tokensFullyCharged ();
+        setTokensFullyCharged (__tokensFullyCharged);
+      } catch ( err ) { console.log("failed to test if ICO is fully charged with tokens") }
+    }
+    /**
+     * fetch project data
+     * @param _contract 
+     */
+    async function _project (_contract: Contract) {
+      try {
+        const _projectURI = await _contract.projectURI ();
+        const response = await fetch(_projectURI);
+        const __project = await response.json();
+        setProject(__project);
     
-    const _hardcap = await contract?.hardcap();
-    setHardcap (_hardcap);
+        fetch(__project.logo)
+        .then(response => response.blob())
+        .then(blob => {
+          const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
+          setMediaType (type);
+        })
+        .catch(error => console.error('Error fetching media:', error));
+      } catch ( err ) { console.log("failed fetch project data") }
+    }
+    /**
+     * fetch ICO status
+     * @param _contract 
+     */
+    async function _status (_contract: Contract) {
+      try {
+        const __status = await _contract.getICOState ();
+        setStatus (Number(__status));
+      } catch (err) { console.log("Failed to fetch current status of ICO") }
+    }
+    /**
+     * fetch IOC creator's information
+     * @param _contract 
+     */
+    async function _user (_contract: Contract) {
+      try {
+        const _creator = await _contract.creator ();
+        setOwner (_creator);
+        const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
+        setCreator (user);
+      } catch (err) {
+        console.log("Failed to fetch ICO creator's information");
+      }
+    }
+  
 
-    const _startTime = await contract?.startTime();
-    setStartTime (Number(_startTime));
-
-    const _softcap = await contract?.softcap();
-    setSoftcap (_softcap);
-    
-    const _fundsRaised = await contract?.fundsRaised ();
-    setFundsRaised (_fundsRaised);
-    
-    const _endTime = await contract?.endTime ();
-    setEndTime (Number(_endTime));
-
-    const _decimals = Number(_token.decimal);
-   
-    const _balance = await contract?.tokensAvailable ();
-    setBalance(formatUnits(_balance, _decimals));
-    // setBalance (String(parseUnits(String(Number(_balance)), 18)));
-
-    const _projectURI = await contract?.projectURI ();
-    const response = await fetch(_projectURI);
-    const _project = await response.json();
-    setProject(_project);
-
-    const _creator = await contract?.creator ();
-    const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
-    console.log(_project);
-    setCreator (user);
-
-    fetch(_project?.logo)
-    .then(response => response.blob())
-    .then(blob => {
-      const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
-      setMediaType (type);
-    })
-
+  const _getICOInfo = async (_contract: Contract) => {
+    // token data
+    _token (_contract);
+    // hardcap
+    _hardcap (_contract);
+    // softcap
+    _softcap (_contract);
+    // funds raised
+    _fundsRaised (_contract);
+    // ico startTime
+    _startTime (_contract);
+    // ico endtime
+    _endTime (_contract);
+    // project data
+    _project (_contract);
+    // test if tokens are fully charged
+    _tokensFullyCharged (_contract);
+    // ICO status
+    _status (_contract);
+    // creator data
+    _user (_contract);
   }
 
   React.useEffect(() => {
@@ -129,6 +223,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       signer
     );
     setContract(_contract);
+    _getICOInfo (_contract);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, chainId, signer, params.id]);
   
   const _renderItem = (title: string, value: string) => (
