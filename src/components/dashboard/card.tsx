@@ -150,6 +150,7 @@ const Card = ({ id }: IProps) => {
   }
 
   const _getICOInfo = async (_contract: Contract) => {
+    
     const _start = Date.now() / 1000;
     // token data
     _token (_contract);

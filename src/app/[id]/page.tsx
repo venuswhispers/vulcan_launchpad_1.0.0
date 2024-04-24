@@ -38,6 +38,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [status, setStatus] = React.useState<number>(0);
   const [owner, setOwner] = React.useState<string>("");
 
+
+  console.log(Number(hardcap), Number(token?.price), balance, tokensFullyCharged);
+
   /**
    * get token data
    * @param _contract Contract
@@ -306,7 +309,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               </div>
             </div>
             { _renderCoolDownItem ("Charged Tokens", balance, true) }
-            { _renderItem ("Token Price", reduceAmount(formatEther(price))) }
+            { _renderItem ("Token Price", formatEther(price)) }
             { _renderCoolDownItem ("Start Date", new Date(startTime*1000).toDateString(), true) }
             { _renderCoolDownItem ("Ending Date", new Date(endTime*1000).toDateString(), true) }
             { _renderCoolDownItem ("Time Remaining", `${days}d ${hours}h ${minutes}m ${seconds}s`, false) }
