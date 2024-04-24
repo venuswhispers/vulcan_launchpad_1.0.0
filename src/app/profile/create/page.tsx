@@ -9,7 +9,6 @@ import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useAuth from "@/hooks/useAuth";
 import { useSignMessage } from "wagmi";
-import { uploadToPinata } from "@/utils";
 const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
 import { useRouter } from "next/navigation";
 import { IMGBB_API_KEY } from "@/constants/config";
@@ -22,7 +21,8 @@ const acceptables = [
 ]
 
 
-const Evangilists = () => {
+const Create = () => {
+
   const [fullName, setFullName] = React.useState<string>("");
   const [company, setCompany] = React.useState<string>("");
   const [website, setWebsite] = React.useState<string>("");
@@ -41,7 +41,6 @@ const Evangilists = () => {
 
   const { address, chain, isConnected, chainId } = useActiveWeb3();
   const { signUp } = useAuth();
-  const { signMessageAsync } = useSignMessage();
   const router = useRouter ();
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,34 +111,7 @@ const Evangilists = () => {
       showToast ("Input your company name", "warning");
       valid = false;
     }
-    // if (!website) {
-    //   showToast ("Input your website link", "warning");
-    //   valid = false;
-    // }
-    // if (!twitter) {
-    //   showToast ("Input your twitter link", "warning");
-    //   valid = false;
-    // }
-    // if (!facebook) {
-    //   showToast ("Input your facebook link", "warning");
-    //   valid = false;
-    // }
-    // if (!instagram) {
-    //   showToast ("Input your instagram link", "warning");
-    //   valid = false;
-    // }
-    // if (!linkedin) {
-    //   showToast ("Input your linkedin link", "warning");
-    //   valid = false;
-    // }
-    // if (!farcaster) {
-    //   showToast ("Input your farcaster link", "warning");
-    //   valid = false;
-    // }
-    // if (!lens) {
-    //   showToast ("Input your lens link", "warning");
-    //   valid = false;
-    // }
+    
     if (!bio) {
       showToast ("Input your Bio", "warning");
       valid = false;
@@ -311,4 +283,4 @@ const Evangilists = () => {
   );
 };
 
-export default Evangilists;
+export default Create;

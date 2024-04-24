@@ -43,64 +43,139 @@ const Card = ({ id }: IProps) => {
   const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
 
+  /**
+   * get token data
+   * @param _contract Contract
+   */
+  async function _token (_contract: Contract) {
+    try {
+      const __token = await _contract.tokenInfo ();
+      setToken (__token);
+    } catch ( err ) { console.log("failed fetch token data") }
+  }
+  /**
+   * get ICO hardcap
+   * @param _contract 
+   */
+  async function _hardcap (_contract: Contract) {
+    try {
+      const __hardcap = await _contract.hardcap ();
+      setHardcap (__hardcap);
+    } catch ( err ) { console.log("failed fetch ICO hardcap") }  
+  }
+  /**
+   * get ICO softcap
+   * @param _contract 
+   */
+  async function _softcap (_contract: Contract) {
+    try {
+      const __softcap = await _contract.softcap ();
+      setSoftcap (__softcap);
+    } catch ( err ) { console.log("failed fetch ICO softcap") }
+  }
+  /**
+   * get ICO fundsRaised
+   * @param _contract 
+   */
+  async function _fundsRaised (_contract: Contract) {
+    try {
+      const __fundsRaised = await _contract.fundsRaised ();
+      setFundsRaised (__fundsRaised);
+    } catch ( err ) { console.log("failed fetch ICO fundsRaised") }
+  }
+  /**
+   * fetch ICO endTime
+   * @param _contract 
+   */
+  async function _endTime (_contract: Contract) {
+    try {
+      const __endTime = await _contract.endTime ();
+      setEndTime (__endTime);
+    } catch ( err ) { console.log("failed fetch ICO endTime") }
+  }
+  /**
+   * test if ICO is fully charged to reach hardcap and start
+   * @param _contract 
+   */
+  async function _tokensFullyCharged (_contract: Contract) {
+    try {
+      const __tokensFullyCharged = await _contract.tokensFullyCharged ();
+      setEndTime (__tokensFullyCharged);
+    } catch ( err ) { console.log("failed to test if ICO is fully charged with tokens") }
+  }
+  /**
+   * fetch project data
+   * @param _contract 
+   */
+  async function _project (_contract: Contract) {
+    try {
+      const _projectURI = await _contract.projectURI ();
+      const response = await fetch(_projectURI);
+      const __project = await response.json();
+      setProject(__project);
+  
+      fetch(__project.logo)
+      .then(response => response.blob())
+      .then(blob => {
+        const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
+        setMediaType (type);
+      })
+      .catch(error => console.error('Error fetching media:', error));
+    } catch ( err ) { console.log("failed fetch project data") }
+  }
+  /**
+   * fetch ICO status
+   * @param _contract 
+   */
+  async function _status (_contract: Contract) {
+    try {
+      const __status = await _contract.getICOState ();
+      setStatus (Number(__status));
+    } catch (err) { console.log("Failed to fetch current status of ICO") }
+  }
+  /**
+   * fetch IOC creator's information
+   * @param _contract 
+   */
+  async function _user (_contract: Contract) {
+    try {
+      const _creator = await _contract.creator ();
+      setOwner (_creator);
+      const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
+      setCreator (user);
+    } catch (err) {
+      console.log("Failed to fetch ICO creator's information");
+    }
+  }
 
   const _getICOInfo = async (_contract: Contract) => {
+    const _start = Date.now() / 1000;
     // token data
-    const _token = await _contract.tokenInfo ();
-    setToken (_token);
+    _token (_contract);
     // hardcap
-    const _hardcap = await _contract.hardcap();
-    setHardcap (_hardcap);
+    _hardcap (_contract);
     // softcap
-    const _softcap = await _contract.softcap();
-    setSoftcap (_softcap);
+    _softcap (_contract);
     // funds raised
-    const _fundsRaised = await _contract.fundsRaised ();
-    setFundsRaised (_fundsRaised);
+    _fundsRaised (_contract);
     // ico endtime
-    const _endTime = await _contract.endTime ();
-    setEndTime (Number(_endTime));
+    _endTime (_contract);
     // project data
-    const _projectURI = await _contract.projectURI ();
-    const response = await fetch(_projectURI);
-    const _project = await response.json();
-    setProject(_project);
+    _project (_contract);
     // test if tokens are fully charged
-    const _tokensFullyCharged = await _contract.tokensFullyCharged ();
-    setTokensFullyCharged (_tokensFullyCharged);
+    _tokensFullyCharged (_contract);
     // ICO status
-    const _status = await _contract.getICOState ();
-    setStatus (Number(_status));
+    _status (_contract);
     // creator data
-    const _creator = await _contract.creator ();
-    setOwner (_creator);
-    const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
-    setCreator (user);
-    // test if log is video or pic
-    fetch(_project.logo)
-    .then(response => response.blob())
-    .then(blob => {
-      const type = blob.type.split('/')[0]; // Get the main type (image, video, etc.)
-      setMediaType (type);
-    })
-    .catch(error => console.error('Error fetching media:', error));
-   
-    console.log({
-      _token, 
-      _hardcap, 
-      _softcap,
-      _fundsRaised,
-      _status,
-      _tokensFullyCharged,
-      user,
-      _project
-    }) ;
+    _user (_contract);
+    const _end = Date.now () / 1000;
+    console.log("time consuming---->", _end - _start);
   }
 
   React.useEffect(() => {
     timerRef.current = setInterval(async () => {
-      const _now = new Date().getTime();
-      const _distance = endTime - Math.floor(_now/1000);
+      const _now = Math.floor(Date.now()/1000);
+      const _distance = endTime - _now;
       setDistance(_distance);
       if ((_distance < 0 || isNaN(_distance)) && timerRef.current) {
         clearInterval(timerRef.current);
@@ -141,6 +216,7 @@ const Card = ({ id }: IProps) => {
     );
     _getICOInfo (_contract); 
     setContract(_contract);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, chainId, signer, id]);
 
   const router = useRouter ();
