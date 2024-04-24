@@ -1,7 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import { ReactElement, createContext } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import Image from "next/image";
+import img from "next/img";
 
 interface IToastContext {
   showToast: (type: string, str: string) => void;
@@ -22,7 +23,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
-                <Image
+                <img
                   src="/images/success.png"
                   alt=""
                   width={40}
@@ -65,7 +66,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 p-4">
               <div className="flex items-center">
-                <Image
+                <img
                   src="/images/warning.png"
                   alt=""
                   width={40}
@@ -108,7 +109,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
-                <Image
+                <img
                   src="/images/question.png"
                   alt=""
                   width={40}
@@ -151,7 +152,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
-                <Image
+                <img
                   src="/images/fail.png"
                   alt=""
                   width={40}
