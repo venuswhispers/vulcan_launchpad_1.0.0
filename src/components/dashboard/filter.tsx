@@ -14,7 +14,8 @@ interface IProps {
 
 interface ISort { 
   label: string, 
-  key: string 
+  key: string,
+  direction: boolean 
 }
 interface IFilter { 
   label: string, 
@@ -22,25 +23,25 @@ interface IFilter {
 }
 // "Created", "Funds Raised", "Softcap", "Hardcap"
 const _sorts: ISort[] =[
-  { key: 'startTime', label: 'Created' },
-  { key: 'fundsRaised', label: 'Funds Raised' },
-  { key: 'softcap', label: 'Softcap' },
-  { key: 'endTime', label: 'End Time' },
-  { key: 'hardcap', label: 'Hardcap' }
+  { key: 'startTime', label: 'Start Time', direction: true },
+  { key: 'startTime', label: 'StartTime', direction: false },
+  { key: 'endTime', label: 'EndTime', direction: true },
+  { key: 'endTime', label: 'EndTime', direction: false },
+  { key: 'fundsRaised', label: 'FundsRaised', direction: true },
+  { key: 'fundsRaised', label: 'FundsRaised', direction: false },
+  { key: 'softcap', label: 'Softcap', direction: true },
+  { key: 'softcap', label: 'Softcap', direction: false },
+  { key: 'hardcap', label: 'Hardcap', direction: true },
+  { key: 'hardcap', label: 'Hardcap', direction: false },
 ]
 
-const _filters: IFilter[] = [
-  { label: "All", key: [0, 1, 2, 3] },
-  { label: "Progress", key: [0] },
-  { label: "Failed", key: [1] },
-  { label: "Success", key: [2, 3] },
-]
+const _filters:string[] = ["All", "Await Deposit", "Progress", "Failed", "Success"];
 
 const Filter = ( { data, onChange }: IProps ) => {
 
-  const [filter, setFilter] = React.useState<IFilter>({ label: "All", key: [0, 1, 2, 3] });
+  const [filter, setFilter] = React.useState<string>("All");
   const [chain, setChain] = React.useState<string>("All");
-  const [sort, setSort] = React.useState<ISort>({ key: 'created', label: 'Created' });
+  const [sort, setSort] = React.useState<ISort>({ key: 'startTime', label: 'Start Time', direction: true });
   const [keyword, setKeyword] = React.useState<string>("");
   const [mainKeyword,] = useAtom<string>(keywordAtom);
 
@@ -48,10 +49,31 @@ const Filter = ( { data, onChange }: IProps ) => {
   React.useEffect(() => {
     const _sort = (_prev: IVulcan, _cur: IVulcan) => {
       //@ts-ignore
-      const _value = _prev[sort.key] > _cur[sort.key];
+      const _value = sort.direction ? _prev[sort.key] > _cur[sort.key] : _prev[sort.key] < _cur[sort.key];
       return _value ? -1 : 1;
     }
-    const _data = data.filter((_item: IVulcan) => _item.title.toLowerCase().includes(keyword.toLowerCase())).filter((_item: IVulcan) => filter.key.includes(_item.status)).sort(_sort).map((_item: IVulcan) => _item.address);
+    const _filter = (_item: IVulcan) => {
+      let _value: boolean = false;
+      switch (filter) {
+        case "All":
+          _value = true;
+          break;
+        case "Await Deposit":
+          _value = ( _item.status === 0 && !_item.tokensFullyCharged ) ? true: false;
+          break;
+        case "Progress":
+          _value = ( _item.status === 0 && _item.tokensFullyCharged ) ? true: false;
+          break;
+        case "Failed":
+          _value = ( _item.status === 1 ) ? true: false;
+          break;
+          case "Success":
+            _value = ( _item.status === 2 || _item.startTime === 3 ) ? true: false;
+          break;
+      }
+      return _value;
+    }
+    const _data = data.filter((_item: IVulcan) => _item.title.toLowerCase().includes(keyword.toLowerCase())).filter((_item: IVulcan) => _filter(_item)).sort(_sort).map((_item: IVulcan) => _item.address);
     onChange (_data);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, sort, keyword]);
@@ -78,10 +100,10 @@ const Filter = ( { data, onChange }: IProps ) => {
     <Dropdown label="Dropdown button" renderTrigger={() => 
       <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
         <h4 className="text-xs px-1">Filters</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter.label }</span><Icon icon="bxs:down-arrow" /></div>
+        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter }</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-    { _filters.map((_item: IFilter) => <Dropdown.Item onClick={() => setFilter(_item)} key={_item.label} className={`${filter === _item && 'font-bold'} text-xs`}>{_item.label}</Dropdown.Item>) }
+    { _filters.map((_item: string) => <Dropdown.Item onClick={() => setFilter(_item)} key={_item} className={`${filter === _item && 'font-bold !text-gray-800'} text-xs`}>{_item}</Dropdown.Item>) }
     </Dropdown>
   )
 
@@ -89,10 +111,10 @@ const Filter = ( { data, onChange }: IProps ) => {
     <Dropdown label="Dropdown button" renderTrigger={() => 
       <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
         <h4 className="text-xs px-1">Sort by</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ sort.label }</span><Icon icon="bxs:down-arrow" /></div>
+        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span className="flex gap-1 items-center">{ sort.direction ? <Icon icon="ph:arrow-up-bold" /> : <Icon icon="ph:arrow-down-bold" /> }{ sort.label }</span><Icon icon="bxs:down-arrow" /></div>
       </div>
     }>
-      { _sorts.map((_item: ISort) => <Dropdown.Item onClick={() => setSort(_item)} key={_item.key} className={`${sort === _item && 'font-bold'} text-xs`}>{_item.label}</Dropdown.Item>) }
+      { _sorts.map((_item: ISort) => <Dropdown.Item onClick={() => setSort(_item)} key={_item.key + _item.direction} className={`${sort === _item && 'font-bold !text-gray-900'} text-xs`}>{_item.direction ? "Highest" : "Lowest"} {_item.label}</Dropdown.Item>) }
     </Dropdown>
   )
 

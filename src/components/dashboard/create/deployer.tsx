@@ -6,10 +6,10 @@ import InputToken from "@/components/dashboard/create/atoms/tokenAddressInput";
 import InfoShower from "@/components/dashboard/create/atoms/infoShower";
 import { reduceAmount, parseNumber } from "@/utils";
 import { Dropdown } from "flowbite-react";
-import { useAtom } from "jotai";
-import { useReadContracts, useReadContract } from "wagmi";
 import { Contract, ethers } from "ethers";
 //hooks
+import { useReadContracts, useReadContract } from "wagmi";
+import { useAtom } from "jotai";
 import useToastr from "@/hooks/useToastr";
 import useAuth from "@/hooks/useAuth";
 //abis
@@ -267,7 +267,7 @@ const Create = ({ step, setStep }: IProps) => {
         valid = false;
       };
     
-      if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
+      if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(ethPrice))) {
         showToast("Invalid Token price.", "warning");
         valid = false;
       } 
@@ -279,37 +279,32 @@ const Create = ({ step, setStep }: IProps) => {
       console.log(err);
     }
   };
+
   //@dev deposit token amount to reach softcap
   const _depositAmountToSoftcap = React.useMemo(() => {
-    if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
+    if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(ethPrice))) {
       return BigInt("0");
     } 
     const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
     if (_price === BigInt("0")) {
       return BigInt("0");
     }
-    
     const _softcap = parseEther(softCap);
     const _amount = _softcap / _price;
-
     return _amount + BigInt("1");
   }, [currency, price, ethPrice, softCap]);
+
   //@dev deposit token amount to reach hardcap
   const _depositAmountToHardcap = React.useMemo(() => {
-
     if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
       return BigInt("0");
     } 
-
     const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
-    
     if (_price === BigInt("0")) {
       return BigInt("0");
     }
-    
     const _hardcap = parseEther(hardCap);
     const _amount = _hardcap / _price;
-
     return _amount + BigInt("1");
   }, [currency, price, ethPrice, hardCap]);
   // @dev totalSupply

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Displayer from "@/components/dashboard/create/atoms/quillDisplayer";
 import { useAtom } from "jotai";
 import { previewAtom } from "@/store";
-
+// atoms
 import {
   titleAtom,
   hardCapAtom,

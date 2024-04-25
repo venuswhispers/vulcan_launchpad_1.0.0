@@ -27,41 +27,47 @@ export default function Home() {
   const [metaData, setMetaData] = React.useState<IVulcan[]>([]);
   const [ethPrice, setEthPrice] = useAtom<number>(ethPriceAtom);
 
-  const fetchMetaData = async (ids: string[]) => {
-    const _icos: IVulcan[] = await Promise.all(ids.map(async (_id: string) => {
-      const _contract = new Contract(
-        _id,
-        ICO,
-        signer
-      );
-      // ICO status
-      const _status = await _contract.getICOState ();
-      // hardcap
-      const _hardcap = await _contract.hardcap();
-      // softcap
-      const _softcap = await _contract.softcap();
-      // funds raised
-      const _fundsRaised = await _contract.fundsRaised ();
-      // ico endtime
-      const _endTime = await _contract.endTime ();
-      // ico startTime
-      const _startTime = await _contract.startTime ();
-      // project data
+  const _fetchMetaData = async (_id: string) => {
+    const _contract = new Contract(
+      _id,
+      ICO,
+      signer
+    );
+    const _getTitle = async () => {
       const _projectURI = await _contract.projectURI ();
-      const response = await fetch(_projectURI);
-      const _project = await response.json();
+      const _response = await fetch(_projectURI);
+      const _project = await _response.json();
+      return _project.title;
+    }
+    const _promises: Function[] = [
+      _contract.getICOState, // ICO status
+      _contract.hardcap, // ICO hardcap
+      _contract.softcap, // ICO softcap
+      _contract.fundsRaised, // ICO fundsRaised
+      _contract.endTime, // ICO endTime
+      _contract.startTime, // ICO startTime
+      _contract.tokensFullyCharged, // validate if tokens are fully charged
+      _getTitle // ICO title
+    ]
+    const [_status, _hardcap, _softcap, _fundsRaised, _endTime, _startTime, _tokensFullyCharged, _title] = await Promise.all(_promises.map(async(_promise: Function) => {
+      return await _promise();
+    }));
+    return {
+      status: _status,
+      softcap: Number(formatEther(_softcap)),
+      fundsRaised: Number(formatEther(_fundsRaised)),
+      endTime: Number(_endTime) * 1000,
+      startTime: Number(_startTime) * 1000,
+      hardcap: Number(formatEther(_hardcap)),
+      title: _title,
+      tokensFullyCharged: _tokensFullyCharged,
+      address: _id
+    }
+  }
 
-      return {
-        status: _status,
-        softcap: Number(formatEther(_softcap)),
-        fundsRaised: Number(formatEther(_fundsRaised)),
-        endTime: Number(_endTime) * 1000,
-        startTime: Number(_startTime) * 1000,
-        hardcap: Number(formatEther(_hardcap)),
-        title: _project.title,
-        address: _id
-      }
-    })); 
+  const fetchMetaData = async (ids: string[]) => {
+    const _icos: IVulcan[] = await Promise.all(ids.map(_fetchMetaData)); 
+    console.log(_icos)
     setMetaData (_icos);
   }
 

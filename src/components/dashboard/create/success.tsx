@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface IProps {
   step: number;

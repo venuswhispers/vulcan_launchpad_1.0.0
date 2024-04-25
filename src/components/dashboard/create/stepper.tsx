@@ -1,13 +1,10 @@
 import React from "react";
-import { CREAT } from "@/constants";
 
 interface IProps {
   step: number
 }
 
 const Stepper = ({step}: IProps) => {
-
-  // const [step, setStep] = React.useState<number>(0);
 
   return (
     <ul className="relative flex flex-col-reverse xs:flex-row-reverse gap-2 mb-8">

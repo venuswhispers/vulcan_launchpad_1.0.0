@@ -1,10 +1,6 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Button, Timeline } from "flowbite-react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
-import { reduceAmount } from "@/utils/methods";
-import { useAtom } from "jotai";
 
 import LogoUploader from "./logoUploader";
 import ICODeployer from "./icoDepolyer";
@@ -18,8 +14,6 @@ interface IProps {
 
 const ProgressModal = ({ confirm, stepper, percent, hash }: IProps) => {
   
-  const [title, setTitle] = React.useState<string>("Swap Transfer in Progress");
-
   return (
     <div>
       <div className="fixed top-0 left-0 right-0 bottom-0 bg-[#0000003d] z-10 backdrop-filter backdrop-blur-[10px]"></div>

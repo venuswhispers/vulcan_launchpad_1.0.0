@@ -1,12 +1,12 @@
-import { FC } from 'react'
+import React from 'react';
 
-interface Props {
+interface IProps {
   strokeWidth?: number
   sqSize?: number
   percent: number
 }
 
-const Circle = (props: Props) => {
+const Circle = (props: IProps) => {
   let { strokeWidth = 8, sqSize = 160, percent } = props;
 
   const radius = (sqSize - strokeWidth) / 2

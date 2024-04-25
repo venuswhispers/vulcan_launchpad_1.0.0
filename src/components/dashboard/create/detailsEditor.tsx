@@ -1,18 +1,19 @@
 "use client";
 import React from "react";
 import dynamic from "next/dynamic";
-//components
+// components
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputCap from "@/components/dashboard/create/atoms/capInput";
 import Datepicker from "@/components/dashboard/create/atoms/datePicker";
-const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
 import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
-//hooks
+const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
+// hooks
 import useToastr from "@/hooks/useToastr";
-import { Preview } from '@/types';
 import useAuth from "@/hooks/useAuth";
-//jotai
 import { useAtom } from "jotai";
+// types
+import { Preview } from '@/types';
+// atoms
 import {
   titleAtom,
   hardCapAtom,
@@ -30,7 +31,6 @@ import {
   instagramAtom
 } from "@/store";
 
-
 interface IProps {
   step: number,
   setStep: React.Dispatch<React.SetStateAction<number>>
@@ -39,7 +39,7 @@ interface IProps {
 const Create = ({ step, setStep }: IProps) => {
   // validation test
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
-  // toastr
+  // hooks
   const { user, isAuthenticated } = useAuth ();
   const { showToast } = useToastr ();
   // atoms
@@ -117,36 +117,10 @@ const Create = ({ step, setStep }: IProps) => {
       showToast("You must choose introduction Media for your project.", "warning");
       valid = false;
     }
-    // if (!twitter) {
-    //   showToast("Twitter account is required.", "warning");
-    //   valid = false;
-    // }
-    // if (!facebook) {
-    //   showToast("facebook account is required.", "warning");
-    //   valid = false;
-    // }
-    // if (!instagram) {
-    //   showToast("instagram account is required.", "warning");
-    //   valid = false;
-    // }
-    // if (!linkedin) {
-    //   showToast("linkedin account is required.", "warning");
-    //   valid = false;
-    // }
-    // if (!farcaster) {
-    //   showToast("farcaster account is required.", "warning");
-    //   valid = false;
-    // }
-    // if (!lens) {
-    //   showToast("lens account is required.", "warning");
-    //   valid = false;
-    // }
-
     if (new Date(endTime) <= new Date()) {
       showToast("The end time must be in the future.", "warning");
       valid = false;
     }
-
     if (valid) {
       setStep (1);
     }

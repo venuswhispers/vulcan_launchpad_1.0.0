@@ -7,13 +7,13 @@ import Image from "next/image";
 import useAuth from "@/hooks/useAuth";
 import useToastr from "@/hooks/useToastr";
 import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
 // components
 import ClipboardCopier from "@/components/share/clipCopier";
 import QRcode from "react-qr-code";
 // utils
 import { copyToClipboard } from "@/utils";
-// jotai
-import { useAtom } from "jotai";
+// atoms
 import {
   icoAtom,
   amountAtom,
