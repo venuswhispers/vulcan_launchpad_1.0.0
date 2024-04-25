@@ -20,6 +20,8 @@ import { ethPriceAtom } from "@/store/icos";
 import { IUser, IProject, IToken } from "@/types";
 // jotai
 import { useAtom } from "jotai";
+// constants
+import { CHAIN_DATA } from "@/constants/constants";
 
 interface IProps {
   id: string
@@ -42,6 +44,8 @@ const Card = ({ id }: IProps) => {
   const [owner, setOwner] = React.useState<string>("");
   const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
   const [ ethPrice ] = useAtom<number>(ethPriceAtom);
+
+  const { chain } = useActiveWeb3 ();
 
   /**
    * get token data
@@ -267,6 +271,7 @@ const Card = ({ id }: IProps) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, tokensFullyCharged]);
+
   
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
@@ -378,7 +383,7 @@ const Card = ({ id }: IProps) => {
             <Icon icon="ph:heart-bold" width={22} className="text-[#2B6EC8]"/>
           </button>
           <button onClick={() => router.push(`/${id}`)} className="rounded-xl truncate bg-[#2B6EC8] px-2 text-white py-3">View</button>
-          <a href={`https://sepolia.etherscan.io/address/${id}`} target="_blank" className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60 flex justify-center items-center">
+          <a href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${id}`} target="_blank" className="dark:bg-[#020110] bg-[#E5EBFF] px-[10px] rounded-xl hover:opacity-60 flex justify-center items-center">
             <Icon icon="ic:twotone-travel-explore" width={22} className="text-[#2B6EC8]"/>
           </a>
         </section>
@@ -387,6 +392,8 @@ const Card = ({ id }: IProps) => {
       <div className="px-2 py-[1px] rounded-lg top-0 right-3 -translate-y-1/2 absolute bg-[#FFE7E4] text-[#FF6A55] text-[12px] font-bold">{hardcap > 0 ? Number(formatEther(fundsRaised))*100/Number(formatEther(hardcap)) : 0}%</div>
     </div>
   )
+
+
 };
 
 export default Card;

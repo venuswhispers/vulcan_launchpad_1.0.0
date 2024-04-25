@@ -8,6 +8,7 @@ import useAuth from "@/hooks/useAuth";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { copyToClipboard } from "@/utils";
 import useToastr from "@/hooks/useToastr";
+import { CHAIN_DATA } from "@/constants/constants";
 
 interface INav {
   title: string;
@@ -46,8 +47,8 @@ const Sider = () => {
   const [current, setCurrent] = React.useState<string>("Dashboard");
   const [isCollapse, setIsCollapse] = React.useState<boolean>(true);
   //web3
-  const { address } = useActiveWeb3();
-  //hoos
+  const { address, chain } = useActiveWeb3();
+  //hooks
   const { showToast } = useToastr();
 
   const _renderThemeSwitch = () => (
@@ -208,7 +209,7 @@ const Sider = () => {
                       width={15}
                       onClick={() =>
                         window.open(
-                          "https://sepolia.etherscan.io/address/" + address
+                          `${CHAIN_DATA[String(chain?.id)]?.explorer}/address/` + address
                         )
                       }
                       height={15}

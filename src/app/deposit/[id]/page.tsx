@@ -20,6 +20,8 @@ import { reduceAmount } from "@/utils";
 import { formatUnits } from "viem";
 // utils
 import { copyToClipboard } from "@/utils";
+// constants
+import { CHAIN_DATA } from "@/constants/constants";
 
 import useToastr from "@/hooks/useToastr";
 import { __private__ } from "@rainbow-me/rainbowkit";
@@ -46,6 +48,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const { showToast } = useToastr();
 
   const router = useRouter();
+
+  const { chain } = useActiveWeb3 ();
 
   const handleCopyAddress = async () => {
     showToast("Copied address to clipboard", "success");
@@ -174,7 +178,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         </Tooltip>
         <Tooltip content="Go to chain" style="dark">
           <a
-            href={`https://sepolia.etherscan.io/address/${params.id}`}
+            href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${params.id}`}
             target="_blank"
           >
             <Icon

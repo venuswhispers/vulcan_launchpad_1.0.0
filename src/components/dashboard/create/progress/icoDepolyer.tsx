@@ -3,6 +3,9 @@ import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Circle from "./circle";
 import { reduceAddress } from "@/utils";
+// constants
+import { CHAIN_DATA } from "@/constants/constants";
+import useActiveWeb3 from "@/hooks/useActiveWeb3";
 
 interface IParamsStepItem {
   percent: number;
@@ -30,6 +33,8 @@ const LogoUploader = ({
   //timer ref
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [counter, setCounter] = React.useState<number>(0);
+
+  const { chain } = useActiveWeb3 ();
 
   const status = React.useMemo(() => {
     if (stepper < step) {
@@ -93,7 +98,7 @@ const LogoUploader = ({
           <a
             className="cursor-pointer hover:underline"
             target="_blank"
-            href={`https://sepolia.etherscan.io/address/${hash}`}
+            href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${hash}`}
           >
             {hash && reduceAddress(hash, 10)}
           </a>

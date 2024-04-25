@@ -19,6 +19,10 @@ import {
   amountAtom,
   nameAtom
 } from "@/store";
+// constants
+import { CHAIN_DATA } from "@/constants/constants";
+import { useActiveModifiers } from "react-day-picker";
+import useActiveWeb3 from "@/hooks/useActiveWeb3";
 
 interface IProps {
   step: number,
@@ -33,6 +37,7 @@ const Create = ({ step, setStep }: IProps) => {
   const { showToast } = useToastr ();
   const { user, isAuthenticated } = useAuth ();
   const [tokenName] = useAtom (nameAtom);
+  const { chain } = useActiveWeb3 ();
   //router
   const router  = useRouter ();
   
@@ -59,7 +64,7 @@ const Create = ({ step, setStep }: IProps) => {
           <ClipboardCopier size={22} text={ico}/>
         </Tooltip>
         <Tooltip content="Go to chain" style="dark">
-          <a href={`https://sepolia.etherscan.io/address/${ico}`} target="_blank"><Icon className='cursor-pointer' icon="fluent:open-16-filled" width={22} /></a>
+          <a href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${ico}`} target="_blank"><Icon className='cursor-pointer' icon="fluent:open-16-filled" width={22} /></a>
         </Tooltip>
       </div>
 
