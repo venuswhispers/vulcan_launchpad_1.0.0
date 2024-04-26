@@ -15,7 +15,7 @@ import ICO from "@/constants/abis/ICO.json";
 import axios from "axios";
 import { baseURL } from "@/constants/config";
 // types
-import { IUser, IProject, IToken } from "@/types";
+import { IUSER, IProject, IToken } from "@/types";
 import { reduceAmount } from "@/utils";
 import { formatUnits } from "viem";
 // utils
@@ -33,16 +33,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   );
   const [token, setToken] = React.useState<IToken | undefined>(undefined);
   const [price, setPrice] = React.useState<bigint>(BigInt("0"));
-  const [project, setProject] = React.useState<IProject | undefined>(undefined);
   const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
-  const [softcap, setSoftcap] = React.useState<bigint>(BigInt("0"));
-  const [fundsRaised, setFundsRaised] = React.useState<bigint>(BigInt("0"));
-  const [startTime, setStartTime] = React.useState<number>(0);
-  const [endTime, setEndTime] = React.useState<number>(0);
-  const [distance, setDistance] = React.useState<number>(0);
-  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
-  const [mediaType, setMediaType] = React.useState<string>("");
-  const [creator, setCreator] = React.useState<IUser | undefined>(undefined);
   const [balance, setBalance] = React.useState<number>(0);
 
   const { showToast } = useToastr();
@@ -67,55 +58,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     if (!_token) return;
     setToken(_token);
     setPrice(_token.price);
-
-    const _hardcap = await contract?.hardcap();
-    setHardcap(_hardcap);
-
-    const _startTime = await contract?.startTime();
-    setStartTime(Number(_startTime));
-
-    const _softcap = await contract?.softcap();
-    setSoftcap(_softcap);
-
-    const _fundsRaised = await contract?.fundsRaised();
-    setFundsRaised(_fundsRaised);
-
-    const _endTime = await contract?.endTime();
-    setEndTime(Number(_endTime));
-
-    const _decimals = Number(_token.decimal);
-
-    const _balance = await contract?.tokensAvailable();
-    setBalance(Math.floor(Number(formatUnits(_balance, _decimals))));
-    // setBalance (String(parseUnits(String(Number(_balance)), 18)));
-
-    const _projectURI = await contract?.projectURI();
-    const response = await fetch(_projectURI);
-    const _project = await response.json();
-    setProject(_project);
-
-    const _creator = await contract?.creator();
-    const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
-    console.log(_project);
-    setCreator(user);
   };
-
-  React.useEffect(() => {
-    timerRef.current = setInterval(async () => {
-      const _now = new Date().getTime();
-      const _distance = endTime - Math.floor(_now / 1000);
-      setDistance(_distance);
-      if ((_distance < 0 || isNaN(_distance)) && timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    }, 1000);
-    return () => {
-      //@ts-ignore
-      clearInterval(timerRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endTime]);
-
 
   React.useEffect(() => {
     if (!address || !chainId || !signer || !params.id) {

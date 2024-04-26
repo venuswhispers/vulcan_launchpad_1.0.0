@@ -20,18 +20,18 @@ export interface IProject {
   youtubeLink?: string;
 }
 
-export interface IUser {
-  _id: string;
-  wallet: string;
-  fullName: string;
-  company: string;
-  avatar: string;
-  bio: string;
-  website: string;
-  twitter: string;
-  linkedin: string;
-  facebook: string;
-  instagram: string;
-  farcaster: string;
-  lens: string;
-}
+// export interface IUser {
+//   _id: string;
+//   wallet: string;
+//   fullName: string;
+//   company: string;
+//   avatar: string;
+//   bio: string;
+//   website: string;
+//   twitter: string;
+//   linkedin: string;
+//   facebook: string;
+//   instagram: string;
+//   farcaster: string;
+//   lens: string;
+// }

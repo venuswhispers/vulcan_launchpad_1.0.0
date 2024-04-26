@@ -353,6 +353,7 @@ const Create = ({ step, setStep }: IProps) => {
       // @step1 upload logo to PINATA
       setStepper (1);
       setPercent (0);
+      console.log(preview)
       const _logoURI = await uploadToPinata(
         preview?.data as string,
         ({ loaded, total }: { loaded: number; total: number }) => {
@@ -381,7 +382,6 @@ const Create = ({ step, setStep }: IProps) => {
         lens
       });
       const _projectURI = await uploadToIPFS(
-        //@ts-ignore
         new File(
           [
             _projectInfo

@@ -153,7 +153,6 @@ const Sider = () => {
               </div>
               <div className="flex justify-center items-center flex-col mt-4">
                 {user && user.avatar ? (
-                  // <Avatar img={user.avatar} className="h-[70px] w-[70px]" /> :
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={user.avatar}

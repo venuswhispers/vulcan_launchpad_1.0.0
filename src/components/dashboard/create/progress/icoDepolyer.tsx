@@ -111,8 +111,8 @@ const LogoUploader = ({
       >
         <div className="text-3xl absolute left-0 top-0 p-1 rounded-full -translate-x-1/2 -translate-y-2 bg-white dark:bg-[#0A0C0F]">
           {stepper < step ? (
-            <Icon
-              icon="fluent:task-list-square-rtl-20-filled"
+            <Icon 
+              icon="heroicons-solid:clipboard-list"
               width={40}
               height={40}
             />

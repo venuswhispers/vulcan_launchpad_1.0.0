@@ -1,16 +1,17 @@
 export interface IUSER {
-  address: string
+  wallet: string
   fullName: string,
   company: string,
   avatar: string,
-  website: string,
-  bio: string,
-  twitter: string, 
-  facebook: string, 
-  instagram: string, 
-  farcaster: string, 
-  lens: string, 
-  linkedin: string
+  ip: string,
+  // website: string,
+  // bio: string,
+  // twitter: string, 
+  // facebook: string, 
+  // instagram: string, 
+  // farcaster: string, 
+  // lens: string, 
+  // linkedin: string
 };
 
 export type TMsg = { 

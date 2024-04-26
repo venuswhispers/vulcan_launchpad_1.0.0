@@ -5,10 +5,9 @@ import { useSignMessage } from "wagmi";
 import { useAuthRequestChallengeEvm } from "@moralisweb3/next";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import axios from 'axios';
-import { SERVER_URL } from "@/constants/config";
 import { useAtom } from "jotai";
 import { isAuthenticatedAtom, userAtom } from "@/store/user";
-import { IUSER, TRegister } from '@/types/user';
+import { IUSER, TRegister } from '@/types';
 import { TMsg } from "@/types/user";
 import jwt from 'jsonwebtoken';
 import useToastr from "@/hooks/useToastr";
@@ -20,7 +19,7 @@ interface IContext {
   signIn: () => Promise<void>,
   signUp: (data: TRegister) => Promise<void>
   isAuthenticated: boolean,
-  user: IUSER|undefined
+  user: IUSER | undefined
 }
 
 export const AuthContext = React.createContext<IContext | undefined>(undefined);
@@ -110,7 +109,6 @@ const AuthProvider = ({
       const signature = await signMessageAsync({ message });
 
       const { data : registerData } = await api.post(`/user/signup`, { message, signature, user });
-      console.log(registerData);
       const { status, data: payload } = registerData;
       
       if (status === "SUCCESS") {
@@ -137,7 +135,7 @@ const AuthProvider = ({
 
   React.useEffect(() => {
     if (isConnected) {
-      signIn ();
+      // signIn ();
     } else {
       setUser (undefined);
       setIsAuthenticated (false);

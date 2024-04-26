@@ -7,15 +7,14 @@ import axios from 'axios';
  * @param {*} progress callback to display progress (progress: number) => {}
  * @returns Promise
  */
-export const uploadToIPFS = (data: string, progress: any) => new Promise(async(resolve, reject) => {
+export const uploadToIPFS = (data: File, progress: any) => new Promise(async(resolve, reject) => {
     const formData = new FormData();
     formData.append('file', data)
-    formData.append('pinataMetadata', JSON.stringify({ name: 'mint.bidify.cloud' }));
+    formData.append('pinataMetadata', JSON.stringify({ name: 'vulcan.launchpad' }));
     formData.append('pinataOptions', JSON.stringify({ cidVersion: 0 }));
     
     const res = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', formData, {
-        //@ts-ignore
-        maxBodyLength: "Infinity",
+        maxBodyLength: Infinity,
         headers: {
             //@ts-ignore
             'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,

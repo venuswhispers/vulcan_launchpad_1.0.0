@@ -8,8 +8,7 @@ import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import useToastr from "@/hooks/useToastr";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useAuth from "@/hooks/useAuth";
-import { useSignMessage } from "wagmi";
-const Description = dynamic(() => import("@/components/dashboard/create/atoms/multiTextInput"), { ssr: false });
+const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
 import { useRouter } from "next/navigation";
 import { IMGBB_API_KEY } from "@/constants/config";
 
@@ -71,20 +70,21 @@ const Create = () => {
   const _submitRegister = async () => {
     try {
       setIsLoading (true);
-      // const _avatar = preview ? await uploadToPinata(preview) : "";
-      const formData = new FormData();
-      //@ts-ignore
-      formData.append("image", avatar);
 
-      const { data: { url: _avatar } } = await fetch(
-        // "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
-        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, 
-        {
-          method: "POST",
-          body: formData
-        }
-      ).then(res => res.json());
-
+      let _avatar = "";
+      if (avatar) {
+        const formData = new FormData();
+        formData.append("image", avatar);
+        const { data: { url: _newAvatar } } = await fetch(
+          `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, 
+          {
+            method: "POST",
+            body: formData
+          }
+        ).then(res => res.json());
+        _avatar = _newAvatar;
+      }
+      
       const data = { fullName, company, website, twitter, facebook, instagram, farcaster, lens, bio, linkedin, avatar: _avatar };
       await signUp (data);
       router.push("/profile");
@@ -141,7 +141,7 @@ const Create = () => {
           {
             preview  ?
             <Image
-              src={ preview ? preview : '/images/default.jpg'}
+              src={preview}
               width={70}
               height={70}
               alt=''
