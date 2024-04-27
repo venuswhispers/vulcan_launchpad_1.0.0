@@ -66,7 +66,7 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
       if (_balance.data?.value && ethAmount >= _balance.data.value) throw "Insufficient ETH balance";
 
       console.log(ethAmount)
-      const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount });
+      const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount, gasLimit: 500000 });
       await _tx.wait();
       showToast(`Successfully Invested ${formatEther(ethAmount)}ETH`, "success");
       refresh (contract); // refresh ICO data

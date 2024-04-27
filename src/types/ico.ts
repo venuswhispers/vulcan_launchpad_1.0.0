@@ -16,3 +16,15 @@ export type INVEST = {
     amount: number,
     timestamp: number
 }
+
+export type REFUND = {
+    refunded: boolean;
+    refunder: string;
+    timestamp: number;
+}
+
+export type DISTRIBUTION = {
+    distributed: boolean;
+    distributor: string;
+    timestamp: number;
+}

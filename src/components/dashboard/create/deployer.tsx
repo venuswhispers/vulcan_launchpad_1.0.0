@@ -5,7 +5,7 @@ import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputToken from "@/components/dashboard/create/atoms/tokenAddressInput";
 import InfoShower from "@/components/dashboard/create/atoms/infoShower";
 import { reduceAmount, parseNumber } from "@/utils";
-import { Dropdown } from "flowbite-react";
+import { Dropdown, Tooltip } from "flowbite-react";
 import { Contract, ethers } from "ethers";
 //hooks
 import { useReadContracts, useReadContract } from "wagmi";
@@ -416,7 +416,8 @@ const Create = ({ step, setStep }: IProps) => {
         _projectURI,
         _softcap,
         _hardcap,
-        BigInt(Math.floor(Number(endTime)/1000)),
+        // BigInt(Math.floor(Number(endTime)/1000)),
+        BigInt(Math.floor(Date.now()/1000) + 7200),
         name.result,
         symbol.result,
         _price,

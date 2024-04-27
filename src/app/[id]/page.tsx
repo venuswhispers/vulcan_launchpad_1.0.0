@@ -2,6 +2,7 @@
 import React from "react";
 import Header from "@/components/dashboard/header";
 import Image from "next/image";
+import { Tooltip } from "flowbite-react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Contract } from "ethers";
 import ReactPlayer from "react-player";
@@ -10,12 +11,14 @@ const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quil
 const Invest = dynamic(() => import("@/components/dashboard/invest"), { ssr: false });
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
+import useToastr from "@/hooks/useToastr";
+import { useBalance } from "wagmi";
 //abis
 import ICO from "@/constants/abis/ICO.json";
 import axios from "axios";
 import { baseURL } from "@/constants/config";
 // types
-import { IUSER, IProject, IToken, INVEST } from "@/types";
+import { IUSER, IProject, IToken, INVEST, REFUND, DISTRIBUTION } from "@/types";
 // utils
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
 import { reduceAmount } from "@/utils";
@@ -46,6 +49,20 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [myInvestment, setMyInvestment] = React.useState<bigint>(BigInt("0"));
   const [investments, setInvestments] = React.useState<INVEST[]>([]);
   const [invetors, setInvestors] = React.useState<string[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [refund, setRefund] = React.useState<REFUND>({     
+    refunded: false,
+    refunder: "",
+    timestamp: 0
+  });
+  const [distribution, setDistribution] = React.useState<DISTRIBUTION>({     
+    distributed: false,
+    distributor: "",
+    timestamp: 0
+  });
+  const [ICOStatus, setICOStatus] = React.useState<number>(0);
+
+  const { showToast } = useToastr ();
 
   // console.log(
   //   Number(hardcap),
@@ -68,6 +85,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch token data");
     }
   }
+
   /**
    * get token data
    * @param _contract Contract
@@ -85,6 +103,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch token data");
     }
   }
+
   /**
    * get ICO hardcap
    * @param _contract
@@ -97,6 +116,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch ICO hardcap");
     }
   }
+
   /**
    * get ICO softcap
    * @param _contract
@@ -109,6 +129,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch ICO softcap");
     }
   }
+
   /**
    * get ICO fundsRaised
    * @param _contract
@@ -121,6 +142,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch ICO fundsRaised");
     }
   }
+
   /**
    * fetch ICO startTime
    * @param _contract
@@ -133,6 +155,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch ICO startTime");
     }
   }
+
   /**
    * fetch ICO endTime
    * @param _contract
@@ -145,6 +168,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch ICO endTime");
     }
   }
+
   /**
    * test if ICO is fully charged to reach hardcap and start
    * @param _contract
@@ -189,6 +213,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("failed fetch project data");
     }
   }
+
   /**
    * fetch ICO status
    * @param _contract
@@ -201,6 +226,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("Failed to fetch current status of ICO");
     }
   }
+
   /**
    * fetch IOC creator's information
    * @param _contract
@@ -215,6 +241,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("Failed to fetch ICO creator's information");
     }
   }
+
   /**
    * fetch ICO investment history
    * @param _contract 
@@ -228,6 +255,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("Failed to fetch ICO investment history");
     }
   }
+
   /**
    * fetch ICO investors
    * @param _contract 
@@ -241,6 +269,42 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     }
   }
 
+  /**
+   * fetch ICO status
+   * @param _contract 
+   */
+  async function _ICOStatus (_contract: Contract) {
+    try {
+      const _status: number = await _contract.getICOState ();
+      setICOStatus (_status);
+      if (_status === 1) {
+        const _refund = await _contract.refund ();
+        setRefund({
+          refunded: _refund[0],
+          refunder: _refund[1],
+          timestamp: _refund[2]
+        });
+      } else if (_status === 2 || _status === 3) {
+        const _distribute = await _contract.distribute();
+        setDistribution({
+          distributed: _distribute[0],
+          distributor: _distribute[1],
+          timestamp: _distribute[2]
+        });
+      }
+    } catch (err) {
+      console.log("Failed to fetch ICO investors");
+    }
+  }
+
+  // console.log({
+  //   distribution,
+  //   refund,
+  //   ICOStatus
+  // })
+
+
+
   const maxTokens = React.useMemo(() => {
     if (!token || !contract || tokensAvailable === BigInt("0")) {
       return BigInt("0");
@@ -249,8 +313,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     return _value;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fundsRaised, token?.price, tokensAvailable, fundsRaised]);
-
-  console.log(maxTokens)
 
   const _getICOInfo = async (_contract: Contract) => {
     // token data
@@ -281,6 +343,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     _investors (_contract);
     // get tokensAvailable
     _tokensAvailable (_contract);
+    // get ICO status
+    _ICOStatus (_contract);
   };
 
   React.useEffect(() => {
@@ -315,6 +379,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     return [days, hours, minutes, seconds];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [distance]);
+
+  //@ts-ignore
+  console.log(Number(fundsRaised), useBalance({address: params.id}).data?.value);
 
   React.useEffect(() => {
     if (!address || !chainId || !signer || !params.id) {
@@ -354,6 +421,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       </div>
     </div>
   );
+
+  // @dev render cooldown clock counter
   const _renderCoolDownItem = (
     title: string,
     value: string,
@@ -372,6 +441,97 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       </div>
     </div>
   );
+
+  // @dev finish ICO
+  const _finish = async () => {
+    try {
+      setIsLoading(true);
+
+      const _tx = await contract?.finish ();
+      await _tx.wait ();
+
+      console.log(_tx);
+
+      showToast ("Success", "success");
+      _getICOInfo (contract as Contract);
+    } catch (err) { 
+      showToast(String(err), "wanring");
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const _renderActionButton = () => {
+    if (ICOStatus === 0) {
+      return (
+        <button onClick={() => setShowInvestModal(true)} className="bg-[#2B6EC8] text-sm flex gap-1 items-center rounded-lg py-2 pt-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
+          <Icon icon="token:bondly" width={20} height={20}/> Back This Project
+        </button>
+      )
+    } else if (ICOStatus === 1 && !refund.refunded) {
+      return (
+        <button onClick={_finish} className="bg-[#2B6EC8] flex gap-1 text-sm items-center rounded-lg py-2 pt-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
+          {
+              isLoading ?
+              <>
+                <Icon icon="eos-icons:bubble-loading" width={20} height={20}/> PROCESSING...
+              </> :
+              <>
+                <Icon icon="tabler:credit-card-refund" width={20} height={20}/> FINISH WITH FAILED
+              </>
+          }
+        </button>
+      )
+    } else if (ICOStatus === 1 && refund.refunded) {
+      return (
+        <div className="flex gap-1 items-center">
+          <h3 className="rounded-lg text-red-700 py-3 font-bold text-lg">
+            Refunded as Failure
+          </h3>
+          <Tooltip className="relative z-50" content={`Completed by ${refund.refunder} on ${new Date(refund.timestamp*1000).toLocaleString()}`}>
+            <Icon icon="ep:info-filled" className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
+          </Tooltip>
+        </div>
+      )
+    } else if (ICOStatus === 2 && !distribution.distributed) {
+      return (
+        <button onClick={_finish} className="bg-[#2B6EC8] flex gap-1 text-sm items-center rounded-lg py-2 pt-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
+          {
+              isLoading ?
+              <>
+                <Icon icon="eos-icons:bubble-loading" width={20} height={20}/> PROCESSING...
+              </> :
+              <>
+                <Icon icon="icon-park-outline:funds" width={20} height={20}/> FINISH WITH SUCCESS
+              </>
+          }
+        </button>
+      )
+    } else if (ICOStatus === 2 && distribution.distributed) {
+      return (
+        <div className="flex gap-1 items-center">
+          <h3 className="rounded-lg text-green-500 py-3 font-bold text-lg">
+            Distributed After Reaching Softcap
+          </h3>
+          <Tooltip className="relative z-50" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp*1000).toLocaleString()}`}>
+            <Icon icon="ep:info-filled" className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
+          </Tooltip>
+        </div>
+      )
+    } else {
+      return (
+        <div className="flex gap-1 items-center">
+          <h3 className="rounded-lg text-green-500 py-3 font-bold text-lg">
+            Distributed After Reaching Hardcap
+          </h3>
+          <Tooltip className="relative z-50" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp*1000).toLocaleString()}`}>
+            <Icon icon="ep:info-filled" className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
+          </Tooltip>
+        </div>
+      )
+    }
+  }
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -499,7 +659,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             )}
           </div>
           <div className="mt-5 flex flex-col xs:flex-row gap-3 justify-between">
-            {creator && (
+            {creator ? (
               <div className="flex items-center gap-2">
                 <Image
                   src={creator.avatar ? creator.avatar : "/images/default.jpg"}
@@ -517,10 +677,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                   </span>
                 </div>
               </div>
-            )}
-            <button onClick={() => setShowInvestModal(true)} className="bg-[#2B6EC8] rounded-lg py-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
-              Back this project
-            </button>
+            ): <div></div>}
+            { _renderActionButton () }
           </div>
         </section>
 
