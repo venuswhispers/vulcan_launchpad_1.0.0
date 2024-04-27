@@ -2,11 +2,12 @@
 import React from "react";
 import Header from "@/components/dashboard/header";
 import Image from "next/image";
-import { Tooltip } from "flowbite-react";
+import { Tooltip, Popover } from "flowbite-react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Contract } from "ethers";
 import ReactPlayer from "react-player";
 import dynamic from "next/dynamic";
+const History = dynamic(() => import("@/components/dashboard/history"), { ssr: false });
 const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quillDisplayer"), { ssr: false });
 const Invest = dynamic(() => import("@/components/dashboard/invest"), { ssr: false });
 //hooks
@@ -22,6 +23,8 @@ import { IUSER, IProject, IToken, INVEST, REFUND, DISTRIBUTION } from "@/types";
 // utils
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
 import { reduceAmount } from "@/utils";
+// constants
+import { CHAIN_DATA } from "@/constants/constants";
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
   const { address, chainId, signer } = useActiveWeb3();
@@ -42,7 +45,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [creator, setCreator] = React.useState<IUSER | undefined>(undefined);
   const [tokensAvailable, setTokensAvailable] = React.useState<bigint>(BigInt("0"));
   const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
-  const [status, setStatus] = React.useState<number>(0);
   const [owner, setOwner] = React.useState<string>("");
   const [showInvestModal, setShowInvestModal] = React.useState<boolean>(false);
   const [ethPrice, setEthPrice] = React.useState<number>(3000);
@@ -50,6 +52,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [investments, setInvestments] = React.useState<INVEST[]>([]);
   const [invetors, setInvestors] = React.useState<string[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [showHistory, setShowHistory] = React.useState<boolean>(false);
   const [refund, setRefund] = React.useState<REFUND>({     
     refunded: false,
     refunder: "",
@@ -215,19 +218,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   }
 
   /**
-   * fetch ICO status
-   * @param _contract
-   */
-  async function _status(_contract: Contract) {
-    try {
-      const __status = await _contract.getICOState();
-      setStatus(Number(__status));
-    } catch (err) {
-      console.log("Failed to fetch current status of ICO");
-    }
-  }
-
-  /**
    * fetch IOC creator's information
    * @param _contract
    */
@@ -331,8 +321,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     _project(_contract);
     // test if tokens are fully charged
     _tokensFullyCharged(_contract);
-    // ICO status
-    _status(_contract);
     // creator data
     _user(_contract);
     // my ICO investment
@@ -533,6 +521,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     }
   }
 
+  
   return (
     <div className="flex w-full flex-col gap-4">
       <Header />
@@ -547,6 +536,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           refresh={_getICOInfo}
           myInvestment={myInvestment}
           maxTokens={maxTokens}
+        /> 
+      }
+      { showHistory && 
+        <History 
+          investments={investments} 
+          setVisible={setShowHistory} 
+          explorer={CHAIN_DATA[String(chainId)].explorer}
         /> 
       }
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">
@@ -635,9 +631,10 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 Current Investors
               </h2>
               <div className="flex gap-1 items-center">
-                <div className="text-[15px] flex gap-2 font-bold text-[#0CAF60] items-center">
-                  <h3 className="text-[#0CAF60] cursor-pointer hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
-                </div>
+                  <h3 onClick={() => setShowHistory(true)} className="text-[#0CAF60] underline cursor-pointer font-bold text-[15px] hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
+                  <Tooltip className="relative z-50" content={`Totally ${invetors.length} investors with ${investments.length} times`}>
+                    <Icon icon="ep:info-filled" width={17} height={17} className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
+                  </Tooltip>
               </div>
             </div>
             {_renderCoolDownItem("Charged Tokens", formatUnits(tokensAvailable, Number(token?.decimal)), true)}

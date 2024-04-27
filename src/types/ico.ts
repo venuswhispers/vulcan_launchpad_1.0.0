@@ -13,7 +13,7 @@ export interface IVulcan {
 export type INVEST = {
     investor: string,
     contributor: string,
-    amount: number,
+    amount: bigint,
     timestamp: number
 }
 

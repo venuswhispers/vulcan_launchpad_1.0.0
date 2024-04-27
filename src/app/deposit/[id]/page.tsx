@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Header from "@/components/dashboard/header";
 import Image from "next/image";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Contract } from "ethers";
@@ -10,9 +9,9 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import ClipboardCopier from "@/components/share/clipCopier";
 import QRcode from "react-qr-code";
 import { useRouter } from "next/navigation";
+import useToastr from "@/hooks/useToastr";
 //abis
 import ICO from "@/constants/abis/ICO.json";
-import axios from "axios";
 import { baseURL } from "@/constants/config";
 // types
 import { IUSER, IProject, IToken } from "@/types";
@@ -20,11 +19,10 @@ import { reduceAmount } from "@/utils";
 import { formatUnits } from "viem";
 // utils
 import { copyToClipboard } from "@/utils";
+import axios from "axios";
 // constants
 import { CHAIN_DATA } from "@/constants/constants";
 
-import useToastr from "@/hooks/useToastr";
-import { __private__ } from "@rainbow-me/rainbowkit";
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
   const { address, chainId, signer } = useActiveWeb3();
