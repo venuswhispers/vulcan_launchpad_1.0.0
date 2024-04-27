@@ -35,6 +35,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [price, setPrice] = React.useState<bigint>(BigInt("0"));
   const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
   const [balance, setBalance] = React.useState<number>(0);
+  
 
   const { showToast } = useToastr();
 
@@ -58,6 +59,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     if (!_token) return;
     setToken(_token);
     setPrice(_token.price);
+    const _hardcap = await contract?.hardcap ();
+    setHardcap (_hardcap);
   };
 
   React.useEffect(() => {
@@ -86,6 +89,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       return Math.ceil(Number(_amount));
     }
   }, [price, hardcap]);
+
+  console.log(_depositAmountToHardcap, price, hardcap)
 
 
   return (

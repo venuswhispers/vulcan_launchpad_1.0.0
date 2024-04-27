@@ -3,10 +3,11 @@ import React from "react";
 import Header from "@/components/dashboard/header";
 import Image from "next/image";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Displayer from "@/components/dashboard/create/atoms/quillDisplayer";
 import { Contract } from "ethers";
-import { formatEther, formatUnits, parseUnits } from "viem";
 import ReactPlayer from "react-player";
+import dynamic from "next/dynamic";
+const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quillDisplayer"), { ssr: false });
+const Invest = dynamic(() => import("@/components/dashboard/invest"), { ssr: false });
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 //abis
@@ -14,7 +15,9 @@ import ICO from "@/constants/abis/ICO.json";
 import axios from "axios";
 import { baseURL } from "@/constants/config";
 // types
-import { IUSER, IProject, IToken } from "@/types";
+import { IUSER, IProject, IToken, INVEST } from "@/types";
+// utils
+import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
 import { reduceAmount } from "@/utils";
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
@@ -34,19 +37,37 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
   const [mediaType, setMediaType] = React.useState<string>("");
   const [creator, setCreator] = React.useState<IUSER | undefined>(undefined);
-  const [balance, setBalance] = React.useState<string>("0");
-  const [tokensFullyCharged, setTokensFullyCharged] =
-    React.useState<boolean>(false);
+  const [tokensAvailable, setTokensAvailable] = React.useState<bigint>(BigInt("0"));
+  const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
   const [status, setStatus] = React.useState<number>(0);
   const [owner, setOwner] = React.useState<string>("");
+  const [showInvestModal, setShowInvestModal] = React.useState<boolean>(false);
+  const [ethPrice, setEthPrice] = React.useState<number>(3000);
+  const [myInvestment, setMyInvestment] = React.useState<bigint>(BigInt("0"));
+  const [investments, setInvestments] = React.useState<INVEST[]>([]);
+  const [invetors, setInvestors] = React.useState<string[]>([]);
 
   // console.log(
   //   Number(hardcap),
   //   Number(token?.price),
-  //   balance,
+  //   tokensAvailable,
   //   tokensFullyCharged
   // );
 
+  /**
+   * get tokens available
+   * @param _contract Contract
+   */
+  async function _tokensAvailable(_contract: Contract) {
+    try {
+      
+      const __tokensAvailable = await _contract.tokensAvailable();
+      setTokensAvailable(__tokensAvailable);
+
+    } catch (err) {
+      console.log("failed fetch token data");
+    }
+  }
   /**
    * get token data
    * @param _contract Contract
@@ -57,8 +78,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       setToken(__token);
       setPrice(__token.price);
       const _decimals = Number(__token.decimal);
-      const _balance = await _contract.tokensAvailable();
-      setBalance(formatUnits(_balance, _decimals));
+      const _tokensAvailable = await _contract.tokensAvailable();
+      setTokensAvailable(_tokensAvailable);
+
     } catch (err) {
       console.log("failed fetch token data");
     }
@@ -129,10 +151,20 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
    */
   async function _tokensFullyCharged(_contract: Contract) {
     try {
-      const __tokensFullyCharged = await _contract.tokensFullyCharged();
+      const __tokensFullyCharged = await _contract.tokensFullyCharged ();
       setTokensFullyCharged(__tokensFullyCharged);
     } catch (err) {
       console.log("failed to test if ICO is fully charged with tokens");
+    }
+  }
+
+  async function _myInvestment(_contract: Contract) {
+    try {
+      const __myInvestment = await _contract.investments (address);
+      console.log(__myInvestment)
+      setMyInvestment (__myInvestment);
+    } catch (er) {
+      console.log("failed to catch my investment of ICO");
     }
   }
   /**
@@ -183,6 +215,42 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       console.log("Failed to fetch ICO creator's information");
     }
   }
+  /**
+   * fetch ICO investment history
+   * @param _contract 
+   */
+  async function _history (_contract: Contract) {
+    try {
+      const __history: any[] = await _contract.getHistory ();
+      const _investments: INVEST[] = __history.map((_item: any[]) => ({ investor: _item[0], contributor: _item[1], amount: Number(_item[2]), timestamp: Number(_item[3]) }))
+      setInvestments (_investments);
+    } catch (err) {
+      console.log("Failed to fetch ICO investment history");
+    }
+  }
+  /**
+   * fetch ICO investors
+   * @param _contract 
+   */
+  async function _investors (_contract: Contract) {
+    try {
+      const ___investors: string[] = await _contract.getInvestors ();
+      setInvestors (___investors);
+    } catch (err) {
+      console.log("Failed to fetch ICO investors");
+    }
+  }
+
+  const maxTokens = React.useMemo(() => {
+    if (!token || !contract || tokensAvailable === BigInt("0")) {
+      return BigInt("0");
+    }
+    const _value = BigInt(tokensAvailable) - parseEther("1") * BigInt(fundsRaised) / BigInt(token.price);
+    return _value;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fundsRaised, token?.price, tokensAvailable, fundsRaised]);
+
+  console.log(maxTokens)
 
   const _getICOInfo = async (_contract: Contract) => {
     // token data
@@ -205,6 +273,14 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     _status(_contract);
     // creator data
     _user(_contract);
+    // my ICO investment
+    _myInvestment(_contract);
+    // ICO history
+    _history (_contract);
+    // get ICO investors
+    _investors (_contract);
+    // get tokensAvailable
+    _tokensAvailable (_contract);
   };
 
   React.useEffect(() => {
@@ -250,6 +326,20 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, chainId, signer, params.id]);
 
+  React.useEffect(() => {
+    fetch("/api/utils/eth-price")
+    .then(async (response) => {
+      const {
+        payload: { amount },
+      } = await response.json();
+      setEthPrice(amount);
+    })
+    .catch((err) => {
+      console.log("failed to fetch eth price");
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const _renderItem = (title: string, value: string) => (
     <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
       <h2 className="text-[15px] font-bold text-[#6F6F6F] dark:text-[#CCCCCC]">
@@ -286,7 +376,19 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header />
-
+      { showInvestModal && token && contract && 
+        <Invest 
+          visible={showInvestModal} 
+          setVisible={setShowInvestModal}
+          token={token}
+          price={price}
+          contract={contract}
+          ethPrice={ethPrice}
+          refresh={_getICOInfo}
+          myInvestment={myInvestment}
+          maxTokens={maxTokens}
+        /> 
+      }
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">
         All Launchpads
       </h1>
@@ -361,14 +463,24 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 <Image src={"/images/eth.svg"} width={20} alt="" height={20} />
                 <div className="text-[15px] flex gap-2 font-bold text-[#0CAF60] items-center">
                   <h2 className="max-w-[100px] truncate">
-                    {formatEther(fundsRaised)}
+                    { formatEther(fundsRaised) }
                   </h2>
                   ETH
                   <Icon icon="bxs:up-arrow" />
                 </div>
               </div>
             </div>
-            {_renderCoolDownItem("Charged Tokens", balance, true)}
+            <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
+              <h2 className="text-[15px] font-bold text-[#6F6F6F] dark:text-[#CCCCCC]">
+                Current Investors
+              </h2>
+              <div className="flex gap-1 items-center">
+                <div className="text-[15px] flex gap-2 font-bold text-[#0CAF60] items-center">
+                  <h3 className="text-[#0CAF60] cursor-pointer hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
+                </div>
+              </div>
+            </div>
+            {_renderCoolDownItem("Charged Tokens", formatUnits(tokensAvailable, Number(token?.decimal)), true)}
             {_renderItem("Token Price", formatEther(price))}
             {_renderCoolDownItem(
               "Start Date",
@@ -406,7 +518,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
             )}
-            <button className="bg-[#2B6EC8] rounded-lg py-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
+            <button onClick={() => setShowInvestModal(true)} className="bg-[#2B6EC8] rounded-lg py-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
               Back this project
             </button>
           </div>
@@ -438,7 +550,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             )}
           </div>
           <div className="mt-5 text-sm text-[#777E90]">
-            <Displayer value={project ? project.description : ""} />
+            <Displayer value={project?.description ?? ""} />
           </div>
           <div className="border border-dashed border-[#ADADAD] rounded-lg p-4 mt-5">
             <div className="flex gap-4">

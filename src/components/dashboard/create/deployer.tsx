@@ -296,7 +296,7 @@ const Create = ({ step, setStep }: IProps) => {
 
   //@dev deposit token amount to reach hardcap
   const _depositAmountToHardcap = React.useMemo(() => {
-    if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(price))) {
+    if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(ethPrice))) {
       return BigInt("0");
     } 
     const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));

@@ -47,18 +47,24 @@ export const reduceAmount = (number: number | string | unknown | bigint, len = 2
     const num = Math.floor(number as number);
     if (num >= 10 ** 7) throw (num / 10 ** 6).toFixed(2) + "M";
     if (num >= 10 ** 4) throw (num / 10 ** 3).toFixed(2) + "K";
-    const decimal = ((number as number) - num).toString();
+    const decimal = ((number as number) - num).toFixed(20);
     let count = 0;
+    let word = true;
     for (let i = 2; i < decimal.length; i++) {
       if (decimal[i] == "0") {
         count++;
       } else {
+        word = false;
         break;
       }
     }
     // count = 0;
-    const _deciaml = Number(decimal).toFixed(count + len);
-    throw num + _deciaml.substring(1, _deciaml.length);
+    if (word || count > 8) {
+      throw num;
+    } else {
+      const _deciaml = Number(decimal).toFixed(count + len);
+      throw num + _deciaml.substring(1, _deciaml.length);
+    }
   } catch (value: any) {
     return value as string;
   }

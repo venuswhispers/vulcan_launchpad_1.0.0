@@ -71,19 +71,20 @@ export default function Home() {
     setMetaData (_icos);
   }
 
-  const onChange = (ids: string[]) => {
-    setICOs (ids);
-  }
-
+  
   React.useEffect(() => {
     if (!contractFactory) return;
     contractFactory.getVulcans().then((_icos: string[]) => {
       setICOs([..._icos].reverse());
       fetchMetaData ([..._icos].reverse());
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contractFactory]);
-
+  
+  const onChange = (ids: string[]) => {
+    setICOs (ids);
+  }
+  
   React.useEffect(() => {
     if (!address || !chainId || !signer || !FACTORY_ADDRESSES[chainId]) {
       return;

@@ -9,3 +9,10 @@ export interface IVulcan {
     tokensFullyCharged: boolean,
     address: string
 }
+
+export type INVEST = {
+    investor: string,
+    contributor: string,
+    amount: number,
+    timestamp: number
+}
