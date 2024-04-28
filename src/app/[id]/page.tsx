@@ -9,7 +9,7 @@ import ReactPlayer from "react-player";
 import dynamic from "next/dynamic";
 const History = dynamic(() => import("@/components/dashboard/history"), { ssr: false });
 const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quillDisplayer"), { ssr: false });
-const Invest = dynamic(() => import("@/components/dashboard/invest"), { ssr: false });
+const Invest = dynamic(() => import("@/components/dashboard/invest/invest"), { ssr: false });
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useToastr from "@/hooks/useToastr";
@@ -239,7 +239,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   async function _history (_contract: Contract) {
     try {
       const __history: any[] = await _contract.getHistory ();
-      const _investments: INVEST[] = __history.map((_item: any[]) => ({ investor: _item[0], contributor: _item[1], amount: Number(_item[2]), timestamp: Number(_item[3]) }))
+      const _investments: INVEST[] = __history.map((_item: any[]) => ({ investor: String(_item[0]), contributor: String(_item[1]), amount: BigInt(_item[2]), timestamp: Number(_item[3]) }))
       setInvestments (_investments);
     } catch (err) {
       console.log("Failed to fetch ICO investment history");
@@ -333,6 +333,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     _tokensAvailable (_contract);
     // get ICO status
     _ICOStatus (_contract);
+
+    const _lister = await _contract.lister();
+    console.log("lister---------------------", _lister);
   };
 
   React.useEffect(() => {

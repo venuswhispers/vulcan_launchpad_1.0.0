@@ -195,6 +195,11 @@ const Create = ({ step, setStep }: IProps) => {
   // @dev pay 100DAI of spam filter fee
   const handlePaySpamFilterFee = async () => {
 
+    if (Number(daiBalance) < 100) {
+      showToast ("Insufficient DAI balance.", "warning");
+      return;
+    }
+
     const _isPaid = await contractFactory?.paidSpamFilterFee(address);
     setPaid (_isPaid);
 
@@ -322,6 +327,8 @@ const Create = ({ step, setStep }: IProps) => {
   // @deploy smart contract with informations
   const handleSubmit = async () => {
 
+    setIco ("");
+
     if (!decimals || !totalSupply || !name || !symbol) return;
 
     const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
@@ -410,6 +417,7 @@ const Create = ({ step, setStep }: IProps) => {
         _decimals,
         _totalSupply,
         tokenAddress,
+        wallet,
         cyptoSIDAO
       })
       const _tx = await contractFactory?.launchNewICO (
@@ -424,6 +432,7 @@ const Create = ({ step, setStep }: IProps) => {
         _decimals,
         _totalSupply,
         tokenAddress,
+        wallet,
         cyptoSIDAO
       );
       await _tx.wait();

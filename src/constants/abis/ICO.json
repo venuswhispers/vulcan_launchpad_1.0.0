@@ -63,6 +63,11 @@
       },
       {
         "internalType": "address",
+        "name": "fundsAddress_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "lister_",
         "type": "address"
       }
@@ -119,43 +124,43 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "ico_",
+        "name": "ico",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "distributor_",
+        "name": "distributor",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "fundsRaised_",
+        "name": "fundsRaised",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "daoFee_",
+        "name": "daoFee",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "listerFee_",
+        "name": "listerFee",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "creatorFee_",
+        "name": "creatorFee",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "timestamp_",
+        "name": "timestamp",
         "type": "uint256"
       }
     ],
@@ -168,19 +173,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "ico_",
+        "name": "ico",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "caller_",
+        "name": "caller",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "timestamp_",
+        "name": "timestamp",
         "type": "uint256"
       }
     ],
@@ -193,31 +198,31 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "ico_",
+        "name": "ico",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "investor_",
+        "name": "investor",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "contributor_",
+        "name": "contributor",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount_",
+        "name": "amount",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "timestamp_",
+        "name": "timestamp",
         "type": "uint256"
       }
     ],
@@ -352,6 +357,19 @@
     "name": "finish",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fundsAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

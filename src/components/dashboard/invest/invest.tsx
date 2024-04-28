@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { TOKEN, IToken } from "@/types";
-import TokenSelector from "./invest/tokenSelector";
+import TokenSelector from "./tokenSelector";
 import { Contract } from "ethers";
 import { format } from "path";
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
@@ -66,7 +66,7 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
       if (_balance.data?.value && ethAmount >= _balance.data.value) throw "Insufficient ETH balance";
 
       console.log(ethAmount)
-      const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount, gasLimit: 500000 });
+      const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount });
       await _tx.wait();
       showToast(`Successfully Invested ${formatEther(ethAmount)}ETH`, "success");
       refresh (contract); // refresh ICO data

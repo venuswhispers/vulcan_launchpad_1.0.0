@@ -21,8 +21,12 @@ export const CHAIN_IDS = {
 
 export const FACTORY_ADDRESSES: Record<string, string> = {
   [CHAIN_IDS.ARBITRUM]: "", //verified
-  [CHAIN_IDS.SEPOLIA]: "0x84899F7A39737E835cB581D043B04852cCd255b0", //verified
+  [CHAIN_IDS.SEPOLIA]: "0x12C2b34c7D028AdfA8A077d547C6D2FDdEdFFF1B", //verified
 };
+// export const FACTORY_ADDRESSES: Record<string, string> = {
+//   [CHAIN_IDS.ARBITRUM]: "", //verified
+//   [CHAIN_IDS.SEPOLIA]: "0x84899F7A39737E835cB581D043B04852cCd255b0", //verified
+// };
 
 export const DAI_ADDRESSES: Record<string, string> = {
   [CHAIN_IDS.ARBITRUM]: "", //verified

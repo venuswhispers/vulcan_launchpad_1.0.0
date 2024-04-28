@@ -1,30 +1,54 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "daiAddress_", "type": "address" },
-      { "internalType": "address", "name": "daoAddress_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "daiAddress_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "daoAddress_",
+        "type": "address"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "target", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      }
     ],
     "name": "AddressEmptyCode",
     "type": "error"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
     ],
     "name": "AddressInsufficientBalance",
     "type": "error"
   },
-  { "inputs": [], "name": "FailedInnerCall", "type": "error" },
+  {
+    "inputs": [],
+    "name": "FailedInnerCall",
+    "type": "error"
+  },
   {
     "inputs": [
-      { "internalType": "address", "name": "token", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
     ],
     "name": "SafeERC20FailedOperation",
     "type": "error"
@@ -35,13 +59,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "creator_",
+        "name": "creator",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "ico_",
+        "name": "ico",
         "type": "address"
       },
       {
@@ -113,6 +137,12 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "fundsAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "lister",
         "type": "address"
       }
@@ -126,24 +156,28 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "user_",
+        "name": "user",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount_",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "SpamFilterFeePaid",
+    "name": "PaidSpamFilterFee",
     "type": "event"
   },
   {
     "inputs": [],
     "name": "daiToken",
     "outputs": [
-      { "internalType": "contract IERC20", "name": "", "type": "address" }
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -151,21 +185,45 @@
   {
     "inputs": [],
     "name": "daoAddress",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "feeAmount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "feeContributions",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -173,43 +231,118 @@
     "inputs": [],
     "name": "getVulcans",
     "outputs": [
-      { "internalType": "address[]", "name": "", "type": "address[]" }
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "projectURI_", "type": "string" },
-      { "internalType": "uint256", "name": "softcap_", "type": "uint256" },
-      { "internalType": "uint256", "name": "hardcap_", "type": "uint256" },
-      { "internalType": "uint256", "name": "endTime_", "type": "uint256" },
-      { "internalType": "string", "name": "name_", "type": "string" },
-      { "internalType": "string", "name": "symbol_", "type": "string" },
-      { "internalType": "uint256", "name": "price_", "type": "uint256" },
-      { "internalType": "uint256", "name": "decimal_", "type": "uint256" },
-      { "internalType": "uint256", "name": "totalSupply_", "type": "uint256" },
-      { "internalType": "address", "name": "tokenAddress_", "type": "address" },
-      { "internalType": "address", "name": "lister_", "type": "address" }
+      {
+        "internalType": "string",
+        "name": "projectURI_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "softcap_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "hardcap_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endTime_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "symbol_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "price_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "decimal_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalSupply_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "fundsAddress_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "lister_",
+        "type": "address"
+      }
     ],
     "name": "launchNewICO",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "user_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "user_",
+        "type": "address"
+      }
     ],
     "name": "paidSpamFilterFee",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -222,7 +355,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "daoAddress_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "daoAddress_",
+        "type": "address"
+      }
     ],
     "name": "setDAOAddress",
     "outputs": [],
@@ -231,7 +368,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "owner_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      }
     ],
     "name": "setOwner",
     "outputs": [],
@@ -239,9 +380,21 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "vulcans",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   }
