@@ -266,7 +266,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   async function _ICOStatus (_contract: Contract) {
     try {
       const _status: number = await _contract.getICOState ();
-      setICOStatus (_status);
+      setICOStatus (Number(_status));
+
       if (_status === 1) {
         const _refund = await _contract.refund ();
         setRefund({
@@ -275,7 +276,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           timestamp: _refund[2]
         });
       } else if (_status === 2 || _status === 3) {
-        const _distribute = await _contract.distribute();
+        const _distribute = await _contract.distribution();
         setDistribution({
           distributed: _distribute[0],
           distributor: _distribute[1],
@@ -283,7 +284,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         });
       }
     } catch (err) {
-      console.log("Failed to fetch ICO investors");
+      console.log(err)
+      console.log("Failed to fetch ICO distribution");
     }
   }
 

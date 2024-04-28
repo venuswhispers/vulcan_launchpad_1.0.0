@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 import { INVEST } from "@/types";
 import { formatEther } from "viem";
+import { reduceAmount } from "@/utils";
 
 interface IProps {
   data: INVEST;
@@ -18,7 +19,7 @@ const Investment = ({ data, explorer }: IProps) => {
       <div className="w-full flex gap-2 text-sm items-center">
         <h1 className="truncate">{new Date(Number(data.timestamp)*1000).toLocaleString()}</h1>
         <a href={`${explorer}/address/${data.investor}`} target="_blank" className="truncate hover:underline cursor-pointer">{data.investor}</a>
-        <h1>{ formatEther(data.amount) }ETH</h1>
+        <h1>{ reduceAmount(formatEther(data.amount)) }ETH</h1>
         <Icon
           icon="iconamoon:arrow-up-2-light"
           onClick={() => setOpen(!open)}
