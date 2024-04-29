@@ -7,11 +7,12 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { Contract } from "ethers";
 import ReactPlayer from "react-player";
 import Distribution from "@/components/dashboard/invest/distribution";
+import Refund from "@/components/dashboard/invest/refund";
+import Invest from "@/components/dashboard/invest/invest";
 // dynamic imports
 import dynamic from "next/dynamic";
 const History = dynamic(() => import("@/components/dashboard/invest/history"), { ssr: false });
 const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quillDisplayer"), { ssr: false });
-const Invest = dynamic(() => import("@/components/dashboard/invest/invest"), { ssr: false });
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useToastr from "@/hooks/useToastr";
@@ -59,10 +60,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [txHash, setTxHash] = React.useState<string>("");
   const [ICOStatus, setICOStatus] = React.useState<number>(0);
+  const [cap, setCap] = React.useState<string>("Hardcap");
   // show Modals
   const [showInvestModal, setShowInvestModal] = React.useState<boolean>(false);
   const [showHistory, setShowHistory] = React.useState<boolean>(false);
   const [showDistribution, setShowDistribution] = React.useState<boolean>(false);
+  const [showRefund, setShowRefund] = React.useState<boolean>(true);
 
   const [refund, setRefund] = React.useState<REFUND>({     
     refunded: false,
@@ -297,7 +300,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
       if (_status === 1) {
         const _refund = await _contract.refund ();
-        const { data } = await api.get(`/ico/invest/distribution?distributor=${_refund[1]}&ico=${params.id}`);
+        const { data } = await api.get(`/ico/invest/refund?refunder=${_refund[1]}&ico=${params.id}`);
+        console.log(data);
         const _hash = data ? data.txHash : "";
         setRefund({
           refunded: _refund[0],
@@ -456,6 +460,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", distribution)
     if (( ICOStatus === 2 || ICOStatus === 3 ) && distribution.distributed) {
       _fetchDistributionData ();
+      setCap(ICOStatus === 2 ? "Softcap": "Hardcap");
       setShowDistribution (true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -498,13 +503,36 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
   // @dev finish ICO
   const _finish = async () => {
+
     try {
       setIsLoading(true);
 
+      const _distribution = await contract?.distribution();
+      const _refund = await contract?.refund ();
+
+      if (_refund[0] || _distribution[0]) {
+        _getICOInfo (contract as Contract);
+        return;
+      }
+     
       const _tx = await contract?.finish ();
       await _tx.wait ();
 
-      console.log(_tx);
+      if (ICOStatus === 2) {
+        await api.post('/ico/invest/distribution', { 
+          ico: params.id,
+          distributor: String(address),
+          txHash: _tx.hash,
+          chainId: Number(chainId)
+        });
+      } else if (ICOStatus === 1) {
+        await api.post('/ico/invest/refund', { 
+          ico: params.id,
+          refunder: String(address),
+          txHash: _tx.hash,
+          chainId: Number(chainId)
+        });
+      };
 
       showToast ("Success", "success");
       _getICOInfo (contract as Contract);
@@ -531,7 +559,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               <>
                 <Icon icon="eos-icons:bubble-loading" width={20} height={20}/> PROCESSING...
               </> :
-              <span className="text-red-800 flex gap-1 items-center">
+              <span className="flex gap-1 items-center">
                 <Icon icon="tabler:credit-card-refund" width={20} height={20}/> REFUND ALL
               </span>
           }
@@ -540,7 +568,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     } else if (ICOStatus === 1 && refund.refunded) {
       return (
         <div className="flex gap-1 items-center">
-          <h3 className="rounded-lg text-red-700 py-3 font-bold text-lg">
+          <h3 onClick={() => setShowRefund(true)} className="rounded-lg cursor-pointer text-red-700 underline hover:opacity-60 py-3 font-bold text-lg">
             Refunded as Failure
           </h3>
           <Tooltip className="relative z-50" content={`Completed by ${refund.refunder} on ${new Date(refund.timestamp*1000).toLocaleString()}`}>
@@ -557,7 +585,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 <Icon icon="eos-icons:bubble-loading" width={20} height={20}/> PROCESSING...
               </> :
               <>
-                <Icon icon="icon-park-outline:funds" width={20} height={20}/> FINISH WITH SUCCESS
+                <Icon icon="icon-park-outline:funds" width={20} height={20}/> DISTRIBUTE FUNDS & TOKENS
               </>
           }
         </button>
@@ -565,7 +593,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     } else if (ICOStatus === 2 && distribution.distributed) {
       return (
         <div className="flex gap-1 items-center">
-          <h3 className="rounded-lg text-green-500 py-3 font-bold text-lg">
+          <h3 onClick={() => setShowDistribution(true)} className="rounded-lg text-green-500 underline hover:opacity-60 cursor-pointer py-3 font-bold text-lg">
             Distributed After Reaching Softcap
           </h3>
           <Tooltip className="relative z-50" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp*1000).toLocaleString()}`}>
@@ -617,6 +645,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       {
         showDistribution && contract &&
         <Distribution 
+          cap={cap}
           id={params.id}
           setVisible={setShowDistribution} 
           explorer={CHAIN_DATA[String(chainId)].explorer}
@@ -626,6 +655,18 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           lister={lister}
           distribution={distribution}
           contributions={contributions}
+        />
+      }
+      {
+        showRefund && contract &&
+        <Refund 
+          id={params.id}
+          setVisible={setShowRefund} 
+          explorer={CHAIN_DATA[String(chainId)].explorer}
+          contract={contract}
+          fundsRaised={fundsRaised}
+          refund={refund}
+          investments={investments}
         />
       }
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">

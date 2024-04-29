@@ -7,3 +7,8 @@ export type CONTRIBUTION = {
     contributor: string,
     amount: bigint
 }
+
+export type INVESTMENT = {
+    investor: string,
+    amount: bigint
+}

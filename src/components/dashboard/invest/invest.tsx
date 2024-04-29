@@ -80,15 +80,18 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myI
 
       const _max: bigint = await _getMaxTokens ();
       if (ethAmount > _max) throw "ICO token balance is insufficient.";
+      const _statusBefore: number = await contract.getICOState ();
+      if (_statusBefore !== 0) throw "You cannot invest now because it is not the investment period.";
+  
 
       console.log(ethAmount)
       const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount });
       await _tx.wait();
       showToast(`Successfully Invested ${formatEther(ethAmount)}ETH`, "success");
 
-      const _status: number = await contract.getICOState ();
-      console.log({_status});
-      if (_status === 3) {
+      const _statusAfter: number = await contract.getICOState ();
+      console.log({_statusAfter});
+      if (_statusAfter === 3) {
         await api.post('/ico/invest/distribution', { 
           ico: id,
           distributor: String(address),

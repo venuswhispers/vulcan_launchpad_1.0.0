@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
-import { TOKEN, IToken, CONTRIBUTION, DISTRIBUTION } from "@/types";
+import { TOKEN, IToken, CONTRIBUTION, DISTRIBUTION, INVESTMENT } from "@/types";
 import TokenSelector from "./tokenSelector";
 import { Contract } from "ethers";
 import { format } from "path";
@@ -16,16 +16,17 @@ import { cyptoSIDAO } from '@/constants/config';
 interface IProps {
   setVisible: React.Dispatch<React.SetStateAction<boolean>>,
   id: string,
+  cap: string,
   explorer: string,
   contract: Contract,
   fundsRaised: bigint,
   wallet: string,
   lister: string,
   contributions: CONTRIBUTION[],
-  distribution: DISTRIBUTION
+  distribution: DISTRIBUTION, 
 }
 
-const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet, lister, contributions, distribution }: IProps) => {
+const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet, lister, contributions, distribution, cap }: IProps) => {
 
   const [creator, setCreator] = React.useState<string>("");
 
@@ -38,7 +39,7 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
             <Icon onClick={() => setVisible(false)} icon="ep:close-bold" width={20} className="relative cursor-pointer hover:opacity-60"/>
           </div>
           <h2 className="flex gap-2 items-center font-bold text-lg"><Icon icon="icon-park-outline:funds" width={30} height={30}/>
-            Distributed After Reaching Hardcap
+            Distributed After Reaching {cap}
             <a href={`${explorer}/tx/${distribution.hash}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60' icon="fluent:open-16-filled" width={22} /></a>
           </h2>
           
@@ -68,7 +69,7 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
                   <span>{ index+1}.</span>
                   <a href={`${explorer}/address/${_item.contributor}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{_item.contributor}</a>
                 </div>
-                <h1>{ reduceAmount(Number(formatEther(_item.amount))*0.1) }ETH</h1>
+                <h1>{ reduceAmount(Number(formatEther(_item.amount))*0.15) }ETH</h1>
               </div>
             ))
           }
