@@ -65,7 +65,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [showInvestModal, setShowInvestModal] = React.useState<boolean>(false);
   const [showHistory, setShowHistory] = React.useState<boolean>(false);
   const [showDistribution, setShowDistribution] = React.useState<boolean>(false);
-  const [showRefund, setShowRefund] = React.useState<boolean>(true);
+  const [showRefund, setShowRefund] = React.useState<boolean>(false);
 
   const [refund, setRefund] = React.useState<REFUND>({     
     refunded: false,
