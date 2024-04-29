@@ -68,7 +68,7 @@ const Filter = ( { data, onChange }: IProps ) => {
           _value = ( _item.status === 1 ) ? true: false;
           break;
           case "Success":
-            _value = ( _item.status === 2 || _item.startTime === 3 ) ? true: false;
+            _value = ( _item.status === 2 || _item.status === 3 ) ? true: false;
           break;
       }
       return _value;

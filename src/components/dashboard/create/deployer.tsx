@@ -425,7 +425,7 @@ const Create = ({ step, setStep }: IProps) => {
         _softcap,
         _hardcap,
         // BigInt(Math.floor(Number(endTime)/1000)),
-        BigInt(Math.floor(Date.now()/1000) + 300),
+        BigInt(Math.floor(Date.now()/1000) + 7200),
         name.result,
         symbol.result,
         _price,
