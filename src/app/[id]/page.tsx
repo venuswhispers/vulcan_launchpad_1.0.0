@@ -462,6 +462,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       _fetchDistributionData ();
       setCap(ICOStatus === 2 ? "Softcap": "Hardcap");
       setShowDistribution (true);
+    } else if (ICOStatus === 1 && refund.refunded) {
+      setShowRefund (true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ICOStatus, distribution])
