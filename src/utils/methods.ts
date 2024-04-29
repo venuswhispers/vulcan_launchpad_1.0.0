@@ -43,8 +43,8 @@ export const copyToClipboard = async (text: string) => {
  */
 export const reduceAmount = (number: number | string | unknown | bigint, len = 2) => {
   try {
-    if (isNaN(number as number)) throw "0";
-    const num = Math.floor(number as number);
+    if (isNaN(Number(number))) throw "0";
+    const num = Math.floor(Number(number));
     if (num >= 10 ** 7) throw (num / 10 ** 6).toFixed(2) + "M";
     if (num >= 10 ** 4) throw (num / 10 ** 3).toFixed(2) + "K";
     const decimal = ((number as number) - num).toFixed(20);

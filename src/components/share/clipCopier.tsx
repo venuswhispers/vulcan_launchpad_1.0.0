@@ -24,8 +24,8 @@ const ClipboardCopier = ({text, size}: {text: string, size?: number}) => {
 
  return (
     isCopied ?  
-    <Icon icon="entypo:check" width={size} className={`cursor-pointer hover:opacity-75`}/> : 
-    <Icon onClick={handleCopy} icon="akar-icons:copy" width={size} className={`cursor-pointer hover:opacity-75`}/>
+    <Icon icon="entypo:check" width={size} className={`relative cursor-pointer hover:opacity-75`}/> : 
+    <Icon onClick={handleCopy} icon="akar-icons:copy" width={size} className={`relative cursor-pointer hover:opacity-75`}/>
   )
 }
 

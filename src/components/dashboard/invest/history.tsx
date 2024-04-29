@@ -2,7 +2,7 @@
 import React from "react";
 import { INVEST } from "@/types";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Investment from "./create/atoms/invest";
+import Investment from "../create/atoms/invest";
 
 interface IProps {
   investments: INVEST[],

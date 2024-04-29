@@ -4,20 +4,26 @@ import Image from "next/image";
 import { TOKEN, IToken } from "@/types";
 import TokenSelector from "./tokenSelector";
 import { Contract } from "ethers";
-import { format } from "path";
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
 import { useBalance } from "wagmi";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { reduceAmount } from "@/utils";
+// components
+import Success from "./investSuccess";
+// hooks
 import useToastr from "@/hooks/useToastr";
+// constants
 import { cyptoSIDAO } from '@/constants/config';
+import useAPI from "@/hooks/useAPI";
+
 
 const tokens: TOKEN[] = [
   { label: "ETH", image: "/images/eth.webp" },
   { label: "USD", image: "/images/usd.png" },
 ]
 
-interface IProps {
+interface IProps { 
+  id: string,
   visible: boolean,
   setVisible: React.Dispatch<React.SetStateAction<boolean>>,
   token: IToken,
@@ -26,10 +32,12 @@ interface IProps {
   ethPrice: number,
   refresh: (contract: Contract) => void,
   myInvestment: bigint,
-  maxTokens: bigint
+  maxTokens: bigint,
+  totalSupply: bigint,
+  tokensAvailable: bigint
 }
 
-const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInvestment, maxTokens }: IProps) => {
+const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myInvestment, maxTokens, totalSupply, tokensAvailable }: IProps) => {
 
   const [fromAmount, setFromAmount] = React.useState<string>("0");
   const [showTokenSelector, setShowTokenSelector] = React.useState<boolean>(false);
@@ -38,9 +46,13 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
   const [balance, setBalance] = React.useState<bigint>(BigInt("0"));
   const [ethAmount, setEthAmount] = React.useState<bigint>(BigInt("0"));
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { showToast } = useToastr ();
+  const [showSuccessModal, setShowSuccessModal] = React.useState<boolean>(false);
+  const [hash, setHash] = React.useState<string>("");
+  // hooks
+  const { showToast } = useToastr (); 
+  const api = useAPI ();
 
-  const { address } = useActiveWeb3 ();
+  const { address, chainId } = useActiveWeb3 ();
   const _balance = useBalance({ address });
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,24 +65,42 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
   }
 
   const onInvest = async () => {
+
     if (isLoading) return;
 
     try {
       setIsLoading (true);
-      if (ethAmount === BigInt("0") || fromAmount === "0" || fromAmount === "") throw "Input Amount to invest.";
+      if (ethAmount === BigInt("0") || fromAmount === "0" || fromAmount === "") throw "Enter the amount you wish to invest.";
       const _tokensFullyCharged = await contract.tokensFullyCharged ();
       if (!_tokensFullyCharged) throw "Tokens are not fully charged yet for this ICO.";
       const _minEthAvailable = await contract.minEthAvailable ();
-      if (ethAmount <= _minEthAvailable) throw "Too small amount to purchase";
+      if (ethAmount <= _minEthAvailable) throw "The amount is too small to purchase.";
       // console.log(ethAmount, _balance.data?.value)
-      if (_balance.data?.value && ethAmount >= _balance.data.value) throw "Insufficient ETH balance";
+      if (_balance.data?.value && ethAmount >= _balance.data.value) throw "Your ETH balance is insufficient.";
+
+      const _max: bigint = await _getMaxTokens ();
+      if (ethAmount > _max) throw "ICO token balance is insufficient.";
 
       console.log(ethAmount)
       const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount });
       await _tx.wait();
       showToast(`Successfully Invested ${formatEther(ethAmount)}ETH`, "success");
+
+      const _status: number = await contract.getICOState ();
+      console.log({_status});
+      if (_status === 3) {
+        await api.post('/ico/invest/distribution', { 
+          ico: id,
+          distributor: String(address),
+          txHash: _tx.hash,
+          chainId: Number(chainId)
+        });
+      }
+
       refresh (contract); // refresh ICO data
-      console.log({ _tx });
+      // show alert modal
+      setHash (_tx.hash);
+      setShowSuccessModal(true);
     } catch (err) {
       if (String(err).includes("User denied transaction signature")) {
         showToast ("User denied transaction signature", "warning");
@@ -131,6 +161,12 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
 
   // @dev set Max tokens
   const _setMaxTokens = async () => {
+    const _status = await contract.getICOState ();
+    if (Number(_status) !== 0) {
+      setFromAmount ("0");
+      setEthAmount (BigInt("0"));
+      return;
+    }
     const _max: bigint = await _getMaxTokens ();
     const _amount = selectedToken.label === "ETH" ? formatEther(_max) : formatEther(_max*BigInt(Math.ceil(ethPrice)));
     setFromAmount (_amount);
@@ -149,17 +185,34 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
     setEthAmount (_max);
   }
 
+  //@dev what percentage of totalSupply
+  const percent = React.useMemo(() => {
+    return reduceAmount(Number(toAmount) * 100 / Number(formatUnits(totalSupply, Number(token.decimal))))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalSupply, toAmount]);
+
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 bg-[#0000003a] backdrop-filter backdrop-blur-[5px] flex justify-center px-2 items-center">
-      
+      { 
+        showSuccessModal && 
+        <Success 
+          setVisible={setShowSuccessModal}
+          hash={hash}
+          percent={percent}
+          tokens={Number(toAmount)}
+          ethAmount={ethAmount}
+        /> 
+      }
       <div className="fixed top-0 left-0 right-0 bottom-0" onClick={() => {}}></div>
-      <div className="rounded-xl p-[1px] pl-[2px] bg-gradient-to-tr from-[#ff6a0096] via-[#6d78b280] to-[#e02d6f86] mt-10 md:mt-0 w-full lg:w-[550px]">
+      <div className="rounded-xl p-[1px] bg-gradient-to-tr from-[#ff6a0096] via-[#6d78b280] to-[#e02d6f86] mt-10 md:mt-0 w-full lg:w-[550px]">
         <div className="w-full h-full dark:bg-[#100E28] bg-white rounded-xl dark:text-white p-4 z-50">
           <div className="flex justify-end">
             <Icon onClick={() => setVisible(false)} icon="ep:close-bold" width={20} className="relative cursor-pointer hover:opacity-60"/>
           </div>
           <h2 className="flex gap-2 items-center"><Icon icon="solar:wallet-money-bold" width={30} height={30}/>BACK THIS PROJECT</h2>
           <div className="dark:bg-black bg-[#F3F7FC] rounded-xl mt-2 px-4 py-6 text-sm">
+
+
             <div className="flex justify-between items-end">
               <h1 className="px-3 pb-1">AMOUNT TO INVEST</h1>
               <button onClick={_setMaxEth} className="pb-[6px] px-3 pt-2 hover:opacity-60 cursor-pointer relative rounded-lg border dark:border-gray-700  text-xs">MAX</button>
@@ -215,13 +268,14 @@ const Invest = ({ setVisible, token, price, contract, ethPrice, refresh, myInves
               <div className="px-1 dark:text-gray-400">
                 Available: { reduceAmount(formatUnits(maxTokens, Number(token.decimal))) } 
               </div>
+              <div className=""><span className="text-[15px] font-bold text-green-600">{ percent }%</span> of totalSupply</div>
             </div>
             <div className="px-3 dark:text-gray-400">
               (*{reduceAmount(formatEther(price))}ETH = { token.decimal >= BigInt("0") && reduceAmount(Number(formatEther(price)) * Number(formatUnits(maxTokens, Number(token.decimal)))) }ETH )
             </div>
           </div>
           <h3 className="px-3 mt-2 text-[15px]">
-            <span className="text-gray-700 dark:text-gray-400 font-semibold text-[15px]">My Investment</span>: { reduceAmount(formatEther(myInvestment)) }ETH (= { price > BigInt("0") && reduceAmount(myInvestment / price) } tokens) 
+            <span className="text-gray-700 dark:text-gray-400 font-semibold text-[15px]">My Investment</span>: { reduceAmount(formatEther(myInvestment)) }ETH (= { Number(price) > 0 && reduceAmount(Number(myInvestment) / Number(price)) } tokens) 
           </h3>
           <button onClick={onInvest} className="flex relative cursor-pointer justify-center items-center gap-2 text-white mt-7 p-4 w-full rounded-xl bg-gradient-to-r from-[#FF6802] to-[#EE0E72] hover:from-[#ff6702de] hover:to-[#ee0e739f]">
             {
