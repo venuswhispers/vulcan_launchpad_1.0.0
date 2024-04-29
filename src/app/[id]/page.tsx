@@ -466,7 +466,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       setShowRefund (true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ICOStatus, distribution])
+  }, [ICOStatus, distribution, refund])
 
   const _renderItem = (title: string, value: string) => (
     <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
