@@ -42,9 +42,9 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, refund,
           </h2>
           {
             investments.map((_item: CONTRIBUTION, index: number) => (
-              <div key={_item.contributor} className="w-full flex gap-2 text-sm justify-between items-center">
+              <div key={'investor' + index} className="w-full flex gap-2 text-sm justify-between items-center">
                 <div className="flex gap-2">
-                  <span>{ index+1}.</span>
+                  <span>{ index+1 }.</span>
                   <a href={`${explorer}/address/${_item.contributor}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{_item.contributor}</a>
                 </div>
                 <h1>{ reduceAmount(formatEther(_item.amount)) }ETH</h1>

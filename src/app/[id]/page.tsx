@@ -527,6 +527,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           txHash: _tx.hash,
           chainId: Number(chainId)
         });
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> success distribute update")
       } else if (ICOStatus === 1) {
         await api.post('/ico/invest/refund', { 
           ico: params.id,
@@ -534,6 +535,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           txHash: _tx.hash,
           chainId: Number(chainId)
         });
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> success refund update")
       };
 
       showToast ("Success", "success");
