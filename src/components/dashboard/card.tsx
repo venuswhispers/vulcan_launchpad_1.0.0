@@ -137,8 +137,9 @@ const Card = ({ id }: IProps) => {
       fetch(__project.logo)
         .then((response) => response.blob())
         .then((blob) => {
-          const type = blob.type.split("/")[0]; // Get the main type (image, video, etc.)
-          setMediaType(type);
+          // const type = blob.type.split("/")[0]; // Get the main type (image, video, etc.)
+          setMediaType (blob.type);
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>", { logo: __project.logo, type: blob.type });
         })
         .catch((error) => console.error("Error fetching media:", error));
     } catch (err) {
@@ -298,14 +299,14 @@ const Card = ({ id }: IProps) => {
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
       <section id="logo" className="relative w-full rounded-2xl">
-        {mediaType === "video" ? (
+        {mediaType.toLowerCase().startsWith("video") ? (
           <video
             className="w-full h-full aspect-[1.5/1] rounded-[19px]"
             controls
           >
             <source src={project?.logo + ""} />
           </video>
-        ) : mediaType === "image" ? (
+        ) : mediaType.toLowerCase().startsWith("image") ? (
           <Image
             src={project?.logo + ""}
             key={project?.logo + ""}

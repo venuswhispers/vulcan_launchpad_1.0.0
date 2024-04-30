@@ -224,8 +224,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       fetch(__project.logo)
         .then((response) => response.blob())
         .then((blob) => {
-          const type = blob.type.split("/")[0]; // Get the main type (image, video, etc.)
-          setMediaType(type);
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>", { logo: __project.logo, type: blob.type });
+          // const type = blob.type.split("/")[0]; // Get the main type (image, video, etc.)
+          setMediaType(blob.type);
         })
         .catch((error) => console.error("Error fetching media:", error));
     } catch (err) {
@@ -812,13 +813,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             Building an open digital economy
           </h1>
           <div className="mt-5 mb-5 aspect-[2/1] flex justify-center items-center">
-            {mediaType === "video" ? (
+            {mediaType.toLowerCase().startsWith("video") ? (
               <video
                 className="w-full rounded-xl"
                 src={project ? project.logo : "/images/spade.png"}
                 controls
               />
-            ) : mediaType === "image" ? (
+            ) : mediaType.toLowerCase().startsWith("image") ? (
               <Image
                 src={project ? project.logo : "/images/spade.png"}
                 // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
