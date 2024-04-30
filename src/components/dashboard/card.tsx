@@ -362,10 +362,13 @@ const Card = ({ id }: IProps) => {
           </div>
         )}
       </section>
-
-      <h2 className="mt-2 font-bold text-black dark:text-white text-[15px]">
-        {project?.title}
-      </h2>
+      {
+        project?.title ?
+        <h2 className="mt-2 font-bold text-black dark:text-white text-[15px]">
+          {project.title}
+        </h2> :
+        <h2 className="mt-2 font-bold text-black dark:text-white min-h-[18.5px] animate-pulse dark:bg-[#00000088] rounded-full w-2/3 bg-gray-300"></h2>
+      }
       <h5 className="text-[] dark:text-[#868686] text-xs mt-1">Fair Launch</h5>
 
       <section id="title" className="gap-2 mt-4 flex items-center">
