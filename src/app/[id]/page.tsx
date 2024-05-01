@@ -22,7 +22,7 @@ import ICO from "@/constants/abis/ICO.json";
 import axios from "axios";
 import { baseURL } from "@/constants/config";
 // types
-import { IUSER, IProject, IToken, INVEST, REFUND, DISTRIBUTION, CONTRIBUTION } from "@/types";
+import { IUSER, IProject, IToken, HISTORY, REFUND, DISTRIBUTION, CONTRIBUTION, INVESTMENT } from "@/types";
 // utils
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
 import { reduceAmount } from "@/utils";
@@ -53,7 +53,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [owner, setOwner] = React.useState<string>("");
   const [ethPrice, setEthPrice] = React.useState<number>(3000);
   const [myInvestment, setMyInvestment] = React.useState<bigint>(BigInt("0"));
-  const [investments, setInvestments] = React.useState<INVEST[]>([]);
+  const [investHistory, setInvestHistory] = React.useState<HISTORY[]>([]);
+  const [investments, setInvestments] = React.useState<INVESTMENT[]>([]);
   const [invetors, setInvestors] = React.useState<string[]>([]);
   const [lister, setLister] = React.useState<string>("");
   const [contributions, setContributions] = React.useState<CONTRIBUTION[]>([]);
@@ -203,7 +204,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
   async function _myInvestment(_contract: Contract) {
     try {
-      const __myInvestment = await _contract.investments (address);
+      const __myInvestment = await _contract.investHistory (address);
       console.log(__myInvestment)
       setMyInvestment (__myInvestment);
     } catch (er) {
@@ -256,8 +257,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   async function _history (_contract: Contract) {
     try {
       const __history: any[] = await _contract.getHistory ();
-      const _investments: INVEST[] = __history.map((_item: any[]) => ({ investor: String(_item[0]), contributor: String(_item[1]), amount: BigInt(_item[2]), timestamp: Number(_item[3]) }))
-      setInvestments (_investments);
+      const _investHistory: HISTORY[] = __history.map((_item: any[]) => ({ investor: String(_item[0]), contributor: String(_item[1]), amount: BigInt(_item[2]), timestamp: Number(_item[3]) }))
+      setInvestHistory (_investHistory);
     } catch (err) {
       console.log("Failed to fetch ICO investment history");
     }
@@ -444,8 +445,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     try {
       if (!contract) throw "no contract";
       const _contributors = await contract.getContributors ();
-      const contributions = await Promise.all(_contributors.map(async(_contributor: string) => {
-        const _amount: CONTRIBUTION[] = await contract.contributions(_contributor);
+      const contributions: CONTRIBUTION[] = await Promise.all(_contributors.map(async(_contributor: string) => {
+        const _amount: bigint = await contract.contributions(_contributor);
         return {
           contributor: _contributor,
           amount: _amount
@@ -642,7 +643,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       }
       { showHistory && 
         <History 
-          investments={investments} 
+          investments={investHistory} 
           setVisible={setShowHistory} 
           explorer={CHAIN_DATA[String(chainId)].explorer}
         /> 
@@ -671,7 +672,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           contract={contract}
           fundsRaised={fundsRaised}
           refund={refund}
-          investments={investments}
+          investors={invetors}
+          investments={investHistory}
         />
       }
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">
@@ -761,7 +763,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               </h2>
               <div className="flex gap-1 items-center">
                   <h3 onClick={() => setShowHistory(true)} className="text-[#0CAF60] underline cursor-pointer font-bold text-[15px] hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
-                  <Tooltip className="relative z-50" content={`Totally ${invetors.length} investors with ${investments.length} times`}>
+                  <Tooltip className="relative z-50" content={`Totally ${invetors.length} investors with ${investHistory.length} times`}>
                     <Icon icon="ep:info-filled" width={17} height={17} className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
                   </Tooltip>
               </div>

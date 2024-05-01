@@ -1,11 +1,11 @@
 "use client"
 import React from "react";
-import { INVEST } from "@/types";
+import { HISTORY } from "@/types";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Investment from "../create/atoms/invest";
 
 interface IProps {
-  investments: INVEST[],
+  investments: HISTORY[],
   setVisible: React.Dispatch<React.SetStateAction<boolean>>,
   explorer: string
 }
@@ -20,7 +20,7 @@ const History = ({ investments, setVisible, explorer }: IProps) => {
             <h2 className="text-lg flex gap-1 items-center pt-3"><Icon icon="system-uicons:files-history" width={25} height={25} /> Investment Details ({investments.length})</h2>
             <Icon onClick={() => setVisible(false)} icon="ep:close-bold" width={20} className="relative cursor-pointer hover:opacity-60"/>
           </div>
-          { investments.map((_investment: INVEST, index: number) => <Investment key={index} data={_investment} explorer={explorer}/>) }
+          { investments.map((_investment: HISTORY, index: number) => <Investment key={index} data={_investment} explorer={explorer}/>) }
         </div>
       </div>
     </div>

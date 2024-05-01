@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
-import { TOKEN, IToken, CONTRIBUTION, DISTRIBUTION, REFUND, INVEST } from "@/types";
+import { TOKEN, IToken, CONTRIBUTION, DISTRIBUTION, REFUND, INVESTMENT, HISTORY } from "@/types";
 import TokenSelector from "./tokenSelector";
 import { Contract } from "ethers";
 import { format } from "path";
@@ -20,10 +20,11 @@ interface IProps {
   contract: Contract,
   fundsRaised: bigint,
   refund: REFUND,
-  investments: INVEST[]
+  investments: HISTORY[]
+  investors: string[]
 }
 
-const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, refund, investments }: IProps) => {
+const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, refund, investments, investors }: IProps) => {
 
   const [creator, setCreator] = React.useState<string>("");
 
@@ -41,13 +42,13 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, refund,
             <a href={`${explorer}/tx/${refund.hash}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60' icon="fluent:open-16-filled" width={22} /></a>
           </h2>
           {
-            investments.map((_item: CONTRIBUTION, index: number) => (
+            investors.map((_investor: string, index: number) => (
               <div key={'investor' + index} className="w-full flex gap-2 text-sm justify-between items-center">
                 <div className="flex gap-2">
                   <span>{ index+1 }.</span>
-                  <a href={`${explorer}/address/${_item.contributor}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{_item.contributor}</a>
+                  <a href={`${explorer}/address/${_investor}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{_investor}</a>
                 </div>
-                <h1>{ reduceAmount(formatEther(_item.amount)) }ETH</h1>
+                <h1>{ reduceAmount(formatEther(investments.reduce((sum: bigint, _invest: HISTORY) => _invest.investor.toLowerCase() === _investor.toLowerCase() ? sum + _invest.amount : sum, BigInt("0")))) }ETH</h1>
               </div>
             ))
           }

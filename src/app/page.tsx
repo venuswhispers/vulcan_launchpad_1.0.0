@@ -21,8 +21,8 @@ import { useAtom } from "jotai";
 
 export default function Home() {
   
-  const [contractFactory, setContractFactory] = React.useState<Contract | undefined> (undefined);
   const { address, chainId, signer } = useActiveWeb3();
+  const [contractFactory, setContractFactory] = React.useState<Contract | undefined> (undefined);
   const [icos, setICOs] = React.useState<string[]>([]);
   const [metaData, setMetaData] = React.useState<IVulcan[]>([]);
   const [ethPrice, setEthPrice] = useAtom<number>(ethPriceAtom);

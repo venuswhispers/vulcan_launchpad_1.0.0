@@ -6,7 +6,7 @@ import { formatEther } from "viem";
 import { reduceAmount } from "@/utils";
 
 interface IProps {
-  data: INVEST;
+  data: HISTORY;
   explorer: string
 }
 

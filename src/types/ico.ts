@@ -10,11 +10,16 @@ export interface IVulcan {
     address: string
 }
 
-export type INVEST = {
+export type HISTORY = {
     investor: string,
     contributor: string,
     amount: bigint,
     timestamp: number
+}
+
+export type INVESTMENT = {
+    investor: string,
+    amount: bigint
 }
 
 export type REFUND = {
