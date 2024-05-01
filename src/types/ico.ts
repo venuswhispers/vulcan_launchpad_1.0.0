@@ -17,11 +17,6 @@ export type HISTORY = {
     timestamp: number
 }
 
-export type INVESTMENT = {
-    investor: string,
-    amount: bigint
-}
-
 export type REFUND = {
     refunded: boolean;
     refunder: string;
