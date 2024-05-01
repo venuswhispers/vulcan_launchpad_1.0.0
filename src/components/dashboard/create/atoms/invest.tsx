@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
-import { INVEST } from "@/types";
+import { HISTORY } from "@/types";
 import { formatEther } from "viem";
 import { reduceAmount } from "@/utils";
 
