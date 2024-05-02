@@ -5,6 +5,8 @@ import Provider from '@/providers';
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import 'react-quill/dist/quill.snow.css';
+import "react-time-picker-typescript/dist/style.css";
+
 
 const inter = Inter({ subsets: ["latin"] });
 

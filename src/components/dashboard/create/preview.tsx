@@ -202,8 +202,8 @@ const Preview = () => {
           <h2 className="text-[15px] text-[#6F6F6F] dark:text-[#66666E]">
             Ending Time
           </h2>
-          <h2 className="text-[15px] truncate max-w-[150px] text-nowrap font-bold dark:text-[#B4B4B7] text-[#101010]">
-            {new Date(Number(endTime)).toLocaleDateString()}
+          <h2 className="text-[15px] max-w-[200px] truncate text-nowrap font-bold dark:text-[#B4B4B7] text-[#101010]">
+            {new Date(Number(endTime)).toLocaleString()}
           </h2>
         </div>
       ) : (

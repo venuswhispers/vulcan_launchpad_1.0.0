@@ -4,9 +4,11 @@ import dynamic from "next/dynamic";
 // components
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputCap from "@/components/dashboard/create/atoms/capInput";
-import Datepicker from "@/components/dashboard/create/atoms/datePicker";
+
 import Uploader from "@/components/dashboard/create/atoms/dragFileUploader";
 const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
+const Datepicker = dynamic(() => import("@/components/dashboard/create/atoms/datePicker"), { ssr: false });
+const TimePicker = dynamic(() => import("@/components/dashboard/create/atoms/timePicker"), { ssr: false });
 // hooks
 import useToastr from "@/hooks/useToastr";
 import useAuth from "@/hooks/useAuth";
@@ -33,7 +35,7 @@ import {
 
 interface IProps {
   step: number,
-  setStep: React.Dispatch<React.SetStateAction<number>>
+  setStep: React.Dispatch<React.SetStateAction<number>>,
 }
 
 const Create = ({ step, setStep }: IProps) => {
@@ -47,7 +49,7 @@ const Create = ({ step, setStep }: IProps) => {
   const [hardCap, setHardCap] = useAtom(hardCapAtom);
   const [softCap, setSoftCap] = useAtom(softCapAtom);
   const [youtubeLink, setYoutubeLink] = useAtom(youtubeLinkAtom);
-  const [endTime, setEndTime] = useAtom(endTimeAtom);
+  const [endTime, setEndTime] = useAtom<string>(endTimeAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const [checked, setChecked] = useAtom(checkedAtom);
   const [twitter, setTwitter] = useAtom<string>(twitterAtom);
@@ -57,6 +59,8 @@ const Create = ({ step, setStep }: IProps) => {
   const [farcaster, setFarcaster] = useAtom<string>(farcasterAtom);
   const [lens, setLens] = useAtom<string>(lensAtom);
   const [preview] = useAtom<Preview|undefined>(previewAtom);
+
+  const [time, setTime] = React.useState<string>("00:00");
 
   // @when user type softcap
   const handleSoftcapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,6 +129,18 @@ const Create = ({ step, setStep }: IProps) => {
       setStep (1);
     }
   }
+
+  React.useEffect(() => {
+    const _date = new Date(Number(endTime));
+    console.log(_date)
+    const [_hours, _minutes] = time.split(":");
+    const hours = Number(_hours);
+    const minutes = Number(_minutes);
+    _date.setHours(hours);
+    _date.setMinutes(minutes);
+    setEndTime(String(_date.getTime()))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time])
   
   return (
     <div className="w-full">
@@ -178,11 +194,21 @@ const Create = ({ step, setStep }: IProps) => {
           message="input youtube video link"
         />
         <Datepicker
-          title="End Time"
-          info="*select endTime"
-          placeholder="*When do you want your project fundraising to conclude?"
+          title="End Date"
+          info="*What date do you want your project fundraising to conclude?"
+          placeholder="*What date do you want your project fundraising to conclude?"
           value={endTime}
+          time={time}
           onChange={(value: string) => setEndTime (value)}
+          isInvalid={isInvalid}
+          message="select end date"
+        />
+        <TimePicker
+          title="End Time"
+          info="*What time do you want your project fundraising to conclude?"
+          placeholder="*What time do you want your project fundraising to conclude?"
+          value={time}
+          onChange={(value: string) => setTime (value)}
           isInvalid={isInvalid}
           message="select end time"
         />

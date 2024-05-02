@@ -16,6 +16,7 @@ interface IProps {
   message: string;
   isInvalid: boolean;
   info: string;
+  time: string
 }
 
 const Input = ({
@@ -27,6 +28,7 @@ const Input = ({
   isInvalid,
   message,
   info,
+  time
 }: IProps) => {
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
   const [show, setShow] = React.useState<boolean>(false);
@@ -34,6 +36,8 @@ const Input = ({
 
   const setEndTimeAfter = (month: number) => {
     const currentDate = new Date();
+    currentDate.setHours(0);
+    currentDate.setMinutes(0);
     currentDate.setMonth(currentDate.getMonth() + month);
     setSelectedDate (currentDate);
   };
@@ -46,8 +50,13 @@ const Input = ({
     if (!selectedDate) {
       showToast("Please select end Time!", "warning");
     } else {
-      const _date = selectedDate.getTime ();
-      onChange(String(_date));
+      const _date = selectedDate;
+      const [_hours, _minutes] = time.split(":");
+      const hours = Number(_hours);
+      const minutes = Number(_minutes);
+      _date.setHours(hours);
+      _date.setMinutes(minutes);
+      onChange(String(_date.getTime ()));
       setShow (false);
     }
   }
