@@ -101,7 +101,7 @@ const Preview = () => {
         )}
       </div>
       <div className="w-full mb-2">
-        <h3 className="font-bold opacity-50">Introduction Video</h3>
+        <h3 className="font-bold opacity-50 pb-2">Introduction Video</h3>
         {ReactPlayer.canPlay(youtubeLink) ? (
           <div className="mt-2 mb-5 w-full aspect-video flex justify-center items-center">
             <ReactPlayer

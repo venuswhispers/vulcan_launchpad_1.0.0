@@ -110,7 +110,7 @@ const ProgressModal = ({ confirm, stepper, percent, hash }: IProps) => {
           </div>
 
           {
-            stepper === 4 &&
+            stepper === 4 ?
             <div className="flex justify-between px-4 mt-5 relative">
               <a onClick={() => router.push("/")} className="text-red-600 flex gap-1 items-center cursor-pointer hover:underline">
                 <Icon icon="icon-park-solid:back"/> Return To Dashboard
@@ -118,7 +118,8 @@ const ProgressModal = ({ confirm, stepper, percent, hash }: IProps) => {
               <a onClick={confirm} className="text-green-500 flex gap-1 items-center cursor-pointer hover:underline">
                 Proceed To Deposit <Icon icon="icon-park-solid:back" hFlip/>
               </a>
-            </div>
+            </div> :
+            <div className="py-3"></div>
           }
         </div>
       </div>

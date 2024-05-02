@@ -201,16 +201,6 @@ body {
   border-radius: 10px;
 }
 
-/* .react-ios-time-picker-popup{
-  position: static!important;
-} */
-
-/* .react-ios-time-picker{
-  position: static!important;
-  display: block!important;
-  animation: none!important;
-} */
-
 
 .ribbon {
   --f: 10px; /* control the folded part*/

@@ -12,7 +12,6 @@
     "@iconify/react": "^4.1.1",
     "@moralisweb3/next": "^2.25.2",
     "@rainbow-me/rainbowkit": "^2.0.5",
-    "analogue-time-picker": "^1.0.2",
     "ethers": "^5.7.2",
     "flowbite-react": "^0.7.8",
     "install": "^0.13.0",
