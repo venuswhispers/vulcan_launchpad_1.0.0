@@ -94,12 +94,12 @@ const ICODeployer = ({
           border && "!border-blue-200 border-l min-h-[100px]"
         }`}
       >
-        <div className="text-3xl absolute left-0 top-0 p-1 rounded-full -translate-x-1/2 -translate-y-2 bg-white dark:bg-[#0A0C0F]">
+        <div className="text-3xl flex items-center justify-center absolute left-0 top-0 p-1 rounded-full -translate-x-1/2 -translate-y-2 bg-white dark:bg-[#0A0C0F]">
           {stepper < step ? (
             <Icon
               icon="heroicons-solid:clipboard-list"
-              width={40}
-              height={40}
+              width={33}
+              height={33}
             />
           ) : stepper === step ? (
             <Circle percent={percent} sqSize={33} strokeWidth={4} />

@@ -285,23 +285,23 @@ const Card = ({ id }: IProps) => {
    */
   const _renderStatus = React.useMemo(() => {
     if (status === 0 && !tokensFullyCharged) {
-      return "Await Deposit";
+      return ["Await Deposit", "#04B1F5"];
     } else if (status === 0 && tokensFullyCharged) {
-      return "Live";
+      return ["Live", "#0CAF60"];
     } else if (status === 1) {
-      return "Failed";
+      return ["Failed", "#9c1f1f"];
     } else {
-      return "Success";
+      return ["Success", "#0CAF60"];
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, tokensFullyCharged]);
 
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
-      <section id="logo" className="relative w-full rounded-2xl">
+      <section id="logo" className="relative w-full rounded-2xl aspect-square">
         {mediaType.toLowerCase().startsWith("video") ? (
           <video
-            className="w-full h-full aspect-[1.5/1] rounded-[19px]"
+            className="w-full h-full object-contain dark:bg-black bg-gray-100  rounded-2xl"
             controls
           >
             <source src={project?.logo + ""} />
@@ -314,7 +314,7 @@ const Card = ({ id }: IProps) => {
             alt=""
             height={0}
             sizes="100vw"
-            className="w-full h-full aspect-[1.5/1] rounded-[19px]"
+            className="w-full h-full object-contain dark:bg-black bg-gray-100  rounded-2xl"
           />
         ) : (
           <div className="dark:bg-gray-700 bg-gray-400 w-full h-full aspect-[1.5/1] rounded-[19px] animate-pulse"></div>
@@ -351,8 +351,8 @@ const Card = ({ id }: IProps) => {
 
       <section id="live" className="mt-5 flex gap-2">
         <div className="text-xs flex gap-3 items-center bg-[#D2FAE5] dark:bg-black dark:text-white px-3 py-[6px] rounded-full">
-          <span>{_renderStatus}</span>
-          <div className="w-2 h-2 bg-[#0CAF60] rounded-full"></div>
+          <span>{_renderStatus[0]}</span>
+          <div className={`w-2 h-2 rounded-full`} style={{ backgroundColor: _renderStatus[1] }}></div>
         </div>
         {address === owner && status === 0 && !tokensFullyCharged && (
           <div

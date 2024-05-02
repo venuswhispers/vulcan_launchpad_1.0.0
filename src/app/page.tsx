@@ -116,7 +116,7 @@ export default function Home() {
       <Header/>
       <Filter data={metaData} onChange={onChange}/>
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">All Launchpads</h1>
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 c1200:grid-cols-3 c1450:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w1240:grid-cols-3 c1500:grid-cols-4">
         { icos.map((_key: string) => <Card key={_key} id={_key}/>) }
       </div>
     </div>

@@ -11,6 +11,7 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { reduceAmount } from "@/utils";
 import useToastr from "@/hooks/useToastr";
 import { cyptoSIDAO } from '@/constants/config';
+import { useRouter } from "next/navigation";
 
 
 interface IProps {
@@ -29,6 +30,7 @@ interface IProps {
 const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet, lister, contributions, distribution, cap }: IProps) => {
 
   const [creator, setCreator] = React.useState<string>("");
+  const router = useRouter ();
 
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 bg-[#0000003a] backdrop-filter backdrop-blur-[5px] flex justify-center px-2 items-center">
@@ -73,6 +75,10 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
               </div>
             ))
           }
+          <a onClick={() => router.push("/")} className="underline cursor-pointer mt-5 hover:text-blue-600 text-blue-400 flex gap-1 items-center">
+            <Icon icon="icon-park-solid:back" />
+            Return To Dashboard
+          </a>
         </div>
       </div>
     </div>

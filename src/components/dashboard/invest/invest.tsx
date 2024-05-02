@@ -15,6 +15,9 @@ import useToastr from "@/hooks/useToastr";
 // constants
 import { cyptoSIDAO } from '@/constants/config';
 import useAPI from "@/hooks/useAPI";
+// atoms
+import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
+import { useAtom } from "jotai";
 
 
 const tokens: TOKEN[] = [
@@ -26,28 +29,31 @@ interface IProps {
   id: string,
   visible: boolean,
   setVisible: React.Dispatch<React.SetStateAction<boolean>>,
+  setShowSuccessModal: React.Dispatch<React.SetStateAction<boolean>>,
   token: IToken,
   price: bigint,
   contract: Contract,
   ethPrice: number,
   refresh: (contract: Contract) => void,
-  myInvestment: bigint,
+  myContribution: bigint,
   maxTokens: bigint,
   totalSupply: bigint,
   tokensAvailable: bigint
 }
 
-const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myInvestment, maxTokens, totalSupply, tokensAvailable }: IProps) => {
+const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myContribution, maxTokens, totalSupply, setShowSuccessModal }: IProps) => {
 
-  const [fromAmount, setFromAmount] = React.useState<string>("0");
+  // atoms
+  const [fromAmount, setFromAmount] = useAtom<string>(fromAmountAtom);
+  const [toAmount, setToAmount] = useAtom<bigint>(toAmountAtom);
+  const [ethAmount, setEthAmount] = useAtom<bigint>(ethAmountAtom);
+  const [hash, setHash] = useAtom<string>(hashAtom);
+  // states
   const [showTokenSelector, setShowTokenSelector] = React.useState<boolean>(false);
   const [selectedToken, setSelectedToken] = React.useState<TOKEN>(tokens[0]);
-  const [toAmount, setToAmount] = React.useState<bigint>(BigInt("0"));
   const [balance, setBalance] = React.useState<bigint>(BigInt("0"));
-  const [ethAmount, setEthAmount] = React.useState<bigint>(BigInt("0"));
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [showSuccessModal, setShowSuccessModal] = React.useState<boolean>(false);
-  const [hash, setHash] = React.useState<string>("");
+  // const [showSuccessModal, setShowSuccessModal] = React.useState<boolean>(false);
   // hooks
   const { showToast } = useToastr (); 
   const api = useAPI ();
@@ -100,10 +106,13 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myI
         });
       }
 
-      refresh (contract); // refresh ICO data
-      // show alert modal
       setHash (_tx.hash);
+      // close invest modal
+      setVisible (false);
+      // show alert modal
       setShowSuccessModal(true);
+      // refresh ICO data
+      refresh (contract); 
     } catch (err) {
       if (String(err).includes("User denied transaction signature")) {
         showToast ("User denied transaction signature", "warning");
@@ -196,16 +205,6 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myI
 
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 bg-[#0000003a] backdrop-filter backdrop-blur-[5px] flex justify-center px-2 items-center">
-      { 
-        showSuccessModal && 
-        <Success 
-          setVisible={setShowSuccessModal}
-          hash={hash}
-          percent={percent}
-          tokens={Number(toAmount)}
-          ethAmount={ethAmount}
-        /> 
-      }
       <div className="fixed top-0 left-0 right-0 bottom-0" onClick={() => {}}></div>
       <div className="rounded-xl p-[1px] bg-gradient-to-tr from-[#ff6a0096] via-[#6d78b280] to-[#e02d6f86] mt-10 md:mt-0 w-full lg:w-[550px]">
         <div className="w-full h-full dark:bg-[#100E28] bg-white rounded-xl dark:text-white p-4 z-50">
@@ -217,7 +216,7 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myI
 
 
             <div className="flex justify-between items-end">
-              <h1 className="px-3 pb-1">AMOUNT TO INVEST</h1>
+              <h1 className="px-3 pb-1">AMOUNT TO CONTRIBUTE</h1>
               <button onClick={_setMaxEth} className="pb-[6px] px-3 pt-2 hover:opacity-60 cursor-pointer relative rounded-lg border dark:border-gray-700  text-xs">MAX</button>
             </div>
             <div className="relative bg-white dark:bg-[#100e2891] hover:bg-[#4b3b3b05] hover:dark:bg-black cursor-pointer border border-[#F3F7FC] dark:border-[#222832] mt-1 w-full py-3 px-4 rounded-xl flex items-center justify-between">
@@ -278,16 +277,16 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myI
             </div>
           </div>
           <h3 className="px-3 mt-2 text-[15px]">
-            <span className="text-gray-700 dark:text-gray-400 font-semibold text-[15px]">My Investment</span>: { reduceAmount(formatEther(myInvestment)) }ETH (= { Number(price) > 0 && reduceAmount(Number(myInvestment) / Number(price)) } tokens) 
+            <span className="text-gray-700 dark:text-gray-400 font-semibold text-[15px]">My Contribution</span>: { reduceAmount(formatEther(myContribution)) }ETH (= { Number(price) > 0 && reduceAmount(Number(myContribution) / Number(price)) } tokens) 
           </h3>
-          <button onClick={onInvest} className="flex relative cursor-pointer justify-center items-center gap-2 text-white mt-7 p-4 w-full rounded-xl bg-gradient-to-r from-[#FF6802] to-[#EE0E72] hover:from-[#ff6702de] hover:to-[#ee0e739f]">
+          <button onClick={onInvest} className="flex relative cursor-pointer justify-center items-center gap-2 text-white mt-7 p-4 w-full rounded-xl bg-[#2B6EC8] hover:bg-[#394b85]">
             {
               isLoading ?
               <>
                 <Icon icon="eos-icons:bubble-loading" width={30} height={30}/> PROCESSING...
               </> :
               <>
-                <Icon icon="icons8:buy" width={30} height={30}/> INVEST
+                <Icon icon="icons8:buy" width={30} height={30}/> CONTRIBUTE
               </>
             }
           </button>

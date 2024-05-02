@@ -12,7 +12,7 @@ const Evangilists = () => {
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
 
   const _renderItem = () => (
-    <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-1 w1080:grid-cols-[40%_60%] gap-3 mt-5 border-t border-[#EFEFEF] pt-5 dark:border-[#efefef1f]">
+    <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-1 w1200:grid-cols-[40%_60%] gap-3 mt-5 border-t border-[#EFEFEF] pt-5 dark:border-[#efefef1f]">
       <div className="flex gap-2 items-center">
         <div className="w-[150px] aspect-ratio">
           <Image
@@ -74,8 +74,8 @@ const Evangilists = () => {
       </div>
       
       {/* <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-xl">
-        <section className="mt-5 gap-7 w1080:gap-3 items-center grid grid-cols-1 w1080:grid-cols-3">
-          <div className="flex gap-2 items-center justify-center w1080:justify-start">
+        <section className="mt-5 gap-7 w1200:gap-3 items-center grid grid-cols-1 w1200:grid-cols-3">
+          <div className="flex gap-2 items-center justify-center w1200:justify-start">
             <Image
               src={'/images/elon.png'}
               width={100}
@@ -94,7 +94,7 @@ const Evangilists = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-3 justify-center py-3 w1080:py-0 border-t w1080:border-t-0 w1080:border-l border-[#EFEFEF] dark:border-[#efefef1c]">
+          <div className="flex gap-3 justify-center py-3 w1200:py-0 border-t w1200:border-t-0 w1200:border-l border-[#EFEFEF] dark:border-[#efefef1c]">
             <div>
               <div className="bg-[#B5E4CA] p-2 rounded-full text-black"><Icon icon="mingcute:user-4-line" width={25}/></div>
             </div>
@@ -104,7 +104,7 @@ const Evangilists = () => {
               <div className="bg-[#020111] text-sm -mt-2 rounded-lg p-1 flex gap-1 items-center px-2 dark:text-[#6F767E] text-[#6F767E]"><Icon icon="ph:arrow-up-bold" /> <span className="text-[#83BF6E]">37.8%</span> this week</div>
             </div>
           </div>
-          <div className="flex gap-3 justify-center py-3 w1080:py-0 border-t w1080:border-t-0 w1080:border-l border-[#EFEFEF] dark:border-[#efefef1c]">
+          <div className="flex gap-3 justify-center py-3 w1200:py-0 border-t w1200:border-t-0 w1200:border-l border-[#EFEFEF] dark:border-[#efefef1c]">
             <div>
               <div className="bg-[#CABDFF] p-2 rounded-full text-black"><Icon icon="iconamoon:swap-light" width={25}/></div>
             </div>
@@ -131,7 +131,7 @@ const Evangilists = () => {
           </h3>
         </div>
         
-        <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-1 w1080:grid-cols-[40%_60%] gap-3 mt-5 -mb-3 dark:text-[#CCCCCC] text-[#1A1D1F] text-sm">
+        <section className="grid grid-cols-1 sm:grid-cols-[40%_60%] md:grid-cols-1 w1200:grid-cols-[40%_60%] gap-3 mt-5 -mb-3 dark:text-[#CCCCCC] text-[#1A1D1F] text-sm">
           <div>
             Project Name
           </div>

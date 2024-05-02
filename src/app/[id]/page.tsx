@@ -5,18 +5,18 @@ import Image from "next/image";
 import { Tooltip, Popover } from "flowbite-react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Contract } from "ethers";
-import ReactPlayer from "react-player";
-import Distribution from "@/components/dashboard/invest/distribution";
-import Refund from "@/components/dashboard/invest/refund";
-import Invest from "@/components/dashboard/invest/invest";
 // dynamic imports
 import dynamic from "next/dynamic";
+const Refund = dynamic(() => import("@/components/dashboard/invest/refund"), { ssr: false });
+const Invest = dynamic(() => import("@/components/dashboard/invest/invest"), { ssr: false });
+const Distribution = dynamic(() => import("@/components/dashboard/invest/distribution"), { ssr: false });
 const History = dynamic(() => import("@/components/dashboard/invest/history"), { ssr: false });
 const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quillDisplayer"), { ssr: false });
+const SuccessModal = dynamic(() => import("@/components/dashboard/invest/investSuccess"), { ssr: false });
+const IntroductionMovie = dynamic(() => import("@/components/dashboard/introMovie"), { ssr: false });
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useToastr from "@/hooks/useToastr";
-import { useBalance } from "wagmi";
 //abis
 import ICO from "@/constants/abis/ICO.json";
 import axios from "axios";
@@ -29,8 +29,17 @@ import { reduceAmount } from "@/utils";
 // constants
 import { CHAIN_DATA } from "@/constants/constants";
 import useAPI from "@/hooks/useAPI";
+// atoms
+import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
+import { useAtom } from "jotai";
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
+  // atoms
+  const [fromAmount, setFromAmount] = useAtom<string>(fromAmountAtom);
+  const [toAmount, setToAmount] = useAtom<bigint>(toAmountAtom);
+  const [ethAmount, setEthAmount] = useAtom<bigint>(ethAmountAtom);
+  const [hash, setHash] = useAtom<string>(hashAtom);
+  // states
   const { address, chainId, signer } = useActiveWeb3();
   const [contract, setContract] = React.useState<Contract | undefined>(
     undefined
@@ -50,23 +59,21 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [creator, setCreator] = React.useState<IUSER | undefined>(undefined);
   const [tokensAvailable, setTokensAvailable] = React.useState<bigint>(BigInt("0"));
   const [tokensFullyCharged, setTokensFullyCharged] = React.useState<boolean>(false);
-  const [owner, setOwner] = React.useState<string>("");
   const [ethPrice, setEthPrice] = React.useState<number>(3000);
-  const [myInvestment, setMyInvestment] = React.useState<bigint>(BigInt("0"));
   const [investHistory, setInvestHistory] = React.useState<HISTORY[]>([]);
-  const [investments, setInvestments] = React.useState<INVESTMENT[]>([]);
   const [invetors, setInvestors] = React.useState<string[]>([]);
   const [lister, setLister] = React.useState<string>("");
   const [contributions, setContributions] = React.useState<CONTRIBUTION[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [txHash, setTxHash] = React.useState<string>("");
   const [ICOStatus, setICOStatus] = React.useState<number>(0);
   const [cap, setCap] = React.useState<string>("Hardcap");
   // show Modals
   const [showInvestModal, setShowInvestModal] = React.useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = React.useState<boolean>(false);
   const [showHistory, setShowHistory] = React.useState<boolean>(false);
   const [showDistribution, setShowDistribution] = React.useState<boolean>(false);
   const [showRefund, setShowRefund] = React.useState<boolean>(false);
+  const [showIntroduction, setShowIntroduction] = React.useState<boolean>(false);
 
   const [refund, setRefund] = React.useState<REFUND>({     
     refunded: false,
@@ -202,15 +209,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     }
   }
 
-  async function _myInvestment(_contract: Contract) {
-    try {
-      const __myInvestment = await _contract.investHistory (address);
-      console.log(__myInvestment)
-      setMyInvestment (__myInvestment);
-    } catch (er) {
-      console.log("failed to catch my investment of ICO");
-    }
-  }
   /**
    * fetch project data
    * @param _contract
@@ -242,7 +240,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   async function _user(_contract: Contract) {
     try {
       const _creator = await _contract.creator();
-      setOwner(_creator);
+      // setOwner(_creator);
       const { data: user } = await axios.get(`${baseURL}/user/${_creator}`);
       setCreator(user);
     } catch (err) {
@@ -334,7 +332,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   //   ICOStatus
   // })
 
-
+  const myContribution = React.useMemo(() => {
+    if (!address) {
+      return BigInt("");
+    } else {
+      return investHistory.reduce((acc: bigint, item: HISTORY) => item.investor === address ? acc + item.amount : acc, BigInt("0"));
+    }
+  }, [investHistory, address]);
 
   const maxTokens = React.useMemo(() => {
     if (!token || !contract || tokensAvailable === BigInt("0") || ICOStatus !== 0 || !tokensFullyCharged) {
@@ -364,8 +368,6 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     _tokensFullyCharged(_contract);
     // creator data
     _user(_contract);
-    // my ICO investment
-    _myInvestment(_contract);
     // ICO history
     _history (_contract);
     // get ICO investors
@@ -489,12 +491,11 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const _renderCoolDownItem = (
     title: string,
     value: string,
-    underline: boolean
+    underline: boolean,
+    top?: boolean
   ) => (
     <div
-      className={`flex h-12 gap-4 justify-between text-sm items-center ${
-        underline && "border-b"
-      } border-[#E6E8EC] dark:border-[#ededee1a]`}
+      className={`flex h-12 gap-4 justify-between text-sm items-center ${underline && "border-b"} ${top && 'border-t'} border-[#E6E8EC] dark:border-[#ededee1a]`}
     >
       <h2 className="text-[15px] font-bold text-[#6F6F6F] dark:text-[#CCCCCC]">
         {title}
@@ -630,12 +631,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           id={params.id}
           visible={showInvestModal} 
           setVisible={setShowInvestModal}
+          setShowSuccessModal={setShowSuccessModal}
           token={token}
           price={price}
           contract={contract}
           ethPrice={ethPrice}
           refresh={_getICOInfo}
-          myInvestment={myInvestment}
+          myContribution={myContribution}
           maxTokens={maxTokens}
           totalSupply={token.totalSupply}
           tokensAvailable={tokensAvailable}
@@ -676,12 +678,32 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           investments={investHistory}
         />
       }
+      {
+        showSuccessModal && token &&
+        <SuccessModal
+          setVisible={setShowSuccessModal}
+          hash={hash}
+          percent={reduceAmount(Number(toAmount) * 100 / Number(formatUnits(token.totalSupply, Number(token.decimal))))}
+          tokens={Number(toAmount)}
+          ethAmount={ethAmount}
+        />
+      }
+      {
+        showIntroduction && 
+        <IntroductionMovie 
+          setShowIntroduction={setShowIntroduction}
+          url={project?.youtubeLink ? project.youtubeLink : "/introduction.mp4"}
+        />
+      }
       <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">
         All Launchpads
       </h1>
-      <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-2xl grid grid-cols-1 gap-12 w1300:gap-8 w1300:grid-cols-[55%_calc(45%-32px)]">
+      <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-2xl grid grid-cols-1 gap-12 w1340:gap-8 w1340:grid-cols-[55%_calc(45%-32px)]">
         <section>
-          <div className="w-full min-h-[230px] bg-black rounded-2xl flex items-center">
+          <div className="w-full aspect-[2/1] bg-black rounded-2xl flex items-center justify-center">
+            <Icon width={100}  onClick={() => setShowIntroduction(true)} className="text-white cursor-pointer hover:opacity-60" icon="material-symbols-light:smart-display-outline-rounded" />
+          </div>
+          {/* <div className="w-full min-h-[230px] bg-black rounded-2xl flex items-center">
             <ReactPlayer
               controls
               className="react-player rounded-[19px]"
@@ -694,7 +716,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 borderRadius: 17,
               }}
             />
-          </div>
+          </div> */}
 
           <div className="w-full px-1">
             <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1">
@@ -770,6 +792,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             </div>
             {_renderCoolDownItem("Charged Tokens", formatUnits(tokensAvailable, Number(token?.decimal)), true)}
             {_renderItem("Token Price", formatEther(price))}
+            {_renderItem("My Contribution", formatEther(myContribution))}
             {_renderCoolDownItem(
               "Start Date",
               new Date(startTime * 1000).toDateString(),
@@ -786,7 +809,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               false
             )}
           </div>
-          <div className="mt-5 flex flex-col xs:flex-row gap-3 justify-between">
+          <div className="mt-5 mb-2 flex flex-col xs:flex-row gap-3 justify-between">
             {creator ? (
               <div className="flex items-center gap-2">
                 <Image
@@ -808,6 +831,8 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             ): <div></div>}
             { _renderActionButton () }
           </div>
+          {_renderCoolDownItem("Evangalists", "Coming Soon", true, true)}
+          {_renderCoolDownItem("Whitelists", "Coming Soon", true)}
         </section>
 
         <section>

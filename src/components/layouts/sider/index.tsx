@@ -132,11 +132,11 @@ const Sider = () => {
       )}
       <div
         className={`fixed ${
-          isCollapse ? "-left-[260px]" : "left-4"
-        } transition-all duration-200 bottom-4 z-20 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[260px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}
+          isCollapse ? "-left-[300px]" : "left-4"
+        } transition-all duration-200 bottom-4 z-20 top-4 md:static md:flex md:overflow-auto flex-none flex-col justify-between bg-white dark:bg-[#100E28] w-[300px] border-2 border-[#E3E3E3] dark:border-[#100E28] rounded-xl sider`}
       >
         <div className="w-full h-full overflow-y-scroll overflow-x-hidden vulcan-sider">
-          <div className="w-[260px]">
+          <div className="w-[300px]">
             <section id="sider-info" className="">
               <div className="flex justify-center items-center border-b-2 border-[#E3E3E3] dark:border-[#100E28] p-6">
                 <Image
@@ -199,9 +199,9 @@ const Sider = () => {
                       onClick={handleCopyAddress}
                       className="hover:underline cursor-pointer"
                     >
-                      {address.substring(0, 10) +
+                      {address.substring(0, 13) +
                         "...." +
-                        address.substr(address.length - 10, 10)}
+                        address.substr(address.length - 13, 13)}
                     </span>{" "}
                     <Icon
                       className="cursor-pointer"

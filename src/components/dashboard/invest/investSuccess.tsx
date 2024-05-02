@@ -6,6 +6,7 @@ import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { CHAIN_DATA } from "@/constants/constants";
 import { cyptoSIDAO } from "@/constants/config";
 import { formatEther } from "viem";
+import { useRouter } from "next/navigation";
 
 
 interface IProps {
@@ -19,6 +20,7 @@ interface IProps {
 const Success = ({ setVisible, hash, ethAmount, percent, tokens }: IProps) => {
 
   const { chain } = useActiveWeb3 ();
+  const router = useRouter ();
 
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 bg-[#0000003a] backdrop-filter backdrop-blur-[5px] flex justify-center px-2 items-center">
@@ -36,14 +38,6 @@ const Success = ({ setVisible, hash, ethAmount, percent, tokens }: IProps) => {
               className="relative cursor-pointer hover:opacity-60"
             />
           </div>
-          {/* <h2 className="flex gap-1 items-end">
-            <Icon
-              icon="icon-park-outline:file-success-one"
-              width={25}
-              height={25}
-            />
-            Successfully Invested
-          </h2> */}
           <div className="flex items-center text-green-600 font-bold">
             <Image
               src={'/favicon.svg'}
@@ -51,7 +45,7 @@ const Success = ({ setVisible, hash, ethAmount, percent, tokens }: IProps) => {
               width={50}
               height={50}
             />
-            SUCCESSFULLY INVESTED
+            SUCCESSFULLY CONTRIBUTED
           </div>
           
           <div className="px-8 py-2 text-sm">
@@ -68,6 +62,12 @@ const Success = ({ setVisible, hash, ethAmount, percent, tokens }: IProps) => {
               <a href={`${CHAIN_DATA[String(chain?.id)].explorer}/tx/${hash}`} target="_blank"><Icon className='relative cursor-pointer hover:opacity-60' icon="fluent:open-16-filled" width={22} /></a>
             </div>
           </div>
+
+          <a onClick={() => router.push("/")} className="underline px-5 cursor-pointer mt-2 hover:text-blue-600 text-blue-400 flex gap-1 items-center">
+            <Icon icon="icon-park-solid:back" />
+            Return To Dashboard
+          </a>
+
         </div>
       </div>
     </div>
