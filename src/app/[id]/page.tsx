@@ -795,12 +795,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             {_renderItem("My Contribution", formatEther(myContribution))}
             {_renderCoolDownItem(
               "Start Date",
-              new Date(startTime * 1000).toDateString(),
+              new Date(endTime * 1000).toDateString + new Date(endTime * 1000).toTimeString(),
               true
             )}
             {_renderCoolDownItem(
-              "Ending Date",
-              new Date(endTime * 1000).toDateString(),
+              "Ending Time",
+              new Date(endTime * 1000).toDateString + new Date(endTime * 1000).toTimeString(),
               true
             )}
             {_renderCoolDownItem(

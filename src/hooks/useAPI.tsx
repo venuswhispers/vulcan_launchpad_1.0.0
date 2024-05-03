@@ -21,7 +21,7 @@ const useAPI = () => {
   api.interceptors.response.use(
     (res) => res,
     (err) => {
-      if (err.response.status === 401) {
+      if (err.response && err.response.status === 401) {
         // if (localStorage.getItem('token')) {
         //   localStorage.setItem('expired', true);
         // }

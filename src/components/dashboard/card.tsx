@@ -469,11 +469,7 @@ const Card = ({ id }: IProps) => {
       </section>
 
       <div className="px-2 py-[1px] rounded-lg top-0 right-3 -translate-y-1/2 absolute bg-[#FFE7E4] text-[#FF6A55] text-[12px] font-bold">
-        {hardcap > 0
-          ? (Number(formatEther(fundsRaised)) * 100) /
-            Number(formatEther(hardcap))
-          : 0}
-        %
+        {hardcap > 0 ? reduceAmount((Number(formatEther(fundsRaised)) * 100) / Number(formatEther(hardcap))): 0}%
       </div>
     </div>
   );

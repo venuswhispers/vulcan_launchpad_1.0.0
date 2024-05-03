@@ -93,7 +93,7 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myC
       console.log(ethAmount)
       const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount });
       await _tx.wait();
-      showToast(`Successfully Invested ${formatEther(ethAmount)}ETH`, "success");
+      showToast(`Successfully Contributed ${formatEther(ethAmount)}ETH`, "success");
 
       const _statusAfter: number = await contract.getICOState ();
       console.log({_statusAfter});
