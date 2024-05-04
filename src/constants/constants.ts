@@ -19,6 +19,8 @@ export const CHAIN_IDS = {
   SEPOLIA: 11155111
 };
 
+export const DATES = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
+
 export const FACTORY_ADDRESSES: Record<string, string> = {
   [CHAIN_IDS.ARBITRUM]: "", //verified
   // [CHAIN_IDS.SEPOLIA]: "0xF6D158B30F7c9F441c9D665B4DFcBBa3E1082B68", //verified

@@ -27,7 +27,7 @@ import { IUSER, IProject, IToken, HISTORY, REFUND, DISTRIBUTION, CONTRIBUTION, I
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
 import { reduceAmount } from "@/utils";
 // constants
-import { CHAIN_DATA } from "@/constants/constants";
+import { CHAIN_DATA, DATES } from "@/constants/constants";
 import useAPI from "@/hooks/useAPI";
 // atoms
 import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
@@ -795,12 +795,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             {_renderItem("My Contribution", formatEther(myContribution))}
             {_renderCoolDownItem(
               "Start Date",
-              new Date(endTime * 1000).toDateString + new Date(endTime * 1000).toTimeString(),
+              DATES[new Date(startTime * 1000).getDay()] + " " + new Date(startTime * 1000).toLocaleString(),
               true
             )}
             {_renderCoolDownItem(
               "Ending Time",
-              new Date(endTime * 1000).toDateString + new Date(endTime * 1000).toTimeString(),
+              DATES[new Date(endTime * 1000).getDay()] + " " + new Date(endTime * 1000).toLocaleString(),
               true
             )}
             {_renderCoolDownItem(
