@@ -123,7 +123,7 @@ const Preview = () => {
             {title}
           </h2>
           <div className="border-2 border-[#45B26B] text-[12px] py-1 px-2 rounded-sm">
-            2.45 ETH
+            { hardCap ? hardCap : '0' } ETH
           </div>
         </div>
       ) : (

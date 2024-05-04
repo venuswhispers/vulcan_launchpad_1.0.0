@@ -794,12 +794,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             {_renderItem("Token Price", formatEther(price))}
             {_renderItem("My Contribution", formatEther(myContribution))}
             {_renderCoolDownItem(
-              "Start Date",
+              "Start Time",
               DATES[new Date(startTime * 1000).getDay()] + " " + new Date(startTime * 1000).toLocaleString(),
               true
             )}
             {_renderCoolDownItem(
-              "Ending Time",
+              "End Time",
               DATES[new Date(endTime * 1000).getDay()] + " " + new Date(endTime * 1000).toLocaleString(),
               true
             )}

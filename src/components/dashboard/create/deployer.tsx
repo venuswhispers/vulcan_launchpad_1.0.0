@@ -208,6 +208,10 @@ const Create = ({ step, setStep }: IProps) => {
       return;
     }
 
+    if (isPayingSpamFilterFee) {
+      return;
+    }
+
     try {
       setIsPayingSpamFilterFee(true);
       if (!contractDAI || !contractFactory) throw "";
@@ -410,7 +414,7 @@ const Create = ({ step, setStep }: IProps) => {
         _projectURI,
         _softcap,
         _hardcap,
-        time: BigInt(Math.floor(Number(endTime)/1000)),
+        time: Math.floor(Number(endTime)/1000),
         name: name.result,
         symbol: symbol.result,
         _price,
