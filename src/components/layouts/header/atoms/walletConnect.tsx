@@ -2,8 +2,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Dropdown } from "flowbite-react";
-import { Button, Popover } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";

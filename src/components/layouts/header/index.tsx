@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 const WalletConnectButton = dynamic(
   () => import("@/components/layouts/header/share/walletConnect"),

@@ -5,7 +5,7 @@ import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputToken from "@/components/dashboard/create/atoms/tokenAddressInput";
 import InfoShower from "@/components/dashboard/create/atoms/infoShower";
 import { reduceAmount, parseNumber } from "@/utils";
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/react";
 
 import { Contract, ethers } from "ethers";
 //hooks
