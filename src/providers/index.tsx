@@ -8,21 +8,24 @@ const ThemeProvider = dynamic(() => import("@/providers/themeProvider"), { ssr: 
 const ToastProvider = dynamic(() => import("@/providers/toastProvider"), { ssr: false });
 const AuthProvider = dynamic(() => import("@/providers/authProvider"), { ssr: false });
 const ActiveWeb3Provider = dynamic(() => import("@/providers/web3Provider"), { ssr: false });
+import { NextUIProvider } from "@nextui-org/react";
 
 const ThemeClient = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <ToastProvider>
-        <JotaiProvider>
-          <RainbowProvider>
-            <ActiveWeb3Provider>
-              <AuthProvider>
-                {children}
-              </AuthProvider>
-            </ActiveWeb3Provider>
-          </RainbowProvider>
-        </JotaiProvider>
-      </ToastProvider>
+      <NextUIProvider>
+        <ToastProvider>
+          <JotaiProvider>
+            <RainbowProvider>
+              <ActiveWeb3Provider>
+                <AuthProvider>
+                  {children}
+                </AuthProvider>
+              </ActiveWeb3Provider>
+            </RainbowProvider>
+          </JotaiProvider>
+        </ToastProvider>
+      </NextUIProvider>
     </ThemeProvider>
   );
 };

@@ -68,6 +68,9 @@ const Create = () => {
   }
 
   const _submitRegister = async () => {
+
+    if (isLoading) return;
+
     try {
       setIsLoading (true);
 

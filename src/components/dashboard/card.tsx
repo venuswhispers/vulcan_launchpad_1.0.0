@@ -5,6 +5,7 @@ import Image from "next/image";
 import Progress from "@/components/dashboard/utils/progress";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@nextui-org/react";
 import { Contract } from "ethers";
 import { formatEther, formatUnits } from "viem";
 import { baseURL } from "@/constants/config";
@@ -317,7 +318,9 @@ const Card = ({ id }: IProps) => {
             className="w-full h-full object-contain dark:bg-black bg-gray-100  rounded-2xl"
           />
         ) : (
-          <div className="dark:bg-gray-700 bg-gray-400 w-full h-full aspect-[1.5/1] rounded-[19px] animate-pulse"></div>
+          <Skeleton className="rounded-lg w-full aspect-square dark:bg-[#363639] bg-gray-400">
+            <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
+          </Skeleton>
         )}
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
           {creator?.avatar ? (

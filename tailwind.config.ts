@@ -1,13 +1,15 @@
 import type { Config } from "tailwindcss";
+import { nextui } from "@nextui-org/react";
 
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/flowbite-react/lib/**/*.js",
+    "./src/providers/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: ['class','.light'],
+  darkMode: ['class', '.light'],
   theme: {
     extend: {
       backgroundImage: {
@@ -25,9 +27,9 @@ const config: Config = {
     },
   },
   plugins: [
-    require('flowbite/plugin')({
-        charts: true,
-    }),
+    nextui({
+      defaultTheme: "dark",
+    })
     // ... other plugins
   ]
 };

@@ -5,7 +5,8 @@ import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputToken from "@/components/dashboard/create/atoms/tokenAddressInput";
 import InfoShower from "@/components/dashboard/create/atoms/infoShower";
 import { reduceAmount, parseNumber } from "@/utils";
-import { Dropdown, Tooltip } from "flowbite-react";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
+
 import { Contract, ethers } from "ethers";
 //hooks
 import { useReadContracts, useReadContract } from "wagmi";
@@ -516,18 +517,25 @@ const Create = ({ step, setStep }: IProps) => {
           isInvalid={isInvalid}
           message="input token price"
         />
-        <Dropdown
-          label="Dropdown button"
-          renderTrigger={() => (
+        <Dropdown className="dark:bg-gray-800">
+          <DropdownTrigger>
             <div className="w-[100px] mt-[18px]">
               <div className="bg-[#F0F8FF] flex justify-between items-center cursor-pointer transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border">
                 <span>{currency}</span> <Icon icon="iwwa:arrow-down" />
               </div>
             </div>
-          )}
-        >
-          <Dropdown.Item onClick={() => setCurrency("ETH")}>ETH</Dropdown.Item>
-          <Dropdown.Item onClick={() => setCurrency("USD")}>USD</Dropdown.Item>
+          </DropdownTrigger>
+          <DropdownMenu 
+            aria-label="Single selection example"
+            variant="flat"
+            disallowEmptySelection
+            selectionMode="single"
+            selectedKeys={[currency]}
+            // onSelectionChange={setSelectedKeys}
+          >
+            <DropdownItem key={'ETH'} className={`${currency === 'ETH' && 'font-bold !text-gray-500'} text-gray-300 text-xs`} onClick={() => setCurrency("ETH")}>ETH</DropdownItem >
+            <DropdownItem key={'USD'} className={`${currency === 'USD' && 'font-bold !text-gray-500'} text-gray-300 text-xs`} onClick={() => setCurrency("USD")}>USD</DropdownItem >
+          </DropdownMenu>
         </Dropdown>
       </div>
       <div className="flex flex-row-reverse justify-between">

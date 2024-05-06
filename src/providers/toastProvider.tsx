@@ -16,9 +16,9 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
         toast.custom((t) => (
           <div
             className={`${t.visible ? "animate-enter" : "animate-leave"
-              } max-w-96 dark:bg-gray-900 bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 text-black dark:text-white`}
+              } max-w-96  dark:bg-gray-900 bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 text-black dark:text-white`}
             onClick={() => toast.dismiss(t.id)}
-            style={{ zIndex: "100000!important" }}
+            style={{ zIndex: "100000!important", width: '320px' }}
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
@@ -104,7 +104,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
             className={`${t.visible ? "animate-enter" : "animate-leave"
               } max-w-96  dark:bg-gray-900 bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 text-black dark:text-white`}
             onClick={() => toast.dismiss(t.id)}
-            style={{ zIndex: "100000!important" }}
+            style={{ zIndex: "100000!important", width: '320px' }}
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">
@@ -147,7 +147,7 @@ const ToastProvider = ({ children }: { children: ReactElement }) => {
             className={`${t.visible ? "animate-enter" : "animate-leave"
               } max-w-96  dark:bg-gray-900 bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 text-black dark:text-white`}
             onClick={() => toast.dismiss(t.id)}
-            style={{ zIndex: "100000!important" }}
+            style={{ zIndex: "100000!important", width: '320px' }}
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-center">

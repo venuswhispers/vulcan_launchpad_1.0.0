@@ -2,7 +2,6 @@
 import React from "react";
 import { type Chain, type Address, type Client } from "viem";
 import { useSignMessage } from "wagmi";
-import { useAuthRequestChallengeEvm } from "@moralisweb3/next";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import axios from 'axios';
 import { useAtom } from "jotai";
@@ -61,35 +60,30 @@ const AuthProvider = ({
       const { id, message, profileId }: TMsg = msgData;
 
       if (!id || !message || !profileId) { 
-        throw "not defined message"
+        showToast("Undefined Message.", 'warning');
+        return;
       }
 
       const signature = await signMessageAsync({ message });
       
-      const { data : signinData } = await api.post(`/user/signin`, { message, signature });
-      console.log(signinData);
-      if (signinData.status === "SUCCESS") {
-        const { data: _user }: any = jwt.decode(signinData.data);
-        if (_user) {
-          _setAuth (_user, signinData.data);
-          showToast ("Signin Success", "success");
-        } else {
-          throw "Empty user"
-        }
-      } else if (signinData.status === "NONE") {
+      const { data : signData } = await api.post(`/user/signin`, { message, signature });
+      console.log(signData);
+
+      if (signData === "none") {
         _setAuth (undefined, undefined);
         router.push("/profile/create");
-        throw "Please create your profile";
+        showToast("Please create your profile.", 'warning');
       } else {
-        throw signinData.data;
+        const { data: _user }: any = jwt.decode(signData);
+        _setAuth (_user, signData);
+        showToast ("Signin Success", "success");
       }
-    } catch (err) {
-      if (String(err).includes("User rejected the request")) {
+    } catch (err: any) {
+      if (err.code === 4001) {
         showToast("User rejected the request.", 'warning');
-      } else {
-        showToast(String(err), 'warning');
-      }
-      console.log(err);
+      } else if (err.code === 'ERR_BAD_RESPONSE') {
+        showToast("Signin failed. Please try again.", 'warning');
+      } 
     }
   };
 
@@ -103,33 +97,32 @@ const AuthProvider = ({
       const { id, message, profileId }: TMsg = msgData;
       
       if (!id || !message || !profileId) { 
-        throw "Not Defined Message"
+        showToast("Undefined Message.", 'warning');
+        return;
       }
       
       const signature = await signMessageAsync({ message });
 
       const { data : registerData } = await api.post(`/user/signup`, { message, signature, user });
-      const { status, data: payload } = registerData;
-      
-      if (status === "SUCCESS") {
-        const { data: _user }: any = jwt.decode(payload);
+      console.log({
+        jwt: registerData
+      });
+
+      if (registerData === 'exists') {
+        showToast("User already exists.", 'warning');
+      } else {
+        const { data: _user }: any = jwt.decode(registerData);
         console.log(_user);
-        if (_user) {
-          _setAuth (_user, payload);
-          showToast ("Profile created Successfully.", "success");
-        } else {
-          throw "Empty user"
-        }
-      } else {
-        showToast (payload, "warning");
+        _setAuth (_user, registerData);
+        showToast ("Profile created Successfully.", "success");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      if (String(err).includes("User rejected the request.")) {
-        showToast ("User rejected the request", "warning");
-      } else {
-        showToast (String(err), "error");
-      }
+      if (err.code === 4001) {
+        showToast("User rejected the request.", 'warning');
+      } else if (err.code === 'ERR_BAD_RESPONSE' || err.code === "ERR_NETWORK") {
+        showToast("Register failed. Please try again.", 'warning');
+      } 
     }
   }
 

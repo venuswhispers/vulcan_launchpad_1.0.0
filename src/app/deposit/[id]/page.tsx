@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Contract } from "ethers";
-import { Tooltip } from "flowbite-react";
+import { Tooltip } from "@nextui-org/react";
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import ClipboardCopier from "@/components/share/clipCopier";
@@ -119,10 +119,10 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         >
           {params.id}
         </span>
-        <Tooltip content="Copy address" style="dark">
+        <Tooltip content="Copy address">
           <ClipboardCopier size={22} text={params.id} />
         </Tooltip>
-        <Tooltip content="Go to chain" style="dark">
+        <Tooltip content="Go to chain">
           <a
             href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${params.id}`}
             target="_blank"

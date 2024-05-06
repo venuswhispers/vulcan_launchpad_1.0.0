@@ -1,7 +1,8 @@
 "use client"
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Dropdown } from "flowbite-react";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
+
 import { title } from "process";
 import { IVulcan } from "@/types";
 import { useAtom } from "jotai";
@@ -97,35 +98,65 @@ const Filter = ( { data, onChange }: IProps ) => {
   )
 
   const _renderFilter = () => (
-    <Dropdown label="Dropdown button" renderTrigger={() => 
-      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
-        <h4 className="text-xs px-1">Filters</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter }</span><Icon icon="bxs:down-arrow" /></div>
-      </div>
-    }>
-    { _filters.map((_item: string) => <Dropdown.Item onClick={() => setFilter(_item)} key={_item} className={`${filter === _item && 'font-bold !text-gray-800'} text-xs`}>{_item}</Dropdown.Item>) }
+    <Dropdown className="dark:bg-gray-800">
+      <DropdownTrigger>
+        <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
+          <h4 className="text-xs px-1">Filters</h4>
+          <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ filter }</span><Icon icon="bxs:down-arrow" /></div>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu 
+        aria-label="Single selection example"
+        variant="flat"
+        disallowEmptySelection
+        selectionMode="single"
+        selectedKeys={new Set([filter])}
+        // onSelectionChange={setSelectedKeys}
+      >
+        { _filters.map((_item: string) => <DropdownItem onClick={() => setFilter(_item)} key={_item} className={`${filter === _item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{_item}</DropdownItem>) }
+      </DropdownMenu>
     </Dropdown>
   )
 
   const _renderSort = () => (
-    <Dropdown label="Dropdown button" renderTrigger={() => 
-      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
-        <h4 className="text-xs px-1">Sort by</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span className="flex gap-1 items-center">{ sort.direction ? <Icon icon="ph:arrow-up-bold" /> : <Icon icon="ph:arrow-down-bold" /> }{ sort.label }</span><Icon icon="bxs:down-arrow" /></div>
-      </div>
-    }>
-      { _sorts.map((_item: ISort) => <Dropdown.Item onClick={() => setSort(_item)} key={_item.key + _item.direction} className={`${sort === _item && 'font-bold !text-gray-900'} text-xs`}>{_item.direction ? "Highest" : "Lowest"} {_item.label}</Dropdown.Item>) }
+    <Dropdown className="dark:bg-gray-800">
+      <DropdownTrigger>
+        <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
+          <h4 className="text-xs px-1">Sort by</h4>
+          <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span className="flex gap-1 items-center">{ sort.direction ? <Icon icon="ph:arrow-up-bold" /> : <Icon icon="ph:arrow-down-bold" /> }{ sort.label }</span><Icon icon="bxs:down-arrow" /></div>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu 
+        aria-label="Single selection example"
+        variant="flat"
+        disallowEmptySelection
+        selectionMode="single"
+        selectedKeys={new Set([sort.key + sort.direction])}
+        // onSelectionChange={setSelectedKeys}
+      >
+        { _sorts.map((_item: ISort) => <DropdownItem onClick={() => setSort(_item)} key={_item.key + _item.direction} className={`${sort === _item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{_item.direction ? "Highest" : "Lowest"} {_item.label}</DropdownItem>) }
+      </DropdownMenu>
     </Dropdown>
   )
 
   const _renderChainFilter = () => (
-    <Dropdown label="Dropdown button" renderTrigger={() => 
-      <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
-        <h4 className="text-xs px-1">Chains</h4>
-        <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{chain}</span><Icon icon="bxs:down-arrow" /></div>
-      </div>
-    }>
-      { ["All", "Sepolia"].map((item: string) => <Dropdown.Item onClick={() => setChain(item)} key={item} className={`${chain === item && 'font-bold'} text-xs`}>{item}</Dropdown.Item>) }
+    <Dropdown className="dark:bg-gray-800 w-[170px]">
+      <DropdownTrigger>
+        <div className="flex flex-col w-full sm:w-[13%] md:w-full lg:w-[13%] min-w-[150px]">
+          <h4 className="text-xs px-1">Chains</h4>
+          <div className="rounded-lg bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>{ chain }</span><Icon icon="bxs:down-arrow" /></div>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu 
+        aria-label="Single selection example"
+        variant="flat"
+        disallowEmptySelection
+        selectionMode="single"
+        selectedKeys={new Set([chain])}
+        // onSelectionChange={setSelectedKeys}
+      >
+        { ["All", "Sepolia"].map((item: string) => <DropdownItem onClick={() => setChain(item)} key={item} className={`${chain === item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{item}</DropdownItem>) }
+      </DropdownMenu>
     </Dropdown>
   )
 

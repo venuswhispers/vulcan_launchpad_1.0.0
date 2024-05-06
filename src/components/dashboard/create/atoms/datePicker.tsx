@@ -1,8 +1,6 @@
 import React from "react";
-import { Datepicker } from "flowbite-react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Button } from "flowbite-react";
-import { Tooltip } from "flowbite-react";
+import { Tooltip } from "@nextui-org/react";
 import useToastr from "@/hooks/useToastr";
 
 import { DayPicker } from "react-day-picker";
@@ -65,7 +63,7 @@ const Input = ({
     <div className={className}>
       <div className="px-1 py-1 font-bold truncate flex gap-1 items-center">
         {title}
-        <Tooltip className="relative z-50" content={info}>
+        <Tooltip className="relative z-50 bg-black text-white p-2" content={info}>
           <Icon
             icon="ep:info-filled"
             className="text-[#9A9FA5] cursor-pointer hover:opacity-60"

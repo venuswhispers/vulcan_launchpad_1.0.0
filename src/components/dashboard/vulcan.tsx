@@ -4,7 +4,6 @@ import Header from "@/components/dashboard/header";
 import Image from "next/image";
 import { Tooltip } from "@nextui-org/react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Skeleton } from "@nextui-org/react";
 import { Contract } from "ethers";
 // dynamic imports
 import dynamic from "next/dynamic";
@@ -34,7 +33,7 @@ import useAPI from "@/hooks/useAPI";
 import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
 import { useAtom } from "jotai";
 
-const LaunchPad = ({ params }: { params: { id: string } }) => {
+const Vulcan = ({ id }: { id: string }) => {
   // atoms
   const [fromAmount, setFromAmount] = useAtom<string>(fromAmountAtom);
   const [toAmount, setToAmount] = useAtom<bigint>(toAmountAtom);
@@ -301,7 +300,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
       if (_status === 1) {
         const _refund = await _contract.refund ();
-        const { data } = await api.get(`/ico/invest/refund?refunder=${_refund[1]}&ico=${params.id}`);
+        const { data } = await api.get(`/ico/invest/refund?refunder=${_refund[1]}&ico=${id}`);
         console.log(data);
         const _hash = data ? data.txHash : "";
         setRefund({
@@ -312,7 +311,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         });
       } else if (_status === 2 || _status === 3) {
         const _distribute = await _contract.distribution();
-        const { data } = await api.get(`/ico/invest/distribution?distributor=${_distribute[1]}&ico=${params.id}`);
+        const { data } = await api.get(`/ico/invest/distribution?distributor=${_distribute[1]}&ico=${id}`);
         const _hash = data ? data.txHash : "";
         setDistribution({
           distributed: _distribute[0],
@@ -418,17 +417,17 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   }, [distance]);
 
   //@ts-ignore
-  // console.log(Number(fundsRaised), useBalance({address: params.id}).data?.value);
+  // console.log(Number(fundsRaised), useBalance({address: id}).data?.value);
 
   React.useEffect(() => {
-    if (!address || !chainId || !signer || !params.id) {
+    if (!address || !chainId || !signer || !id) {
       return;
     }
-    const _contract = new Contract(params.id, ICO, signer);
+    const _contract = new Contract(id, ICO, signer);
     setContract(_contract);
     _getICOInfo(_contract);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, chainId, signer, params.id]);
+  }, [address, chainId, signer, id]);
 
   React.useEffect(() => {
     fetch("/api/utils/eth-price")
@@ -526,7 +525,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
       if (ICOStatus === 2) {
         await api.post('/ico/invest/distribution', { 
-          ico: params.id,
+          ico: id,
           distributor: String(address),
           txHash: _tx.hash,
           chainId: Number(chainId)
@@ -534,7 +533,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> success distribute update")
       } else if (ICOStatus === 1) {
         await api.post('/ico/invest/refund', { 
-          ico: params.id,
+          ico: id,
           refunder: String(address),
           txHash: _tx.hash,
           chainId: Number(chainId)
@@ -629,7 +628,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       <Header />
       { showInvestModal && token && contract && 
         <Invest 
-          id={params.id}
+          id={id}
           visible={showInvestModal} 
           setVisible={setShowInvestModal}
           setShowSuccessModal={setShowSuccessModal}
@@ -655,7 +654,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         showDistribution && contract &&
         <Distribution 
           cap={cap}
-          id={params.id}
+          id={id}
           setVisible={setShowDistribution} 
           explorer={CHAIN_DATA[String(chainId)].explorer}
           contract={contract}
@@ -669,7 +668,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       {
         showRefund && contract &&
         <Refund 
-          id={params.id}
+          id={id}
           setVisible={setShowRefund} 
           explorer={CHAIN_DATA[String(chainId)].explorer}
           contract={contract}
@@ -858,9 +857,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 className="w-full rounded-xl"
               />
             ) : (
-              <Skeleton className="rounded-lg w-full aspect-video dark:bg-[#363639] bg-gray-400">
-                <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
-              </Skeleton>
+              ""
             )}
           </div>
           <div className="mt-5 text-sm text-[#777E90]">
@@ -892,4 +889,4 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default LaunchPad;
+export default Vulcan;

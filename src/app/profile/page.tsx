@@ -113,6 +113,9 @@ const Evangilists = () => {
   }, [isAuthenticated]);
 
   const _updateProfile = async () => {
+
+    if (isLoading) return;
+
     try {
       setIsLoading(true);
       let _avatar = avatar;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Tooltip } from "flowbite-react";
+import { Tooltip } from "@nextui-org/react";
 
 interface IProps {
   className?: string,
@@ -13,7 +13,7 @@ const Input = ({title, className, value, info = "info"}: IProps) => {
   return (
     <div className={className}>
       <div className="px-1 py-1 font-bold truncate flex gap-1 items-center">{title} 
-        <Tooltip className="relative z-50" content={info}>
+        <Tooltip className="relative z-50 bg-black text-white p-2" content={info}>
           <Icon icon="ep:info-filled" className="text-[#9A9FA5] cursor-pointer hover:opacity-60" />
         </Tooltip>
       </div>

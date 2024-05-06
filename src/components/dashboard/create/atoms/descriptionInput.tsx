@@ -5,7 +5,7 @@ import { Quill } from "react-quill";
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 //@ts-ignore
 import ImageUploader from "quill-image-uploader";
-import { Tooltip } from "flowbite-react";
+import { Tooltip } from "@nextui-org/react";
 Quill.register("modules/imageUploader", ImageUploader);
 
 interface IProps {
@@ -88,7 +88,7 @@ const Input = ({title, className, onChange, value, placeholder, isInvalid, messa
   return (
     <div className={className}>
       <div className="px-1 py-1 font-bold truncate flex gap-1 items-center">{title} 
-        <Tooltip className="relative z-50" content={info}>
+        <Tooltip className="relative z-50 bg-black text-white p-2" content={info}>
           <Icon icon="ep:info-filled" className="text-[#9A9FA5] cursor-pointer hover:opacity-60" />
         </Tooltip>
       </div>
