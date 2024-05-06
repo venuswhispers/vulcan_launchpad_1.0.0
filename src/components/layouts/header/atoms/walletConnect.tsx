@@ -143,66 +143,6 @@ const WalletConnectButton = () => {
                       {chain.name}
                     </div>
                   </button>
-                  <Popover
-                    className="border-none outline-none"
-                    content={
-                      <div className="flex flex-col gap-2 dark:bg-[#1F2937] bg-white border border-gray-200 rounded-lg dark:border-none">
-                        <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-                          <span className="block text-sm">
-                            {isAuthenticated && user
-                              ? "@" + user.fullName
-                              : "@Vulcan Pad"}
-                          </span>
-                        </div>
-                        {_renderSignActions()}
-                        <div
-                          onClick={openAccountModal}
-                          className="flex gap-2 rounded-b-md items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]"
-                        >
-                          <Icon icon="tabler:logout" width={20} height={20} />
-                          Disconnect
-                        </div>
-                      </div>
-                    }
-                    arrow={false}
-                    trigger="hover"
-                  >
-                    <button
-                      // onClick={openAccountModal}
-                      type="button"
-                      className="founded-full border-[2px] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white !outline-none cursor-pointer"
-                    >
-                      {user && user.avatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={user.avatar}
-                          key={user.avatar}
-                          width={32}
-                          height={32}
-                          alt={"wallet avatar"}
-                          // priority={true}
-                          className="rounded-full aspect-square"
-                        />
-                      ) : (
-                        <Icon
-                          icon="flowbite:user-solid"
-                          width={32}
-                          height={32}
-                          className="rounded-full bg-[#46455367] dark:text-black dark:bg-[#868592c4] opacity-50"
-                        />
-                      )}
-                      {/* {account.displayName} */}
-                      {account.displayBalance && (
-                        <div className="pl-2 pr-3 truncate md:inline hidden dark:text-white text-[#23262F]">
-                          {account.displayBalance.substring(
-                            0,
-                            account.displayBalance.length - 3
-                          )}
-                          <span className="text-[#45B26B]">ETH</span>
-                        </div>
-                      )}
-                    </button>
-                  </Popover>
                 </div>
               );
             })()}
@@ -214,3 +154,64 @@ const WalletConnectButton = () => {
 };
 
 export default WalletConnectButton;
+
+                  // <Popover
+                  //   className="border-none outline-none"
+                  //   content={
+                  //     <div className="flex flex-col gap-2 dark:bg-[#1F2937] bg-white border border-gray-200 rounded-lg dark:border-none">
+                  //       <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+                  //         <span className="block text-sm">
+                  //           {isAuthenticated && user
+                  //             ? "@" + user.fullName
+                  //             : "@Vulcan Pad"}
+                  //         </span>
+                  //       </div>
+                  //       {_renderSignActions()}
+                  //       <div
+                  //         onClick={openAccountModal}
+                  //         className="flex gap-2 rounded-b-md items-center cursor-pointer dark:hover:bg-[#040413] px-3 py-2 hover:bg-[#b6bcc2]"
+                  //       >
+                  //         <Icon icon="tabler:logout" width={20} height={20} />
+                  //         Disconnect
+                  //       </div>
+                  //     </div>
+                  //   }
+                  //   arrow={false}
+                  //   trigger="hover"
+                  // >
+                  //   <button
+                  //     // onClick={openAccountModal}
+                  //     type="button"
+                  //     className="founded-full border-[2px] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white !outline-none cursor-pointer"
+                  //   >
+                  //     {user && user.avatar ? (
+                  //       // eslint-disable-next-line @next/next/no-img-element
+                  //       <img
+                  //         src={user.avatar}
+                  //         key={user.avatar}
+                  //         width={32}
+                  //         height={32}
+                  //         alt={"wallet avatar"}
+                  //         // priority={true}
+                  //         className="rounded-full aspect-square"
+                  //       />
+                  //     ) : (
+                  //       <Icon
+                  //         icon="flowbite:user-solid"
+                  //         width={32}
+                  //         height={32}
+                  //         className="rounded-full bg-[#46455367] dark:text-black dark:bg-[#868592c4] opacity-50"
+                  //       />
+                  //     )}
+                  //     {/* {account.displayName} */}
+                  //     {account.displayBalance && (
+                  //       <div className="pl-2 pr-3 truncate md:inline hidden dark:text-white text-[#23262F]">
+                  //         {account.displayBalance.substring(
+                  //           0,
+                  //           account.displayBalance.length - 3
+                  //         )}
+                  //         <span className="text-[#45B26B]">ETH</span>
+                  //       </div>
+                  //     )}
+                  //   </button>
+                  // </Popover>
