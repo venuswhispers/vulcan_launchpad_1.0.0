@@ -54,13 +54,13 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
           <h1 className="text-green-600 font-bold pt-2 pb-1">CryptoSI DAO&apos;S FEE (2.5%)</h1>
           <div className="w-full flex gap-2 text-sm justify-between items-center">
             <a href={`${explorer}/address/${cyptoSIDAO}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{cyptoSIDAO}</a>
-            <h1>{ reduceAmount(Number(formatEther(fundsRaised))*0.25) }ETH</h1>
+            <h1>{ reduceAmount(Number(formatEther(fundsRaised))*0.025) }ETH</h1>
           </div>
 
           <h1 className="text-green-600 font-bold pt-2 pb-1">LISTING PARTNER&apos;S FEE (1.0%)</h1>
           <div className="w-full flex gap-2 text-sm justify-between items-center">
             <a href={`${explorer}/address/${lister}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{lister}</a>
-            <h1>{ reduceAmount(Number(formatEther(fundsRaised))*0.1) }ETH</h1>
+            <h1>{ reduceAmount(Number(formatEther(fundsRaised))*0.01) }ETH</h1>
           </div>
 
           <h1 className="text-green-600 font-bold pt-2 pb-1">CONTRIBUTION PARTNER&apos;S FEE (1.5%)</h1>
@@ -71,7 +71,7 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
                   <span>{ index+1}.</span>
                   <a href={`${explorer}/address/${_item.contributor}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{_item.contributor}</a>
                 </div>
-                <h1>{ reduceAmount(Number(formatEther(_item.amount))*0.15) }ETH</h1>
+                <h1>{ reduceAmount(Number(formatEther(_item.amount))*0.015) }ETH</h1>
               </div>
             ))
           }
