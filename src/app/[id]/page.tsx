@@ -627,7 +627,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header />
-      { showInvestModal && token && contract && 
+      { showInvestModal && token && contract && chainId && 
         <Invest 
           id={params.id}
           visible={showInvestModal} 
@@ -644,7 +644,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           tokensAvailable={tokensAvailable}
         /> 
       }
-      { showHistory && 
+      { showHistory && chainId &&
         <History 
           investments={investHistory} 
           setVisible={setShowHistory} 
@@ -652,7 +652,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         /> 
       }
       {
-        showDistribution && contract &&
+        showDistribution && contract && chainId &&
         <Distribution 
           cap={cap}
           id={params.id}
@@ -667,7 +667,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         />
       }
       {
-        showRefund && contract &&
+        showRefund && contract && chainId &&
         <Refund 
           id={params.id}
           setVisible={setShowRefund} 
@@ -723,7 +723,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                   {project?.title}
                 </h3>
                 <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`view ICO in block scan`}>
-                  <a href={`${CHAIN_DATA[String(chainId)].explorer}/address/${params.id}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60 text-black dark:text-white' icon="fluent:open-16-filled" width={22} /></a>
+                  { 
+                    <a href={`${CHAIN_DATA[String(chainId)]?.explorer}/address/${params.id}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60 text-black dark:text-white' icon="fluent:open-16-filled" width={22} /></a>
+                  }
                 </Tooltip>
               </div>
               <div className="flex gap-1 items-center">
