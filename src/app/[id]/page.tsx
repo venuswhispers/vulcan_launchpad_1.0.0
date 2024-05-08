@@ -696,10 +696,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           url={project?.youtubeLink ? project.youtubeLink : "/introduction.mp4"}
         />
       }
-      <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">
-        All Launchpads
-      </h1>
-      <div className="dark:bg-[#100E28] bg-white px-3 xs:px-6 py-6 rounded-2xl grid grid-cols-1 gap-12 w1340:gap-8 w1340:grid-cols-[55%_calc(45%-32px)]">
+      <div className="dark:bg-[#100E28] mt-10 bg-white px-3 xs:px-6 py-6 rounded-2xl grid grid-cols-1 gap-12 w1340:gap-8 w1340:grid-cols-[55%_calc(45%-32px)]">
         <section>
           <div className="w-full aspect-[2/1] bg-black rounded-2xl flex items-center justify-center">
             <Icon width={100}  onClick={() => setShowIntroduction(true)} className="text-white cursor-pointer hover:opacity-60" icon="material-symbols-light:smart-display-outline-rounded" />
@@ -721,9 +718,14 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
           <div className="w-full px-1">
             <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1">
-              <h3 className="dark:text-[#CCCCCC] text-[#101010] text-lg font-bold">
-                {project?.title} #001
-              </h3>
+              <div className="flex gap-2 items-center">
+                <h3 className="dark:text-[#CCCCCC] text-[#101010] text-lg font-bold">
+                  {project?.title}
+                </h3>
+                <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`view ICO in block scan`}>
+                  <a href={`${CHAIN_DATA[String(chainId)].explorer}/address/${params.id}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60 text-black dark:text-white' icon="fluent:open-16-filled" width={22} /></a>
+                </Tooltip>
+              </div>
               <div className="flex gap-1 items-center">
                 {project?.facebook && (
                   <a
@@ -786,7 +788,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
               </h2>
               <div className="flex gap-1 items-center">
                   <h3 onClick={() => setShowHistory(true)} className="text-[#0CAF60] underline cursor-pointer font-bold text-[15px] hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
-                  <Tooltip className="relative z-50" content={`Totally ${invetors.length} investors with ${investHistory.length} times`}>
+                  <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`Totally ${invetors.length} investors with ${investHistory.length} times`}>
                     <Icon icon="ep:info-filled" width={17} height={17} className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
                   </Tooltip>
               </div>
@@ -875,13 +877,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
                 height={40}
               />
               <div className="text-[#010914] dark:text-[#CCCCCC] text-sm">
-                cryptocurrency will change market structures, and maybe even the
-                architeecture of the internet itself.
+                In future versions of Vulcan launchpad, this area will be a chat box for backers and also have top pinned comments by the highest ranked Evangalist for a particular ICO.
               </div>
             </div>
             <div className="border-l-[3px] pl-3 mt-2 border-[#0CAF60]">
               <h2 className="dark:text-[#CCCCCC] text-[#010914] text-[15px] font-bold">
-                Michael Saylor
+                CryptoSI team
               </h2>
               <h2 className="text-[#A4A8AB] text-[12px]">Business owner</h2>
             </div>

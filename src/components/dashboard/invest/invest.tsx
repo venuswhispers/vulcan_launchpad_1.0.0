@@ -189,8 +189,20 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myC
 
   // @dev set Max ETH
   const _setMaxEth = async () => {
-    const _max = _balance.data?.value as bigint;
+
+    const _status = await contract.getICOState ();
+    if (Number(_status) !== 0) {
+      setFromAmount ("0");
+      setEthAmount (BigInt("0"));
+      return;
+    }
+
+    const _maxWallet = _balance.data?.value as bigint;
+    const _maxBalance: bigint = await _getMaxTokens ();
+    const _max = _maxWallet > _maxBalance ? _maxBalance : _maxWallet;
+
     const _amount = selectedToken.label === "ETH" ? formatEther(_max) : formatEther(_max*BigInt(Math.ceil(ethPrice)));
+
     setFromAmount (_amount);
     console.log({ _max });
     console.log({ _amount });
@@ -249,7 +261,7 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myC
 
             <div className="flex justify-between items-end mt-8">
               <h1 className="px-3 pb-1">TOKEN AMOUNT</h1>
-              <button onClick={_setMaxTokens} className="pb-[6px] px-3 pt-2 hover:opacity-60 cursor-pointer relative rounded-lg border dark:border-gray-700  text-xs">MAX</button>
+              {/* <button onClick={_setMaxTokens} className="pb-[6px] px-3 pt-2 hover:opacity-60 cursor-pointer relative rounded-lg border dark:border-gray-700  text-xs">Amount left available to buy</button> */}
             </div>
             <div className="relative mt-1 bg-white dark:bg-[#100e2891] hover:bg-[#4b3b3b05] hover:dark:bg-black cursor-pointer border border-[#F3F7FC] dark:border-[#222832] w-full py-3 px-4 rounded-xl flex items-center justify-between">
               <div className="flex items-center gap-3">
