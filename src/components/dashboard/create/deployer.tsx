@@ -365,7 +365,6 @@ const Create = ({ step, setStep }: IProps) => {
       // @step1 upload logo to PINATA
       setStepper (1);
       setPercent (0);
-      console.log(preview)
       const _logoURI = await uploadToPinata(
         preview?.data as string,
         ({ loaded, total }: { loaded: number; total: number }) => {
@@ -384,7 +383,10 @@ const Create = ({ step, setStep }: IProps) => {
       const _projectInfo = JSON.stringify({
         title,
         description: description,
-        logo: _logoURI,
+        logo: {
+          url: _logoURI,
+          type: String(preview?.type)
+        },
         youtubeLink,
         twitter,
         instagram,
@@ -393,6 +395,7 @@ const Create = ({ step, setStep }: IProps) => {
         farcaster,
         lens
       });
+      console.log({ _projectInfo });
       const _projectURI = await uploadToIPFS(
         new File(
           [

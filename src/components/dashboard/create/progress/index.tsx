@@ -20,8 +20,8 @@ const ProgressModal = ({ confirm, stepper, percent, hash }: IProps) => {
   
   return (
     <div>
-      <div className="fixed top-0 left-0 right-0 bottom-0 bg-[#0000003d] z-10 backdrop-filter backdrop-blur-[10px]"></div>
-      <div className="rounded-2xl z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-[1px] bg-gradient-to-tr from-[#ff6a0096] via-[#6d78b280] to-[#e02d6f86] mt-10 md:mt-0 w-full lg:w-[600px]">
+      <div className="fixed top-0 left-0 right-0 bottom-0 bg-[#0000003d] !z-50 backdrop-filter backdrop-blur-[10px]"></div>
+      <div className="rounded-2xl !z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-[1px] bg-gradient-to-tr from-[#ff6a0096] via-[#6d78b280] to-[#e02d6f86] mt-10 md:mt-0 w-full lg:w-[600px]">
         <div className="rounded-2xl relative text-center p-4 bg-white dark:bg-[#0A0C0F] dark:text-white text-black">
           <div className="flex items-center justify-center flex-col gap-1 my-3 mb-5">
             {

@@ -60,9 +60,9 @@ const Create = ({ step, setStep }: IProps) => {
 
       <div className="dark:text-white text-black text-sm mt-8 flex gap-1 items-center justify-center">
         <span onClick={handleCopyAddress} className="hover:underline cursor-pointer w-[100px] xs:w-auto truncate" >{ico}</span> 
-        <Tooltip className="relative z-50 bg-black text-white p-2" content="Copy address">
-          <ClipboardCopier size={22} text={ico}/>
-        </Tooltip>
+        
+        <ClipboardCopier size={22} text={ico}/>
+        
         <Tooltip className="relative z-50 bg-black text-white p-2" content="Go to chain">
           <a href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${ico}`} target="_blank"><Icon className='cursor-pointer' icon="fluent:open-16-filled" width={22} /></a>
         </Tooltip>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { copyToClipboard } from '@/utils/methods';
+import { Tooltip } from '@nextui-org/react';
 
 const ClipboardCopier = ({text, size}: {text: string, size?: number}) => {
   /**
@@ -22,8 +23,8 @@ const ClipboardCopier = ({text, size}: {text: string, size?: number}) => {
 
  return (
     isCopied ?  
-    <Icon icon="entypo:check" width={size} className={`relative cursor-pointer hover:opacity-75`}/> : 
-    <Icon onClick={handleCopy} icon="akar-icons:copy" width={size} className={`relative cursor-pointer hover:opacity-75`}/>
+    <Tooltip className="relative z-50 bg-black text-white p-2" content="Copy address"><Icon icon="entypo:check" width={size} className={`relative cursor-pointer hover:opacity-75`}/></Tooltip> : 
+    <Tooltip className="relative z-50 bg-black text-white p-2" content="Copy address"><Icon onClick={handleCopy} icon="akar-icons:copy" width={size} className={`relative cursor-pointer hover:opacity-75`}/></Tooltip>
   )
 }
 

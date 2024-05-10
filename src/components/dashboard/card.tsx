@@ -9,6 +9,8 @@ import { Skeleton } from "@nextui-org/react";
 import { Contract } from "ethers";
 import { formatEther, formatUnits } from "viem";
 import { baseURL } from "@/constants/config";
+// components
+import LazyImage from "../share/lazyImage";
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 //abis
@@ -133,16 +135,14 @@ const Card = ({ id }: IProps) => {
       const _projectURI = await _contract.projectURI();
       const response = await fetch(_projectURI);
       const __project = await response.json();
+      
+      if (typeof __project.logo === "string" ) {
+        __project.logo = {
+          url: __project.logo,
+          type: 'image/jpeg'
+        }
+      }
       setProject(__project);
-
-      fetch(__project.logo)
-        .then((response) => response.blob())
-        .then((blob) => {
-          // const type = blob.type.split("/")[0]; // Get the main type (image, video, etc.)
-          setMediaType (blob.type);
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>", { logo: __project.logo, type: blob.type });
-        })
-        .catch((error) => console.error("Error fetching media:", error));
     } catch (err) {
       console.log("failed fetch project data");
     }
@@ -300,28 +300,30 @@ const Card = ({ id }: IProps) => {
   return (
     <div className="w-full dark:bg-[#100E28] bg-white p-4 rounded-2xl relative">
       <section id="logo" className="relative w-full rounded-2xl aspect-square">
-        {mediaType.toLowerCase().startsWith("video") ? (
+      {
+          !project ?
+          <Skeleton className="rounded-lg w-full aspect-square dark:bg-[#363639] bg-gray-400">
+            <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
+          </Skeleton> :
+          project.logo.type === "video/mp4" ?
           <video
             className="w-full h-full object-contain dark:bg-black bg-gray-100  rounded-2xl"
             controls
           >
-            <source src={project?.logo + ""} />
-          </video>
-        ) : mediaType.toLowerCase().startsWith("image") ? (
-          <Image
-            src={project?.logo + ""}
-            key={project?.logo + ""}
-            width={0}
-            alt=""
-            height={0}
-            sizes="100vw"
-            className="w-full h-full object-contain dark:bg-black bg-gray-100  rounded-2xl"
-          />
-        ) : (
-          <Skeleton className="rounded-lg w-full aspect-square dark:bg-[#363639] bg-gray-400">
-            <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
-          </Skeleton>
-        )}
+            <source src={project.logo.url} />
+          </video> :
+          <LazyImage src={project.logo.url} />
+          // <Image
+          //   src={project.logo.url}
+          //   key={project.logo.url}
+          //   width={0}
+          //   alt=""
+          //   height={0}
+          //   sizes="100vw"
+          //   priority={false}
+          //   className="w-full h-full object-contain dark:bg-black bg-gray-100  rounded-2xl"
+          // />
+        }
         <div className="absolute right-4 -translate-y-1/2 w-1/6 p-1 bg-white rounded-[30%]">
           {creator?.avatar ? (
             <Image
@@ -359,7 +361,7 @@ const Card = ({ id }: IProps) => {
         </div>
         {address === owner && status === 0 && !tokensFullyCharged && (
           <div
-            onClick={() => router.push(`/deposit/${id}`)}
+            onClick={() => router.push(`/deposit?id=${id}`)}
             className="text-xs flex gap-3 items-center bg-[#48916a] text-white cursor-pointer hover:opacity-60 dark:text-white px-3 py-[6px] rounded-full"
           >
             Deposit Token
@@ -452,7 +454,7 @@ const Card = ({ id }: IProps) => {
             <Icon icon="ph:heart-bold" width={22} className="text-[#2B6EC8]" />
           </button>
           <button
-            onClick={() => router.push(`/${id}`)}
+            onClick={() => router.push(`/details?id=${id}`)}
             className="rounded-xl truncate bg-[#2B6EC8] px-2 text-white py-3"
           >
             View

@@ -10,7 +10,10 @@ export interface IToken {
 export interface IProject {
   title: string;
   description: string;
-  logo: string;
+  logo: {
+    url: string,
+    type: string
+  };
   twitter?: string;
   instagram?: string;
   linkedin?: string;

@@ -8,7 +8,6 @@ import { Tooltip } from "@nextui-org/react";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import ClipboardCopier from "@/components/share/clipCopier";
 import QRcode from "react-qr-code";
-import { useRouter } from "next/navigation";
 import useToastr from "@/hooks/useToastr";
 //abis
 import ICO from "@/constants/abis/ICO.json";
@@ -22,6 +21,8 @@ import { copyToClipboard } from "@/utils";
 import axios from "axios";
 // constants
 import { CHAIN_DATA } from "@/constants/constants";
+// router
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
@@ -33,6 +34,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [price, setPrice] = React.useState<bigint>(BigInt("0"));
   const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
   const [balance, setBalance] = React.useState<number>(0);
+  // router
+  const searchParams = useSearchParams ();
+  const id = searchParams.get("id")??"";
   
 
   const { showToast } = useToastr();
@@ -43,7 +47,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
   const handleCopyAddress = async () => {
     showToast("Copied address to clipboard", "success");
-    await copyToClipboard(params.id);
+    await copyToClipboard(id);
   };
 
   React.useEffect(() => {
@@ -62,12 +66,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   };
 
   React.useEffect(() => {
-    if (!address || !chainId || !signer || !params.id) {
+    if (!address || !chainId || !signer || !id) {
       return;
     }
-    const _contract = new Contract(params.id, ICO, signer);
+    const _contract = new Contract(id, ICO, signer);
     setContract(_contract);
-  }, [address, chainId, signer, params.id]);
+  }, [address, chainId, signer, id]);
 
   // const _depositAmountToSoftcap = React.useMemo(() => {
   //   if (Number(price) === 0) {
@@ -117,14 +121,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           onClick={handleCopyAddress}
           className="hover:underline cursor-pointer w-[100px] xs:w-auto truncate"
         >
-          {params.id}
+          {id}
         </span>
-        <Tooltip content="Copy address">
-          <ClipboardCopier size={22} text={params.id} />
-        </Tooltip>
+        <ClipboardCopier size={22} text={id} />
         <Tooltip content="Go to chain">
           <a
-            href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${params.id}`}
+            href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${id}`}
             target="_blank"
           >
             <Icon
@@ -137,7 +139,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="w-full flex justify-center relative mt-5">
-        <QRcode value={params.id} width={100} height={100} />
+        <QRcode value={id} width={100} height={100} />
         <Image
           src={"/favicon.svg"}
           width={60}

@@ -57,21 +57,25 @@ const AuthProvider = ({
       if (!address) throw "address is not defined..."
 
       const { data : msgData } = await api.post(`/user/request-message`, { chain: 1, address });
-      const { id, message, profileId }: TMsg = msgData;
+
+      const { id, message, profileId, user }: TMsg = msgData;
 
       if (!id || !message || !profileId) { 
         showToast("Undefined Message.", 'warning');
         return;
       }
 
+      if (!user) {
+        router.push("/register");
+        showToast("Please create your profile.", 'warning');
+        return;
+      }
+ 
       const signature = await signMessageAsync({ message });
-      
       const { data : signData } = await api.post(`/user/signin`, { message, signature });
-      console.log(signData);
 
       if (signData === "none") {
-        _setAuth (undefined, undefined);
-        router.push("/profile/create");
+        router.push("/register");
         showToast("Please create your profile.", 'warning');
       } else {
         const { data: _user }: any = jwt.decode(signData);
@@ -87,32 +91,33 @@ const AuthProvider = ({
     }
   };
 
-  const signUp = async (user: TRegister) => {
+  const signUp = async (data: TRegister) => {
 
     try {
       if (!chainId) throw "chain is not defined...";
       if (!address) throw "address is not defined...";
       
       const { data : msgData } = await api.post(`/user/request-message`, { chain: chainId, address });
-      const { id, message, profileId }: TMsg = msgData;
+      const { id, message, profileId, user }: TMsg = msgData;
       
       if (!id || !message || !profileId) { 
         showToast("Undefined Message.", 'warning');
         return;
       }
+
+      if (user) {
+        showToast("User already exists.", 'warning');
+        return;
+      }
       
       const signature = await signMessageAsync({ message });
 
-      const { data : registerData } = await api.post(`/user/signup`, { message, signature, user });
-      console.log({
-        jwt: registerData
-      });
+      const { data : registerData } = await api.post(`/user/signup`, { message, signature, user: data });
 
       if (registerData === 'exists') {
         showToast("User already exists.", 'warning');
       } else {
         const { data: _user }: any = jwt.decode(registerData);
-        console.log(_user);
         _setAuth (_user, registerData);
         showToast ("Profile created Successfully.", "success");
       }

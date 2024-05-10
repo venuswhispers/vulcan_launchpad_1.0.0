@@ -33,8 +33,11 @@ import useAPI from "@/hooks/useAPI";
 // atoms
 import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
 import { useAtom } from "jotai";
+// router
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-const LaunchPad = ({ params }: { params: { id: string } }) => {
+
+const LaunchPad = () => {
   // atoms
   const [fromAmount, setFromAmount] = useAtom<string>(fromAmountAtom);
   const [toAmount, setToAmount] = useAtom<bigint>(toAmountAtom);
@@ -75,6 +78,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [showDistribution, setShowDistribution] = React.useState<boolean>(false);
   const [showRefund, setShowRefund] = React.useState<boolean>(false);
   const [showIntroduction, setShowIntroduction] = React.useState<boolean>(false);
+  // router
+  const searchParams = useSearchParams ();
+  const id = searchParams.get("id")??"";
 
   const [refund, setRefund] = React.useState<REFUND>({     
     refunded: false,
@@ -219,16 +225,13 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       const _projectURI = await _contract.projectURI();
       const response = await fetch(_projectURI);
       const __project = await response.json();
+      if (typeof __project.logo === "string" ) {
+        __project.logo = {
+          url: __project.logo,
+          type: 'image/jpeg'
+        }
+      }
       setProject(__project);
-
-      fetch(__project.logo)
-        .then((response) => response.blob())
-        .then((blob) => {
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>", { logo: __project.logo, type: blob.type });
-          // const type = blob.type.split("/")[0]; // Get the main type (image, video, etc.)
-          setMediaType(blob.type);
-        })
-        .catch((error) => console.error("Error fetching media:", error));
     } catch (err) {
       console.log("failed fetch project data");
     }
@@ -301,7 +304,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
       if (_status === 1) {
         const _refund = await _contract.refund ();
-        const { data } = await api.get(`/ico/invest/refund?refunder=${_refund[1]}&ico=${params.id}`);
+        const { data } = await api.get(`/ico/invest/refund?refunder=${_refund[1]}&ico=${id}`);
         console.log(data);
         const _hash = data ? data.txHash : "";
         setRefund({
@@ -312,7 +315,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         });
       } else if (_status === 2 || _status === 3) {
         const _distribute = await _contract.distribution();
-        const { data } = await api.get(`/ico/invest/distribution?distributor=${_distribute[1]}&ico=${params.id}`);
+        const { data } = await api.get(`/ico/invest/distribution?distributor=${_distribute[1]}&ico=${id}`);
         const _hash = data ? data.txHash : "";
         setDistribution({
           distributed: _distribute[0],
@@ -418,17 +421,17 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   }, [distance]);
 
   //@ts-ignore
-  // console.log(Number(fundsRaised), useBalance({address: params.id}).data?.value);
+  // console.log(Number(fundsRaised), useBalance({address: id}).data?.value);
 
   React.useEffect(() => {
-    if (!address || !chainId || !signer || !params.id) {
+    if (!address || !chainId || !signer || !id) {
       return;
     }
-    const _contract = new Contract(params.id, ICO, signer);
+    const _contract = new Contract(id, ICO, signer);
     setContract(_contract);
     _getICOInfo(_contract);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, chainId, signer, params.id]);
+  }, [address, chainId, signer, id]);
 
   React.useEffect(() => {
     fetch("/api/utils/eth-price")
@@ -526,7 +529,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
 
       if (ICOStatus === 2) {
         await api.post('/ico/invest/distribution', { 
-          ico: params.id,
+          ico: id,
           distributor: String(address),
           txHash: _tx.hash,
           chainId: Number(chainId)
@@ -534,7 +537,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> success distribute update")
       } else if (ICOStatus === 1) {
         await api.post('/ico/invest/refund', { 
-          ico: params.id,
+          ico: id,
           refunder: String(address),
           txHash: _tx.hash,
           chainId: Number(chainId)
@@ -629,7 +632,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       <Header />
       { showInvestModal && token && contract && chainId && 
         <Invest 
-          id={params.id}
+          id={id}
           visible={showInvestModal} 
           setVisible={setShowInvestModal}
           setShowSuccessModal={setShowSuccessModal}
@@ -655,7 +658,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         showDistribution && contract && chainId &&
         <Distribution 
           cap={cap}
-          id={params.id}
+          id={id}
           setVisible={setShowDistribution} 
           explorer={CHAIN_DATA[String(chainId)].explorer}
           contract={contract}
@@ -669,7 +672,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       {
         showRefund && contract && chainId &&
         <Refund 
-          id={params.id}
+          id={id}
           setVisible={setShowRefund} 
           explorer={CHAIN_DATA[String(chainId)].explorer}
           contract={contract}
@@ -720,11 +723,11 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1">
               <div className="flex gap-2 items-center">
                 <h3 className="dark:text-[#CCCCCC] text-[#101010] text-lg font-bold">
-                  {project?.title}
+                  { project?.title }
                 </h3>
                 <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`view ICO in block scan`}>
                   { 
-                    <a href={`${CHAIN_DATA[String(chainId)]?.explorer}/address/${params.id}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60 text-black dark:text-white' icon="fluent:open-16-filled" width={22} /></a>
+                    <a href={`${CHAIN_DATA[String(chainId)]?.explorer}/address/${id}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60 text-black dark:text-white' icon="fluent:open-16-filled" width={22} /></a>
                   }
                 </Tooltip>
               </div>
@@ -845,27 +848,26 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
             Building an open digital economy
           </h1>
           <div className="mt-5 mb-5 aspect-[2/1] flex justify-center items-center">
-            {mediaType.toLowerCase().startsWith("video") ? (
-              <video
-                className="w-full rounded-xl"
-                src={project ? project.logo : "/images/spade.png"}
-                controls
-              />
-            ) : mediaType.toLowerCase().startsWith("image") ? (
-              <Image
-                src={project ? project.logo : "/images/spade.png"}
-                // className={`${className} ${isImageLoading ? 'hidden' : 'block'}`}
-                width={0}
-                alt=""
-                height={0}
-                sizes="100vw"
-                className="w-full rounded-xl"
-              />
-            ) : (
-              <Skeleton className="rounded-lg w-full aspect-video dark:bg-[#363639] bg-gray-400">
-                <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
-              </Skeleton>
-            )}
+          {
+            !project ?
+            <Skeleton className="rounded-lg w-full aspect-video dark:bg-[#363639] bg-gray-400">
+              <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
+            </Skeleton> :
+            project.logo.type === "video/mp4" ?
+            <video
+              className="w-full rounded-xl"
+              src={project.logo.url}
+              controls
+            /> :
+            <Image
+              src={project.logo.url}
+              width={0}
+              alt=""
+              height={0}
+              sizes="100vw"
+              className="w-full rounded-xl"
+            />
+          }
           </div>
           <div className="mt-5 text-sm text-[#777E90]">
             <Displayer value={project?.description ?? ""} />

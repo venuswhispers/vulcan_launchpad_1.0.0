@@ -17,7 +17,8 @@ export interface IUSER {
 export type TMsg = { 
   id: string, 
   message: string, 
-  profileId: string 
+  profileId: string,
+  user: boolean 
 }
 
 export type TRegister = {
