@@ -74,10 +74,11 @@ const Evangilists = () => {
   };
 
   React.useEffect(() => {
+    if (!isAuthenticated) return;
     (async () => {
       try {
         setFetching (true);
-        const { data } = await api.get("/user");
+        const { data } = await api.get("/user/me");
         const {
           avatar,
           bio,
@@ -90,7 +91,7 @@ const Evangilists = () => {
           instagram,
           farcaster,
           lens,
-        } = data.data;
+        } = data;
         setAvatar(avatar ?? "");
         setBio(bio);
         setCompany(company);

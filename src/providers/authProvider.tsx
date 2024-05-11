@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import useToastr from "@/hooks/useToastr";
 import { useRouter } from "next/navigation";
 import useAPI from "@/hooks/useAPI";
+import { baseURL } from "@/constants/config";
 
 
 interface IContext {
@@ -38,19 +39,20 @@ const AuthProvider = ({
 
   const _setAuth = (user: IUSER|undefined, token: string|undefined) => {
     axios.defaults.headers.common['x-auth-token'] = token;
-    setIsAuthenticated (true);
+    if (token) {
+      localStorage.setItem("jwt", token);
+    } else {
+      localStorage.removeItem("jwt");
+      router.push("/");
+    }
+    setIsAuthenticated (token ? true : false);
     setUser (user);
   }
-  //disconnect
-  React.useEffect(() => {
-    if (isDisconnected) {
-      setUser (undefined);
-      setIsAuthenticated (false);
-      router.push("/");
-    }  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDisconnected]);
 
+  /**
+   * signin with SIWE
+   * @returns 
+   */
   const signIn = async () => {
     try {
       if (!chain) throw "chain is not defined...";
@@ -90,7 +92,11 @@ const AuthProvider = ({
       } 
     }
   };
-
+  /**
+   * user registration
+   * @param data 
+   * @returns 
+   */
   const signUp = async (data: TRegister) => {
 
     try {
@@ -131,15 +137,48 @@ const AuthProvider = ({
     }
   }
 
+  /**
+   * sign with token
+   * @param token 
+   */
+  const signWithJWT = async ( token: string ) => {
+    try {
+      axios.defaults.headers.common['x-auth-token'] = token;
+      const { data } = await axios.get(`${baseURL}/user/signinWithToken`);
+      if (data === "none") {
+        throw "none user";
+      } else {
+        const { data: _user }: any = jwt.decode(data);
+        _setAuth (_user, data);
+      }
+    } catch (err) {
+      _setAuth (undefined, undefined);
+    }
+  }
+
+  //@ when wallet is connected, signin with SIWE
   React.useEffect(() => {
     if (isConnected) {
-      signIn ();
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        signWithJWT (jwt);
+      } else {
+        signIn ();
+      }
     } else {
       setUser (undefined);
       setIsAuthenticated (false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, chain, address]);
+
+  //@ disconnect
+  React.useEffect(() => {
+    if (isDisconnected) {
+      _setAuth (undefined, undefined);
+    }  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDisconnected]);
   
 
   return (
