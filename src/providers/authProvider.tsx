@@ -40,9 +40,9 @@ const AuthProvider = ({
   const _setAuth = (user: IUSER|undefined, token: string|undefined) => {
     axios.defaults.headers.common['x-auth-token'] = token;
     if (token) {
-      localStorage.setItem("accessToken", token);
+      localStorage.setItem("jwt", token);
     } else {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("jwt");
       router.push("/");
     }
     setIsAuthenticated (token ? true : false);
@@ -158,9 +158,8 @@ const AuthProvider = ({
 
   //@ when wallet is connected, signin with SIWE
   React.useEffect(() => {
-    console.log({localStorage})
     if (isConnected) {
-      const jwt = localStorage.getItem("accessToken");
+      const jwt = localStorage.getItem("jwt");
       console.log("jwt ------------------->", jwt);
       if (jwt) {
         signWithJWT (jwt);
