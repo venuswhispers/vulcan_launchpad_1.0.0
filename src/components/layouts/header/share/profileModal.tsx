@@ -131,7 +131,6 @@ const ProfileModal = ({ chain, account, setVisible }: IProps) => {
           { _renderSignActions() }
         </div>
       </div>
-      <div className='bg-red p-4' onClick={tester}>test</div>
       <div className='px-5 relative py-3 flex gap-2'>
         <Button isIconOnly className='dark:bg-[#554C5F] bg-[#554c5f5e] rounded-md' size='sm' aria-label="Like">
           <Icon icon="line-md:twitter-x-alt" className='text-black dark:text-white' width={18}/>
