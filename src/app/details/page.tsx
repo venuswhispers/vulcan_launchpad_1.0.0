@@ -720,16 +720,11 @@ const LaunchPad = () => {
           </div> */}
 
           <div className="w-full px-1">
-            <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1">
+            <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1 border-b border-[#E6E8EC] dark:border-[#ededee1a] py-3">
               <div className="flex gap-2 items-center">
                 <h3 className="dark:text-[#CCCCCC] text-[#101010] text-lg font-bold">
                   { project?.title }
                 </h3>
-                <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`view ICO in block scan`}>
-                  { 
-                    <a href={`${CHAIN_DATA[String(chainId)]?.explorer}/address/${id}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60 text-black dark:text-white' icon="fluent:open-16-filled" width={22} /></a>
-                  }
-                </Tooltip>
               </div>
               <div className="flex gap-1 items-center">
                 {project?.facebook && (
@@ -769,6 +764,16 @@ const LaunchPad = () => {
                   </a>
                 )}
               </div>
+            </div>
+            <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
+              <h2 className="text-[15px] font-bold text-[#6F6F6F] dark:text-[#CCCCCC]">
+                View this ICO on the chain
+              </h2>
+              <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`view ICO in block scan`}>
+                <a href={`${CHAIN_DATA[String(chainId)]?.explorer}/address/${id}`} target="_blank" className="flex gap-1 items-center text-[15px] dark:text-[#B4B4B7] truncate text-[#101010] cursor-pointer hover:underline hover:opacity-60">
+                  {id}
+                </a>
+              </Tooltip>
             </div>
             {_renderItem("HardCap", formatEther(hardcap))}
             {_renderItem("SoftCap", formatEther(softcap))}
