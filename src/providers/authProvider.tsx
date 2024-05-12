@@ -39,9 +39,9 @@ const AuthProvider = ({
   const _setAuth = (user: IUSER|undefined, token: string|undefined) => {
     axios.defaults.headers.common['x-auth-token'] = token;
     if (token) {
-      localStorage.setItem("accessToken", token);
+      localStorage.setItem("accessToken-", token);
     } else {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("accessToken-");
       router.push("/");
     }
     setIsAuthenticated (token ? true : false);
@@ -157,28 +157,28 @@ const AuthProvider = ({
 
   //@ when wallet is connected, signin with SIWE
   React.useEffect(() => {
-    // if (isConnected && typeof window !== 'undefined') {
-    //   const jwt = window.localStorage.getItem("accessToken");
-    //   console.log("jwt ------------------->", jwt);
-    //   if (jwt) {
-    //     signWithJWT (jwt);
-    //   } else {
-    //     signIn ();
-    //   }
-    // } else {
-    //   setUser (undefined);
-    //   setIsAuthenticated (false);
-    // }
+    if (isConnected && typeof window !== 'undefined') {
+      const jwt = window.localStorage.getItem("accessToken-");
+      console.log("jwt ------------------->", jwt);
+      if (jwt) {
+        signWithJWT (jwt);
+      } else {
+        signIn ();
+      }
+    } else {
+      setUser (undefined);
+      setIsAuthenticated (false);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, chain, address]);
 
-  //@ disconnect
-  React.useEffect(() => {
-    if (isDisconnected) {
-      _setAuth (undefined, undefined);
-    }  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDisconnected]);
+  // //@ disconnect
+  // React.useEffect(() => {
+  //   if (isDisconnected) {
+  //     _setAuth (undefined, undefined);
+  //   }  
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isDisconnected]);
   
 
   return (
