@@ -157,8 +157,8 @@ const AuthProvider = ({
 
   //@ when wallet is connected, signin with SIWE
   React.useEffect(() => {
-    if (isConnected) {
-      const jwt = localStorage.getItem("accessToken-");
+    if (isConnected && typeof window !== 'undefined') {
+      const jwt = window.localStorage.getItem("accessToken-");
       console.log("jwt ------------------->", jwt);
       if (jwt) {
         signWithJWT (jwt);
