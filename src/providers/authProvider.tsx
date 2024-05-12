@@ -175,13 +175,13 @@ const AuthProvider = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, chain, address]);
 
-  // //@ disconnect
-  // React.useEffect(() => {
-  //   if (isDisconnected) {
-  //     _setAuth (undefined, undefined);
-  //   }  
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [isDisconnected]);
+  //@ disconnect
+  React.useEffect(() => {
+    if (isDisconnected && user && isAuthenticated) {
+      _setAuth (undefined, undefined);
+    }  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDisconnected]);
   
 
   return (
