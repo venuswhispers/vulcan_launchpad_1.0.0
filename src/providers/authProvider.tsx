@@ -160,6 +160,7 @@ const AuthProvider = ({
   React.useEffect(() => {
     if (isConnected) {
       const jwt = localStorage.getItem("jwt");
+      console.log("jwt ------------------->", jwt);
       if (jwt) {
         signWithJWT (jwt);
       } else {
