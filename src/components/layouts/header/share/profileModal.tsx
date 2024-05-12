@@ -7,6 +7,7 @@ import { ACCOUNT, RAINBOW_CHAIN } from '@/types';
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from 'next/navigation';
 import useToastr from '@/hooks/useToastr';
+import test from 'node:test';
 
 interface IProps {
   chain: RAINBOW_CHAIN,
@@ -75,6 +76,11 @@ const ProfileModal = ({ chain, account, setVisible }: IProps) => {
     }
   };
 
+  const tester = () => {
+    const jwt = window.localStorage.getItem("accessToken-");
+    console.log(jwt)
+  }
+
   return (
     <div className='fixed bg-white dark:bg-[#100E28] z-50 right-1 top-1 rounded-lg sm:left-auto left-1 sm:right-4 sm:top-4 sm:w-96 shadow-md dark:shadow-[#ffffff23]'>
       <div className='fixed top-0 left-0 bottom-0 right-0' onClick={ () => setVisible(false) }></div>
@@ -129,6 +135,7 @@ const ProfileModal = ({ chain, account, setVisible }: IProps) => {
         <div className='px-6 py-3 flex gap-2 hover:dark:bg-[#1e1a42] hover:bg-[#28235352] cursor-pointer text-[16px] font-normal'>
           { _renderSignActions() }
         </div>
+        <div className='bg-red p-4' onClick={tester}>test</div>
       </div>
       <div className='px-5 relative py-3 flex gap-2'>
         <Button isIconOnly className='dark:bg-[#554C5F] bg-[#554c5f5e] rounded-md' size='sm' aria-label="Like">

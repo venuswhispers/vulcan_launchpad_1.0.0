@@ -157,18 +157,18 @@ const AuthProvider = ({
 
   //@ when wallet is connected, signin with SIWE
   React.useEffect(() => {
-    if (isConnected && typeof window !== 'undefined') {
-      const jwt = window.localStorage.getItem("accessToken-");
-      console.log("jwt ------------------->", jwt);
-      if (jwt) {
-        signWithJWT (jwt);
-      } else {
-        signIn ();
-      }
-    } else {
-      setUser (undefined);
-      setIsAuthenticated (false);
-    }
+    // if (isConnected && typeof window !== 'undefined') {
+    //   const jwt = window.localStorage.getItem("accessToken-");
+    //   console.log("jwt ------------------->", jwt);
+    //   if (jwt) {
+    //     signWithJWT (jwt);
+    //   } else {
+    //     signIn ();
+    //   }
+    // } else {
+    //   setUser (undefined);
+    //   setIsAuthenticated (false);
+    // }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, chain, address]);
 
