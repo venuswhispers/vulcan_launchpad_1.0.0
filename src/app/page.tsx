@@ -72,44 +72,44 @@ export default function Home() {
   }
 
   
-  // React.useEffect(() => {
-  //   if (!contractFactory) return;
-  //   contractFactory.getVulcans().then((_icos: string[]) => {
-  //     setICOs([..._icos].reverse());
-  //     fetchMetaData ([..._icos].reverse());
-  //   });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [contractFactory]);
+  React.useEffect(() => {
+    if (!contractFactory) return;
+    contractFactory.getVulcans().then((_icos: string[]) => {
+      setICOs([..._icos].reverse());
+      fetchMetaData ([..._icos].reverse());
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contractFactory]);
   
   const onChange = (ids: string[]) => {
     setICOs (ids);
   }
   
-  // React.useEffect(() => {
-  //   if (!address || !chainId || !signer || !FACTORY_ADDRESSES[chainId]) {
-  //     return;
-  //   }
-  //   const _contractFactory = new Contract(
-  //     FACTORY_ADDRESSES[chainId],
-  //     FACTORY,
-  //     signer
-  //   );
-  //   setContractFactory(_contractFactory);
-  // }, [address, chainId, signer]);
+  React.useEffect(() => {
+    if (!address || !chainId || !signer || !FACTORY_ADDRESSES[chainId]) {
+      return;
+    }
+    const _contractFactory = new Contract(
+      FACTORY_ADDRESSES[chainId],
+      FACTORY,
+      signer
+    );
+    setContractFactory(_contractFactory);
+  }, [address, chainId, signer]);
 
-  // React.useEffect(() => {
-  //   fetch("/api/utils/eth-price")
-  //   .then(async (response) => {
-  //     const {
-  //       payload: { amount },
-  //     } = await response.json();
-  //     setEthPrice(amount);
-  //   })
-  //   .catch((err) => {
-  //     console.log("failed to fetch eth price");
-  //   });
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  React.useEffect(() => {
+    fetch("/api/utils/eth-price")
+    .then(async (response) => {
+      const {
+        payload: { amount },
+      } = await response.json();
+      setEthPrice(amount);
+    })
+    .catch((err) => {
+      console.log("failed to fetch eth price");
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex w-full flex-col gap-4">
