@@ -158,6 +158,7 @@ const AuthProvider = ({
 
   //@ when wallet is connected, signin with SIWE
   React.useEffect(() => {
+    console.log({localStorage})
     if (isConnected) {
       const jwt = localStorage.getItem("jwt");
       console.log("jwt ------------------->", jwt);
