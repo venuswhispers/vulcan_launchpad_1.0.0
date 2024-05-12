@@ -37,10 +37,13 @@ const AuthProvider = ({
   const [user, setUser] = useAtom (userAtom);
 
   const _setAuth = (user: IUSER|undefined, token: string|undefined) => {
+    
     axios.defaults.headers.common['x-auth-token'] = token;
     if (token) {
+      console.log("set auth token");
       localStorage.setItem("accessToken-", token);
     } else {
+      console.log("remove auth token");
       localStorage.removeItem("accessToken-");
       router.push("/");
     }
