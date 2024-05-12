@@ -1,6 +1,4 @@
-"use client";
 import React from "react";
-import { type Chain, type Address, type Client } from "viem";
 import { useSignMessage } from "wagmi";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import axios from 'axios';
