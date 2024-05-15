@@ -96,7 +96,7 @@ const Input = ({title, className, onChange, value, placeholder, isInvalid, messa
       <ReactQuill
         className={`w-full max-w-full ${ readOnly && 'displayer p-3 dark:bg-[#020111] bg-[#F0F8FF] rounded-md' }`} 
         theme="snow"
-        readOnly
+        readOnly={readOnly}
         modules={modules}
         formats={formats}
         value={value}
