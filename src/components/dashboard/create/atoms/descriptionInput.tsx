@@ -16,7 +16,8 @@ interface IProps {
   placeholder: string,
   message: string,
   isInvalid: boolean,
-  info: string
+  info: string,
+  readOnly: boolean
 }
 
 const modules = {
@@ -79,7 +80,7 @@ const modules = {
     "font"
   ];
 
-const Input = ({title, className, onChange, value, placeholder, isInvalid, message, info}: IProps) => {
+const Input = ({title, className, onChange, value, placeholder, isInvalid, message, info, readOnly = false}: IProps) => {
 
   const handleProcedureContentChange = (content:any, delta:any, source:any, editor:any) => {
     onChange(content);
@@ -93,8 +94,9 @@ const Input = ({title, className, onChange, value, placeholder, isInvalid, messa
         </Tooltip>
       </div>
       <ReactQuill
-        className="w-full max-w-full"
+        className={`w-full max-w-full ${ readOnly && 'displayer p-3 dark:bg-[#020111] bg-[#F0F8FF] rounded-md' }`} 
         theme="snow"
+        readOnly
         modules={modules}
         formats={formats}
         value={value}

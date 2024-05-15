@@ -10,10 +10,11 @@ interface IProps {
   placeholder: string,
   message: string,
   isInvalid: boolean,
-  info?: string
+  info?: string,
+  readOnly?: boolean
 }
 
-const Input = ({title, className, onChange, value, placeholder, message, isInvalid, info = "info"}: IProps) => {
+const Input = ({title, className, onChange, value, placeholder, message, isInvalid, info = "info", readOnly = false }: IProps) => {
   return (
     <div className={className}>
       <div className="px-1 py-1 font-bold truncate flex gap-1 items-center">{title} 
@@ -22,10 +23,11 @@ const Input = ({title, className, onChange, value, placeholder, message, isInval
         </Tooltip>
       </div>
       <input
-        className="bg-[#F0F8FF] transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border"
+        className={`bg-[#F0F8FF] ${readOnly && 'border-[#00000000]' } transition-all text-[12px] p-3 dark:bg-[#020111] w-full rounded-lg text-blue-gray-700 font-sans font-normal border-[#98bdea1f] outline-none focus:ring-1 focus:ring-[#8ca8cba2] focus:border-[#8ca8cba2] border`}
         placeholder={placeholder} 
         onChange={onChange}
         value={value}
+        disabled={readOnly}
       />
       <p className="text-red-800 text-[11px] px-2 h-3">{ ( isInvalid && !value ) ? message : '' }</p>
     </div>

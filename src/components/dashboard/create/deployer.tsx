@@ -556,7 +556,7 @@ const Create = ({ step, setStep }: IProps) => {
 
       <div className="px-2 pt-2 text-sm">
         <h3 className="flex gap-2">
-          <span>* You need to deposit <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToHardcap) } tokens</span> to reach your hard cap and start this ICO.</span>
+          <span>* You need to deposit <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToHardcap) } tokens</span> to reach your hard cap and start this ICO </span>
         </h3>
         <h3 className="flex gap-2">
           <span>* If you reach your soft cap, you will distribute <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToSoftcap) } tokens</span> and <span className="text-[15px] text-red-600 font-bold">{String(_depositAmountToHardcap - _depositAmountToSoftcap)} tokens</span> will be returned.</span>

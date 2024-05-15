@@ -109,7 +109,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       <h2 className="text-lg font-bold text-center dark:text-white mt-20">
         { 
           _depositAmountToHardcap > balance ? 
-          <>** You need to deposit <span className="text-lg text-green-600 font-bold">{ String(_depositAmountToHardcap - balance) } tokens</span> to reach your hard cap and start this ICO. **</> :
+          <>** You need to deposit <span className="text-lg text-green-600 font-bold">{ String(_depositAmountToHardcap - balance) } tokens</span> to reach your hard cap and start this ICO **</> :
           <>** ICO has been started **</> 
         }
       </h2>
@@ -139,7 +139,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="w-full flex justify-center relative mt-5">
-        <QRCode value={id} size={200} logoImage="/favicon.svg" logoWidth={60} logoHeight={43}/>
+        <div className="p-3 rounded-md bg-white"><QRCode quietZone={0} value={id}  size={200} logoImage="/favicon.svg" logoWidth={60} logoHeight={43}/></div>
       </div>
     </div>
   );
