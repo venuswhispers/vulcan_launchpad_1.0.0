@@ -124,7 +124,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
           {id}
         </span>
         <ClipboardCopier size={22} text={id} />
-        <Tooltip content="Go to chain">
+        <Tooltip content="Go to chain" className="p-2 text-white bg-black">
           <a
             href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${id}`}
             target="_blank"
