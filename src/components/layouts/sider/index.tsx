@@ -18,10 +18,42 @@ interface INav {
 }
 
 const navs: INav[] = [
-  { title: "Dashboard", url: "/", icon: "radix-icons:dashboard" },
-  { title: "Launch ICO", url: "/create", icon: "bi:gem" },
-  { title: "News", url: "/news", icon: "emojione-monotone:newspaper" },
-  { title: "Videos", url: "/videos", icon: "fluent:video-clip-28-regular" },
+  { 
+    title: "My Dashboard", 
+    url: "/", 
+    icon: "radix-icons:dashboard" 
+  },
+  { 
+    title: "Current ICOs", 
+    url: "/live", 
+    icon: "fluent:live-24-regular" 
+  },
+  { 
+    title: "Archived ICOs", 
+    url: "/done", 
+    icon: "hugeicons:wallet-done-02" 
+  },
+  { 
+    title: "Launch ICO", 
+    url: "/create", 
+    icon: "bi:gem" 
+  },
+  { 
+    title: "News", 
+    url: "/news", 
+    icon: "emojione-monotone:newspaper",
+    soon: true
+  },
+  { title: "Tutorials", 
+    url: "/tutorials", 
+    icon: "ic:round-school",
+    soon: true
+  },
+  { title: "Videos", 
+    url: "/videos", 
+    icon: "icon-park-outline:video",
+    soon: true
+  },
   {
     title: "Evangalists",
     url: "/evangilists",
@@ -34,7 +66,11 @@ const navs: INav[] = [
     icon: "ph:user-circle-light",
     soon: true,
   },
-  { title: "Help", url: "/help", icon: "ri:file-list-3-line" },
+  { 
+    title: "Help", 
+    url: "/help", 
+    icon: "ri:file-list-3-line" 
+  },
 ];
 
 const Sider = () => {
@@ -218,19 +254,6 @@ const Sider = () => {
                 )}
               </div>
               <ul className="mt-4 p-6">
-                {isAuthenticated && (
-                  <li
-                    key={"profile"}
-                    onClick={() => _gotoURL("/profile")}
-                    className={`w-full px-1 flex gap-2 items-center text-black dark:text-white text-[15px] py-[10px] ${
-                      pathname === "/profile" &&
-                      "bg-[#2B6EC8] !px-5 !py-4 font-bold !text-white my-1"
-                    }  rounded-2xl cursor-pointer hover:font-bold`}
-                  >
-                    <Icon icon="flowbite:profile-card-solid" width={22} />{" "}
-                    Profile
-                  </li>
-                )}
                 {navs.map((_nav: INav) => _renderNavItem(_nav))}
               </ul>
             </section>

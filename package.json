@@ -31,7 +31,7 @@
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
     "react-player": "^2.16.0",
-    "react-qr-code": "^2.0.12",
+    "react-qrcode-logo": "^2.10.0",
     "react-quill": "^2.0.0",
     "react-time-picker-typescript": "^1.2.3",
     "viem": "^2.9.9",

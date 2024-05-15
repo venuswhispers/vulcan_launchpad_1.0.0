@@ -794,7 +794,7 @@ const LaunchPad = () => {
             </div>
             <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
               <h2 className="text-[15px] font-bold text-[#6F6F6F] dark:text-[#CCCCCC]">
-                Current Investors
+                Current Contributors
               </h2>
               <div className="flex gap-1 items-center">
                   <h3 onClick={() => setShowHistory(true)} className="text-[#0CAF60] underline cursor-pointer font-bold text-[15px] hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
@@ -824,7 +824,7 @@ const LaunchPad = () => {
           </div>
           <div className="mt-5 mb-2 flex flex-col xs:flex-row gap-3 justify-between">
             {creator ? (
-              <div className="flex items-center gap-2">
+              <a href={`https://zapper.xyz/account/${creator.wallet}`} target="_blank" className="flex items-center gap-2 hover:opacity-60">
                 <Image
                   src={creator.avatar ? creator.avatar : "/images/default.jpg"}
                   width={45}
@@ -840,7 +840,7 @@ const LaunchPad = () => {
                     @{creator.fullName}
                   </span>
                 </div>
-              </div>
+              </a>
             ): <div></div>}
             { _renderActionButton () }
           </div>

@@ -7,7 +7,7 @@ import { Tooltip } from "@nextui-org/react";
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import ClipboardCopier from "@/components/share/clipCopier";
-import QRcode from "react-qr-code";
+import { QRCode } from 'react-qrcode-logo';
 import useToastr from "@/hooks/useToastr";
 //abis
 import ICO from "@/constants/abis/ICO.json";
@@ -139,14 +139,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="w-full flex justify-center relative mt-5">
-        <QRcode value={id} width={100} height={100} />
-        <Image
-          src={"/favicon.svg"}
-          width={60}
-          height={60}
-          alt={"logo"}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        />
+        <QRCode value={id} size={200} logoImage="/favicon.svg" logoWidth={60} logoHeight={43}/>
       </div>
     </div>
   );

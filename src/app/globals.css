@@ -63,12 +63,12 @@ body {
 
 :root {
   scrollbar-width: thin;
-  scrollbar-color: #36364993 #ffffff00;
+  scrollbar-color: #5d5d8f #eaeef0;
 }
 
 .dark :root {
   scrollbar-width: thin;
-  scrollbar-color: #363649 #ffffff00;
+  scrollbar-color: #141427 #ffffff00;
 }
 
 .dark .vulcan-sider {

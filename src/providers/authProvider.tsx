@@ -18,6 +18,7 @@ interface IContext {
   signIn: () => Promise<void>,
   signUp: (data: TRegister) => Promise<void>
   isAuthenticated: boolean,
+  isAuthenticating: boolean,
   user: IUSER | undefined
 }
 
@@ -34,6 +35,7 @@ const AuthProvider = ({
   const router = useRouter ();
   //atoms
   const [isAuthenticated, setIsAuthenticated] = useAtom (isAuthenticatedAtom);
+  const [isAuthenticating, setIsAuthenticating] = React.useState<boolean>(false);
   const [user, setUser] = useAtom (userAtom);
 
   const _setAuth = (user: IUSER|undefined, token: string|undefined) => {
@@ -59,7 +61,7 @@ const AuthProvider = ({
     try {
       if (!chain) throw "chain is not defined...";
       if (!address) throw "address is not defined..."
-
+      setIsAuthenticating (true);
       const { data : msgData } = await api.post(`/user/request-message`, { chain: 1, address });
 
       const { id, message, profileId, user }: TMsg = msgData;
@@ -92,6 +94,8 @@ const AuthProvider = ({
       } else if (err.code === 'ERR_BAD_RESPONSE') {
         showToast("Signin failed. Please try again.", 'warning');
       } 
+    } finally {
+      setIsAuthenticating (false);
     }
   };
   /**
@@ -190,6 +194,7 @@ const AuthProvider = ({
         signIn,
         signUp,
         isAuthenticated, 
+        isAuthenticating,
         user
       }}
     >

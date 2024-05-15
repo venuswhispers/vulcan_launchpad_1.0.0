@@ -4,7 +4,6 @@ import Header from '@/components/dashboard/header';
 import Filter from "@/components/dashboard/filter";
 import dynamic from "next/dynamic";
 import { Spinner } from "@nextui-org/spinner";
-import { Button } from "@nextui-org/react";
 const Card = dynamic(() => import("@/components/dashboard/card"), {ssr: false});
 // hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
@@ -16,25 +15,17 @@ import { FACTORY_ADDRESSES, DAI_ADDRESSES } from "@/constants/constants";
 import { Contract, ethers } from "ethers";
 // icons
 import { Icon } from "@iconify/react/dist/iconify.js";
-// rainbow modal
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-
-
 
 import { IVulcan, METATYPE } from "@/types";
 import { formatEther } from "viem";
-import useAuth from "@/hooks/useAuth";
 
 export default function Home() {
   
-  const { address, chainId, signer, isConnecting, isConnected } = useActiveWeb3();
-  const { user, isAuthenticating, signIn } = useAuth ();
+  const { address, chainId, signer } = useActiveWeb3();
   const [contractFactory, setContractFactory] = React.useState<Contract | undefined> (undefined);
   const [icos, setICOs] = React.useState<string[]>([]);
   const [metaData, setMetaData] = React.useState<IVulcan[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  // modal hook
-  const { openConnectModal } = useConnectModal ();
 
   const _fetchMetaData = async (_id: string) => {
     const _contract = new Contract(
@@ -87,13 +78,10 @@ export default function Home() {
       const _icos: string[] = await contractFactory.getVulcans();
       const _metas = await Promise.all(_icos.map(async(id: string) => {
         const contract = new Contract(id, ICO, signer);
-        const investors: string[] = await contract.getInvestors();
-        return {
-          id,
-          isContributed: investors.includes(String(address)) 
-        }
+        const status = await contract.getICOState();
+        return { id, status };
       }));
-      const _filters = _metas.filter((_item: { id: string, isContributed: boolean }) => _item.isContributed).map((_item: { id: string, isContributed: boolean }) => _item.id);
+      const _filters = _metas.filter((_item: METATYPE) => _item.status === 0).map((_item: METATYPE) => _item.id);
       setICOs (_filters);
       fetchMetaData (_filters);
     } catch (err) {
@@ -112,14 +100,6 @@ export default function Home() {
   const onChange = (ids: string[]) => {
     setICOs (ids);
   }
-
-  const _signin = async () => {
-    if (isConnected) {
-      signIn ();
-    } else if (openConnectModal) {
-      openConnectModal();
-    }
-  }
   
   React.useEffect(() => {
     if (!address || !chainId || !signer || !FACTORY_ADDRESSES[chainId]) {
@@ -137,28 +117,21 @@ export default function Home() {
   return (
     <div className="flex w-full flex-col gap-4">
       <Header/>
-      <Filter data={metaData} onChange={onChange} filters={["All", "Await Deposit", "Progress", "Failed", "Success"]}/>
-      <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">My Dashboard</h1>
+      <Filter data={metaData} onChange={onChange} filters={["All", "Await Deposit", "Progress"]}/>
+      <h1 className="text-[#141416] dark:text-[#FAFCFF] text-lg py-4 px-1">Current ICOs</h1>
       {
-        !user ?
-        <div className="flex w-full justify-center mt-20">
-          <Button onClick={_signin} className="h-16 w-44 text-lg" color="secondary" startContent={isAuthenticating || isConnecting ? <Spinner color="white"/> : <Icon icon="fluent-mdl2:signin" className="text-xl"/>}>
-            SIGN IN
-          </Button>
+        isLoading ?
+        <div className="flex gap-2 items-center text-sm font-bold justify-center mt-20">
+          <Spinner size="lg"/> <span className="opacity-60 text-black dark:text-white">LOADING...</span>
         </div> : (
-          isLoading ?
-          <div className="flex gap-2 items-center text-sm font-bold justify-center mt-20">
-            <Spinner size="lg"/> <span className="opacity-60 text-black dark:text-white">LOADING...</span>
-          </div> : (
-            icos.length > 0 ?
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w1240:grid-cols-3 c1500:grid-cols-4">
-              { icos.map((_key: string) => <Card key={_key} id={_key}/>) }
-            </div> :
-            <div className="flex flex-col justify-center items-center pt-5 dark:text-white text-black ">
-              <Icon icon="mdi-light:cloud" className="text-6xl"/>
-              <h2 className="opacity-60">No ICO for this chain</h2>
-            </div>
-          )
+          icos.length > 0 ?
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w1240:grid-cols-3 c1500:grid-cols-4">
+            { icos.map((_key: string) => <Card key={_key} id={_key}/>) }
+          </div> :
+          <div className="flex flex-col justify-center items-center pt-5 dark:text-white text-black ">
+            <Icon icon="mdi-light:cloud" className="text-6xl"/>
+            <h2 className="opacity-60">No ICO for this chain</h2>
+          </div>
         )
       }
     </div>

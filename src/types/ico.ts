@@ -30,3 +30,8 @@ export type DISTRIBUTION = {
     timestamp: number;
     hash: string;
 }
+
+export type METATYPE = {
+    id: string,
+    status: number
+}

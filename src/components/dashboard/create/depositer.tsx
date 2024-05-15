@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 // components
 import ClipboardCopier from "@/components/share/clipCopier";
-import QRcode from "react-qr-code";
+import { QRCode } from 'react-qrcode-logo';
 // utils
 import { copyToClipboard } from "@/utils";
 // atoms
@@ -68,19 +68,8 @@ const Create = ({ step, setStep }: IProps) => {
         </Tooltip>
       </div>
 
-      <div className='w-full flex justify-center relative mt-5'>
-          <QRcode
-            value={ico}
-            width={100}
-            height={100}
-          />
-          <Image
-            src={'/favicon.svg'}
-            width={60}
-            height={60} 
-            alt={"logo"}
-            className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'  
-          />
+      <div className='w-full flex justify-center mt-5'>
+        <QRCode value={ico} logoImage={"/favicon.svg"} size={200} logoWidth={45} logoHeight={30}/>
       </div>
      
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">

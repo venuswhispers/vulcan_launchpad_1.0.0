@@ -8,8 +8,9 @@ interface INav {
 }
 
 const navs = [
-  {title: 'All Launchpads', url: '/'},
-  // {title: 'Advanced Mode', url: ''},
+  {title: 'Dashboard', url: '/'},
+  {title: 'Current ICOs', url: '/live'},
+  {title: 'Archieved ICOs', url: '/done'},
   {title: 'Launch ICO', url: '/create'},
   // {title: 'My Contributions', url: '/'},
 ]
@@ -26,7 +27,7 @@ const Header = () => {
   )
 
   return (
-    <div className="flex w-full justify-center sm:flex-row flex-col dark:bg-[#100E28] bg-white sm:!bg-inherit rounded-3xl p-[6px]">
+    <div className="flex w-full justify-center flex-col sm:flex-row md:flex-col lg:flex-row dark:bg-[#100E28] bg-white sm:!bg-inherit rounded-3xl p-[6px]">
       { navs.map((item: INav) => _renderMenuItem(item)) }  
     </div>
   );

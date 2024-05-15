@@ -156,7 +156,7 @@ const WalletConnectButton = () => {
                     // onClick={openAccountModal}
                     onClick={() => setShowProfileModa(true)}
                     type="button"
-                    className="founded-full border-[2px] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white !outline-none cursor-pointer"
+                    className="border-[2px] dark:border-[#e6e8ec17] p-[5px] flex items-center dark:bg-black rounded-full dark:text-[#5D5F68] hover:dark:text-white !outline-none cursor-pointer"
                   >
                     {user && user.avatar ? (
                       // eslint-disable-next-line @next/next/no-img-element

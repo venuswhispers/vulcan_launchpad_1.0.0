@@ -40,7 +40,7 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, refund,
           </div>
           <h2 className="flex gap-2 items-center font-bold text-lg pb-2">
             <Icon icon="icon-park-outline:funds" width={30} height={30}/>
-            All Funds Were Refunded To Investors.
+            All Funds Were Refunded To Contributors.
             <a href={`${explorer}/tx/${refund.hash}`} target="_blank"><Icon className='cursor-pointer hover:opacity-60' icon="fluent:open-16-filled" width={22} /></a>
           </h2>
           {
