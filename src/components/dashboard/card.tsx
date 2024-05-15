@@ -135,13 +135,6 @@ const Card = ({ id }: IProps) => {
       const _projectURI = await _contract.projectURI();
       const response = await fetch(_projectURI);
       const __project = await response.json();
-      
-      if (typeof __project.logo === "string" ) {
-        __project.logo = {
-          url: __project.logo,
-          type: 'image/jpeg'
-        }
-      }
       setProject(__project);
     } catch (err) {
       console.log("failed fetch project data");
@@ -254,11 +247,19 @@ const Card = ({ id }: IProps) => {
           </span>
         </div>
       );
-    } else if (status === 0 && tokensFullyCharged) {
+    } else if (status === 0 && tokensFullyCharged && fundsRaised < softcap) {
+      return (
+        <div className="ribbon bg-gradient-to-r from-[#a89262] to-[#c4b585] shadow-lg">
+          <span className="font-bold text-sm text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">
+            Live
+          </span>
+        </div>
+      );
+    } else if (status === 0 && tokensFullyCharged && fundsRaised >= softcap) {
       return (
         <div className="ribbon bg-gradient-to-r from-[#cfb377] to-[#c4b585] shadow-lg">
           <span className="font-bold text-sm text-white [text-shadow:_0_2px_2px_rgb(0_0_0_/_40%)]">
-            Live
+            PASSING
           </span>
         </div>
       );

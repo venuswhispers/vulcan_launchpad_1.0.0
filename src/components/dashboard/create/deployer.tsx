@@ -183,6 +183,7 @@ const Create = ({ step, setStep }: IProps) => {
     if (!address || !chainId || !signer) {
       return;
     }
+
     const _contractDAI = new Contract(DAI_ADDRESSES[chainId], DAI, signer);
     setContractDAI(_contractDAI);
     const _contractFactory = new Contract(
@@ -196,10 +197,10 @@ const Create = ({ step, setStep }: IProps) => {
   // @dev pay 100DAI of spam filter fee
   const handlePaySpamFilterFee = async () => {
 
-    if (Number(daiBalance) < 100) {
-      showToast ("Insufficient DAI balance.", "warning");
-      return;
-    }
+    // if (Number(daiBalance) < 100) {
+    //   showToast ("Insufficient DAI balance.", "warning");
+    //   return;
+    // }
 
     const _isPaid = await contractFactory?.paidSpamFilterFee(address);
     setPaid (_isPaid);

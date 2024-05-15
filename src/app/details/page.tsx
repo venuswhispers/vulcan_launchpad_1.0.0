@@ -225,12 +225,6 @@ const LaunchPad = () => {
       const _projectURI = await _contract.projectURI();
       const response = await fetch(_projectURI);
       const __project = await response.json();
-      if (typeof __project.logo === "string" ) {
-        __project.logo = {
-          url: __project.logo,
-          type: 'image/jpeg'
-        }
-      }
       setProject(__project);
     } catch (err) {
       console.log("failed fetch project data");
