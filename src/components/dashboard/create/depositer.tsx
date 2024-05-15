@@ -69,7 +69,7 @@ const Create = ({ step, setStep }: IProps) => {
       </div>
 
       <div className='w-full flex justify-center mt-5'>
-        <QRCode value={ico} logoImage={"/favicon.svg"} size={200} logoWidth={45} logoHeight={30}/>
+        <div className="p-3 rounded-md bg-white"><QRCode quietZone={0} value={ico} logoImage={"/favicon.svg"} size={200} logoWidth={45} logoHeight={30}/></div>
       </div>
      
       <div className="flex gap-2 justify-between items-center pr-3 mt-5">
