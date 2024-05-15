@@ -197,10 +197,10 @@ const Create = ({ step, setStep }: IProps) => {
   // @dev pay 100DAI of spam filter fee
   const handlePaySpamFilterFee = async () => {
 
-    // if (Number(daiBalance) < 100) {
-    //   showToast ("Insufficient DAI balance.", "warning");
-    //   return;
-    // }
+    if (Number(daiBalance) < 100) {
+      showToast ("Insufficient DAI balance.", "warning");
+      return;
+    }
 
     const _isPaid = await contractFactory?.paidSpamFilterFee(address);
     setPaid (_isPaid);

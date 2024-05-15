@@ -17,7 +17,7 @@ interface IProps {
   message: string,
   isInvalid: boolean,
   info: string,
-  readOnly: boolean
+  readOnly?: boolean
 }
 
 const modules = {
