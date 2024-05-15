@@ -15,7 +15,7 @@ import { baseURL } from "@/constants/config";
 // types
 import { IUSER, IProject, IToken } from "@/types";
 import { reduceAmount } from "@/utils";
-import { formatUnits } from "viem";
+import { formatEther, formatUnits } from "viem";
 // utils
 import { copyToClipboard } from "@/utils";
 import axios from "axios";
@@ -63,6 +63,9 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     setPrice(_token.price);
     const _hardcap = await contract?.hardcap ();
     setHardcap (_hardcap);
+
+    const _balance = await contract?.tokensAvailable();
+    setBalance(Number(formatUnits(_balance, Number(_token.decimal))));
   };
 
   React.useEffect(() => {
@@ -92,7 +95,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     }
   }, [price, hardcap]);
 
-  console.log(_depositAmountToHardcap, price, hardcap)
+  console.log(_depositAmountToHardcap, Number(balance), price, hardcap)
 
 
   return (
