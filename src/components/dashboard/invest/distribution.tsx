@@ -10,7 +10,7 @@ import { useBalance } from "wagmi";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { reduceAmount } from "@/utils";
 import useToastr from "@/hooks/useToastr";
-import { cyptoSIDAO } from '@/constants/config';
+import { cyptoSIDAO } from '@/constants/constants';
 import { useRouter } from "next/navigation";
 
 
@@ -31,6 +31,7 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
 
   const [creator, setCreator] = React.useState<string>("");
   const router = useRouter ();
+  const { chainId } = useActiveWeb3 ();
 
   return (
     <div className="fixed top-0 right-0 left-0 bottom-0 z-50 bg-[#0000003a] backdrop-filter backdrop-blur-[5px] flex justify-center px-2 items-center">
@@ -53,7 +54,7 @@ const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, wallet,
 
           <h1 className="text-green-600 font-bold pt-2 pb-1">CryptoSI DAO&apos;S FEE (2.5%)</h1>
           <div className="w-full flex gap-2 text-sm justify-between items-center">
-            <a href={`${explorer}/address/${cyptoSIDAO}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{cyptoSIDAO}</a>
+            <a href={`${explorer}/address/${cyptoSIDAO[Number(chainId)]}`} target="_blank" className="truncate relative hover:underline cursor-pointer">{cyptoSIDAO[Number(chainId)]}</a>
             <h1>{ reduceAmount(Number(formatEther(fundsRaised))*0.025) }ETH</h1>
           </div>
 

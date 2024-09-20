@@ -1,9 +1,9 @@
 "use client"
 import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 
-import { IVulcan } from "@/types";
+import { CHAIN, IVulcan, METATYPE } from "@/types";
 import { useAtom } from "jotai";
 import { keywordAtom } from "@/store/icos";
 // hooks
@@ -13,25 +13,27 @@ import { config } from "@/constants/wagmiConfig";
 import { chains } from "@/constants/wagmiConfig";
 // types
 import { type Chain } from 'viem';
+import { CHAIN_DATA } from "@/constants/constants";
 
 
 interface IProps {
   data: IVulcan[],
-  onChange: (ids: string[]) => void,
-  filters: string[] 
+  onChange: (ids: METATYPE[]) => void,
+  filters: string[]
 }
 
-interface ISort { 
-  label: string, 
+interface ISort {
+  label: string,
   key: string,
-  direction: boolean 
+  direction: boolean,
+  hide?: boolean
 }
 // "Created", "Funds Raised", "Softcap", "Hardcap"
-const _sorts: ISort[] =[
-  { key: 'startTime', label: 'Start Time', direction: true },
-  { key: 'startTime', label: 'StartTime', direction: false },
-  { key: 'endTime', label: 'EndTime', direction: true },
-  { key: 'endTime', label: 'EndTime', direction: false },
+const _sorts: ISort[] = [
+  { key: 'startTime', label: 'Most Recent', direction: true, hide: true },
+  { key: 'startTime', label: 'Least Recent', direction: false, hide: true },
+  { key: 'endTime', label: 'Most Recent Finish', direction: true, hide: true },
+  { key: 'endTime', label: 'Least Recent Finish', direction: false, hide: true },
   { key: 'fundsRaised', label: 'FundsRaised', direction: true },
   { key: 'fundsRaised', label: 'FundsRaised', direction: false },
   { key: 'softcap', label: 'Softcap', direction: true },
@@ -40,18 +42,19 @@ const _sorts: ISort[] =[
   { key: 'hardcap', label: 'Hardcap', direction: false },
 ]
 
-const Filter = ( { data, onChange, filters }: IProps ) => {
+const Filter = ({ data, onChange, filters }: IProps) => {
 
   const [filter, setFilter] = React.useState<string>("All");
-  const [sort, setSort] = React.useState<ISort>({ key: 'startTime', label: 'Start Time', direction: true });
+  const [sort, setSort] = React.useState<ISort>({ key: 'startTime', label: 'Most Recent', direction: true });
   const [keyword, setKeyword] = React.useState<string>("");
   const [mainKeyword,] = useAtom<string>(keywordAtom);
+  const [chain, setChain] = React.useState<string>("All");
   // web3
-  const { chainId } = useActiveWeb3 ();
+  // const { chainId } = useActiveWeb3();
 
-  const _switchChain = async (id: number) => {
-    await switchChain(config, { chainId: id });
-  }
+  // const _switchChain = async (id: number) => {
+  //   await switchChain(config, { chainId: id });
+  // }
 
 
   React.useEffect(() => {
@@ -67,28 +70,36 @@ const Filter = ( { data, onChange, filters }: IProps ) => {
           _value = true;
           break;
         case "Await Deposit":
-          _value = ( _item.status === 0 && !_item.tokensFullyCharged ) ? true: false;
+          _value = (_item.status === 0 && !_item.tokensFullyCharged) ? true : false;
           break;
         case "Progress":
-          _value = ( _item.status === 0 && _item.tokensFullyCharged ) ? true: false;
+          _value = (_item.status === 0 && _item.tokensFullyCharged) ? true : false;
           break;
         case "Failed":
-          _value = ( _item.status === 1 ) ? true: false;
+          _value = (_item.status === 1) ? true : false;
           break;
-          case "Success":
-            _value = ( _item.status === 2 || _item.status === 3 ) ? true: false;
+        case "Success":
+          _value = (_item.status === 2 || _item.status === 3) ? true : false;
           break;
       }
       return _value;
     }
-    const _data = data.filter((_item: IVulcan) => _item.title.toLowerCase().includes(keyword.toLowerCase())).filter((_item: IVulcan) => _filter(_item)).sort(_sort).map((_item: IVulcan) => _item.address);
-    onChange (_data);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, sort, keyword, chainId, data]);
+
+    if (chain === 'All') {
+      const _data = data.filter((_item: IVulcan) => _item.title.toLowerCase().includes(keyword.toLowerCase())).filter((_item: IVulcan) => _filter(_item)).sort(_sort).map((_item: IVulcan) => ({ id: _item.address, chainId: _item.chainId, status: _item.status }));
+      onChange(_data);
+    } else {
+      const _chainId = Object.values(CHAIN_DATA).find(c => c.name === chain)?.chainId;
+      const _data = data.filter((_item: IVulcan) => _item.title.toLowerCase().includes(keyword.toLowerCase()) && _item.chainId === _chainId).filter((_item: IVulcan) => _filter(_item)).sort(_sort).map((_item: IVulcan) => ({ id: _item.address, chainId: _item.chainId, status: _item.status }));
+      onChange(_data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, sort, keyword, data, chain]);
 
   React.useEffect(() => {
-    setKeyword (mainKeyword);
-  }, [mainKeyword, chainId, data])
+    setKeyword(mainKeyword);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainKeyword, data]);
 
   const _renderSearch = () => (
     <div className="flex relative w-full sm:w-auto md:w-full lg:w-auto grow">
@@ -97,7 +108,7 @@ const Filter = ( { data, onChange, filters }: IProps ) => {
       </svg>
       <input
         className="peer bg-white text-sm !text-[11px] w-full h-full bg-transparent pl-10 rounded-lg text-blue-gray-700 font-sans font-normal outline-none border-none disabled:bg-blue-gray-50 x-3 py-[10px]  !pr-9  border-gray-200"
-        placeholder="*Search ICO..." 
+        placeholder="*Search ICO..."
         value={keyword}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
       />
@@ -110,20 +121,20 @@ const Filter = ( { data, onChange, filters }: IProps ) => {
         <div className="flex flex-col w-full sm:w-[25%] sm: md:w-full lg:w-[150px]">
           <h4 className="text-xs px-1">Filters</h4>
           <div className="rounded-lg truncate bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between">
-            <span>{ filter }</span>
-            <Icon icon="bxs:down-arrow" className="flex-none"/>
+            <span>{filter}</span>
+            <Icon icon="bxs:down-arrow" className="flex-none" />
           </div>
         </div>
       </DropdownTrigger>
-      <DropdownMenu 
+      <DropdownMenu
         aria-label="Single selection example"
         variant="flat"
         disallowEmptySelection
         selectionMode="single"
         selectedKeys={new Set([filter])}
-        // onSelectionChange={setSelectedKeys}
+      // onSelectionChange={setSelectedKeys}
       >
-        { filters.map((_item: string) => <DropdownItem onClick={() => setFilter(_item)} key={_item} className={`${filter === _item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{_item}</DropdownItem>) }
+        {filters.map((_item: string) => <DropdownItem onClick={() => setFilter(_item)} key={_item} className={`${filter === _item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{_item}</DropdownItem>)}
       </DropdownMenu>
     </Dropdown>
   )
@@ -134,20 +145,20 @@ const Filter = ( { data, onChange, filters }: IProps ) => {
         <div className="flex flex-col w-full sm:w-[25%] sm: md:w-full lg:w-[150px]">
           <h4 className="text-xs px-1">Sort by</h4>
           <div className="rounded-lg truncate bg-white px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between">
-            <span className="flex gap-1 items-center">{ sort.direction ? <Icon icon="ph:arrow-up-bold" /> : <Icon icon="ph:arrow-down-bold" /> }{ sort.label }</span>
-            <Icon icon="bxs:down-arrow" className="flex-none"/>
+            <span className="flex gap-1 items-center">{sort.direction ? <Icon icon="ph:arrow-up-bold" /> : <Icon icon="ph:arrow-down-bold" />}{sort.label}</span>
+            <Icon icon="bxs:down-arrow" className="flex-none" />
           </div>
         </div>
       </DropdownTrigger>
-      <DropdownMenu 
+      <DropdownMenu
         aria-label="Single selection example"
         variant="flat"
         disallowEmptySelection
         selectionMode="single"
         selectedKeys={new Set([sort.key + sort.direction])}
-        // onSelectionChange={setSelectedKeys}
+      // onSelectionChange={setSelectedKeys}
       >
-        { _sorts.map((_item: ISort) => <DropdownItem onClick={() => setSort(_item)} key={_item.key + String(_item.direction)} className={`${sort == _item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{`${_item.direction ? "Highest" : "Lowest"} ${_item.label}`}</DropdownItem>) }
+        {_sorts.map((_item: ISort) => <DropdownItem onClick={() => setSort(_item)} key={_item.key + String(_item.direction)} className={`${sort == _item && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{`${!_item.hide ? (_item.direction ? "Highest" : "Lowest") : ""} ${_item.label}`}</DropdownItem>)}
       </DropdownMenu>
     </Dropdown>
   )
@@ -158,31 +169,40 @@ const Filter = ( { data, onChange, filters }: IProps ) => {
         <div className="flex flex-col w-full sm:w-[25%] sm: md:w-full lg:w-[150px]">
           <h4 className="text-xs px-1">Chains</h4>
           <div className="rounded-lg bg-white truncate px-5 py-[9px] text-[11px] flex gap-4 items-center text-[#606D93] cursor-pointer justify-between"><span>
-          {
-            chainId ?
-            chains.find((_chain: Chain) => _chain.id === chainId)?.name : "Not Connected"
-          }  
-          </span><Icon icon="bxs:down-arrow" className="flex-none"/></div>
+            {chain}
+          </span><Icon icon="bxs:down-arrow" className="flex-none" /></div>
         </div>
       </DropdownTrigger>
-      <DropdownMenu 
+      <DropdownMenu
         aria-label="Single selection example"
         variant="flat"
         disallowEmptySelection
         selectionMode="single"
-        selectedKeys={new Set([String(chainId)])}
+        selectedKeys={new Set([chain])}
       >
-        { chains.map((_chain: Chain) => <DropdownItem onClick={() => _switchChain(_chain.id)} key={_chain.id} className={`${chainId === _chain.id && 'font-bold !text-gray-500'} text-gray-300 text-xs`}>{_chain.name}</DropdownItem>) }
+        {
+          ["All", ...Object.values(CHAIN_DATA).map((_chain: CHAIN) => _chain.name)].map((_name: string) => (
+            <DropdownItem
+              onClick={() => setChain(_name)}
+              key={_name}
+              className={`${chain === _name && 'font-bold !text-gray-500'} text-gray-300`}
+            >
+              <span className="text-xs">
+                {_name}
+              </span>
+            </DropdownItem>
+          ))
+        }
       </DropdownMenu>
     </Dropdown>
   )
 
   return (
     <div className="flex gap-2 flex-col sm:flex-row md:flex-col lg:flex-row items-end w-full border border-[#EFF3FA] p-4 bg-gradient-to-r from-[#2B6EC8] to-[#00D7E1] rounded-xl">
-      { _renderSearch () }
-      { _renderFilter () }
-      { _renderSort () }
-      { _renderChainFilter () }
+      {_renderSearch()}
+      {_renderFilter()}
+      {_renderSort()}
+      {_renderChainFilter()}
     </div>
   );
 };

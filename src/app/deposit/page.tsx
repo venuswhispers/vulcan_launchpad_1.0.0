@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Contract } from "ethers";
+import { Contract, providers } from "ethers";
 import { Tooltip } from "@nextui-org/react";
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
@@ -23,10 +23,11 @@ import axios from "axios";
 import { CHAIN_DATA } from "@/constants/constants";
 // router
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import useAsyncEffect from "use-async-effect";
 
 
 const LaunchPad = ({ params }: { params: { id: string } }) => {
-  const { address, chainId, signer } = useActiveWeb3();
+  // const { address, chainId, signer } = useActiveWeb3();
   const [contract, setContract] = React.useState<Contract | undefined>(
     undefined
   );
@@ -35,46 +36,39 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
   const [hardcap, setHardcap] = React.useState<bigint>(BigInt("0"));
   const [balance, setBalance] = React.useState<number>(0);
   // router
-  const searchParams = useSearchParams ();
-  const id = searchParams.get("id")??"";
-  
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") ?? "";
+  const chainId = searchParams.get("chainId") ?? "";
+
 
   const { showToast } = useToastr();
 
   const router = useRouter();
 
-  const { chain } = useActiveWeb3 ();
+  // const { chain } = useActiveWeb3 ();
 
   const handleCopyAddress = async () => {
     showToast("Copied address to clipboard", "success");
     await copyToClipboard(id);
   };
 
-  React.useEffect(() => {
-    if (!contract) return;
-    _getICOInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contract]);
-
-  const _getICOInfo = async () => {
-    const _token = await contract?.tokenInfo();
-    if (!_token) return;
-    setToken(_token);
-    setPrice(_token.price);
-    const _hardcap = await contract?.hardcap ();
-    setHardcap (_hardcap);
-
-    const _balance = await contract?.tokensAvailable();
-    setBalance(Number(formatUnits(_balance, Number(_token.decimal))));
-  };
-
-  React.useEffect(() => {
-    if (!address || !chainId || !signer || !id) {
-      return;
+  useAsyncEffect(async () => {
+    try {
+      const _rpc = CHAIN_DATA[chainId].rpc;
+      const _jsonRpcProvider = new providers.JsonRpcProvider(_rpc);
+      const _contract = new Contract(id, ICO, _jsonRpcProvider);
+      const _token = await _contract.tokenInfo();
+      setToken(_token);
+      setPrice(_token.price);
+      const _hardcap = await _contract.hardcap();
+      setHardcap(_hardcap);
+      const _balance = await _contract.tokensAvailable();
+      setBalance(Number(formatUnits(_balance, Number(_token.decimal))));
+    } catch (err) {
+      console.log(err)
+      console.log("error")
     }
-    const _contract = new Contract(id, ICO, signer);
-    setContract(_contract);
-  }, [address, chainId, signer, id]);
+  }, [])
 
   // const _depositAmountToSoftcap = React.useMemo(() => {
   //   if (Number(price) === 0) {
@@ -88,15 +82,12 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
     if (price === BigInt("0") || hardcap === BigInt("0")) {
       return 0;
     } else {
-      const _amount =  hardcap / price;
+      const _amount = hardcap / price;
       // return _amount;
       console.log({ price, hardcap, _amount })
       return Math.ceil(Number(_amount));
     }
   }, [price, hardcap]);
-
-  console.log(_depositAmountToHardcap, Number(balance), price, hardcap)
-
 
   return (
     <div className="w-full">
@@ -110,14 +101,14 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         </span>
       </div>
       <h2 className="text-lg font-bold text-center dark:text-white mt-20">
-        { 
-          _depositAmountToHardcap > balance ? 
-          <>** You need to deposit <span className="text-lg text-green-600 font-bold">{ String(_depositAmountToHardcap - balance) } tokens</span> to reach your hard cap and start this ICO **</> :
-          <>** ICO has been started **</> 
+        {
+          _depositAmountToHardcap > balance ?
+            <>** You need to deposit <span className="text-lg text-green-600 font-bold">{String(_depositAmountToHardcap - balance)} tokens</span> to reach your hard cap and start this ICO **</> :
+            <>** ICO has been started **</>
         }
       </h2>
 
-      <h3 className="text-center dark:text-white text-sm mt-5">( charged { balance } tokens )</h3>
+      <h3 className="text-center dark:text-white text-sm mt-5">( charged {balance} tokens )</h3>
 
       <div className="dark:text-white text-black text-sm mt-8 flex gap-1 items-center justify-center">
         <span
@@ -129,7 +120,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
         <ClipboardCopier size={22} text={id} />
         <Tooltip content="Go to chain" className="p-2 text-white bg-black">
           <a
-            href={`${CHAIN_DATA[String(chain?.id)]?.explorer}/address/${id}`}
+            href={`${CHAIN_DATA[chainId]?.explorer}/address/${id}`}
             target="_blank"
           >
             <Icon
@@ -142,7 +133,7 @@ const LaunchPad = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="w-full flex justify-center relative mt-5">
-        <div className="p-3 rounded-md bg-white"><QRCode quietZone={0} value={id}  size={200} logoImage="/favicon.svg" logoWidth={60} logoHeight={43}/></div>
+        <div className="p-3 rounded-md bg-white"><QRCode quietZone={0} value={id} size={200} logoImage="/favicon.svg" logoWidth={60} logoHeight={43} /></div>
       </div>
     </div>
   );

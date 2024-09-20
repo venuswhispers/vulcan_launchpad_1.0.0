@@ -13,7 +13,7 @@ import Success from "./investSuccess";
 // hooks
 import useToastr from "@/hooks/useToastr";
 // constants
-import { cyptoSIDAO } from '@/constants/config';
+import { cyptoSIDAO } from '@/constants/constants';
 import useAPI from "@/hooks/useAPI";
 // atoms
 import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
@@ -42,7 +42,6 @@ interface IProps {
 }
 
 const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myContribution, maxTokens, totalSupply, setShowSuccessModal }: IProps) => {
-
   // atoms
   const [fromAmount, setFromAmount] = useAtom<string>(fromAmountAtom);
   const [toAmount, setToAmount] = useAtom<bigint>(toAmountAtom);
@@ -91,7 +90,7 @@ const Invest = ({ setVisible, id, token, price, contract, ethPrice, refresh, myC
   
 
       console.log(ethAmount)
-      const _tx = await contract.invest(ethAmount, cyptoSIDAO, { value: ethAmount });
+      const _tx = await contract.invest(ethAmount, cyptoSIDAO[Number(chainId)], { value: ethAmount });
       await _tx.wait();
       showToast(`Successfully Contributed ${formatEther(ethAmount)}ETH`, "success");
 

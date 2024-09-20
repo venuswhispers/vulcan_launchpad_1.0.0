@@ -53,10 +53,10 @@ const Header = () => {
       </Dropdown> */}
 
       <div className="flex gap-1 sm:gap-6 items-center">
-        <div className="relative mr-2">
+        {/* <div className="relative mr-2">
           <Icon icon="ph:bell-thin" width={22} />
           <div className="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-[#45B26B] border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900"></div>
-        </div>
+        </div> */}
         <div className="relative">
           <svg
             xmlns="http://www.w3.org/2000/svg"

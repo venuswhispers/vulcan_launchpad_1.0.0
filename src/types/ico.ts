@@ -7,7 +7,8 @@ export interface IVulcan {
     hardcap: number,
     title: string,
     tokensFullyCharged: boolean,
-    address: string
+    address: string,
+    chainId: number
 }
 
 export type HISTORY = {
@@ -33,5 +34,6 @@ export type DISTRIBUTION = {
 
 export type METATYPE = {
     id: string,
+    chainId: number,
     status: number
 }

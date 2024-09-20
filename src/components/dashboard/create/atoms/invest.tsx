@@ -30,8 +30,8 @@ const Investment = ({ data, explorer }: IProps) => {
         
       </div>
       <div className={`text-sm px-3 pt-2 dark:text-gray-400 max-h-full overflow-hidden transition-all ${!open && '!max-h-0'}`}>
-        <p className="pt-1"><span>Investor: </span><a href={`${explorer}/address/${data.investor}`} target="_blank" className="hover:underline cursor-pointer">{data.investor}</a></p>
-        <p className="pt-1"><span>Contributor: </span><a href={`${explorer}/address/${data.contributor}`} target="_blank" className="hover:underline cursor-pointer">{data.contributor}</a></p>
+        <p className="pt-1"><span>Contributor: </span><a href={`${explorer}/address/${data.investor}`} target="_blank" className="hover:underline cursor-pointer">{data.investor}</a></p>
+        <p className="pt-1"><span>Contribution Partner: </span><a href={`${explorer}/address/${data.contributor}`} target="_blank" className="hover:underline cursor-pointer">{data.contributor}</a></p>
         <p className="pt-1"><span>Amount: </span><span>{formatEther(data.amount)} ETH</span></p>
         <p className="pt-1"><span>Date: </span><span>{new Date(Number(data.timestamp)*1000).toLocaleString()}</span></p>
       </div>

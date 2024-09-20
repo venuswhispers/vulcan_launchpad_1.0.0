@@ -4,8 +4,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import InputInfo from "@/components/dashboard/create/atoms/infoInput";
 import InputToken from "@/components/dashboard/create/atoms/tokenAddressInput";
 import InfoShower from "@/components/dashboard/create/atoms/infoShower";
-import { reduceAmount, parseNumber } from "@/utils";
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/react";
+import { reduceAmount, parseNumber, getBNBPrice, getETHPrice } from "@/utils";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 
 import { Contract, ethers } from "ethers";
 //hooks
@@ -18,14 +18,14 @@ import ERC20 from "@/constants/abis/erc20.json";
 import FACTORY from "@/constants/abis/factory.json";
 import DAI from "@/constants/abis/dai.json";
 //addresses
-import { FACTORY_ADDRESSES, DAI_ADDRESSES } from "@/constants/constants";
+import { FACTORY_ADDRESSES, DAI_ADDRESSES, CHAIN_DATA } from "@/constants/constants";
 //progress Modal
 import Progress from "@/components/dashboard/create/progress";
 //methods
 import { uploadToPinata, uploadToIPFS } from "@/utils";
 //constants
-import { cyptoSIDAO } from '@/constants/config';
- 
+import { cyptoSIDAO } from '@/constants/constants';
+
 import {
   walletAtom,
   previewAtom,
@@ -34,9 +34,9 @@ import {
   descriptionAtom,
   hardCapAtom,
   softCapAtom,
-  youtubeLinkAtom, 
-  endTimeAtom, 
-  twitterAtom, 
+  youtubeLinkAtom,
+  endTimeAtom,
+  twitterAtom,
   facebookAtom,
   instagramAtom,
   linkedinAtom,
@@ -49,6 +49,7 @@ import {
 } from "@/store";
 import { formatEther, formatUnits, parseEther, parseUnits, toEventHash } from "viem";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
+import useAsyncEffect from "use-async-effect";
 
 interface IProps {
   step: number;
@@ -76,7 +77,7 @@ const Create = ({ step, setStep }: IProps) => {
   const [lens,] = useAtom<string>(lensAtom);
   const [ico, setIco] = useAtom<string>(icoAtom);
   const [, setAmount] = useAtom<string>(amountAtom);
-  const [, setTokenName] = useAtom<string>(nameAtom); 
+  const [, setTokenName] = useAtom<string>(nameAtom);
   //states
   const [isInvalid, setIsInvalid] = React.useState<boolean>(false);
   const [isInvalidTokenAddress, setIsInvalidTokenAddress] = React.useState<boolean>(false);
@@ -94,7 +95,7 @@ const Create = ({ step, setStep }: IProps) => {
   //web3
   const { address, chainId, signer } = useActiveWeb3();
   //eth price
-  const [ethPrice, setEthPrice] = React.useState<number>(3000);
+  const [ethPrice, setEthPrice] = React.useState<number>(0);
   //useContracts
   const { data: token, isPending: tokenPending } = useReadContracts({
     contracts: [
@@ -137,8 +138,8 @@ const Create = ({ step, setStep }: IProps) => {
   // @token infos
   const [name, symbol, decimals, totalSupply] = token || [];
   // @contracts
-  const [contractDAI, setContractDAI] = React.useState< Contract | undefined > ( undefined );
-  const [contractFactory, setContractFactory] = React.useState< Contract | undefined > (undefined);
+  const [contractDAI, setContractDAI] = React.useState<Contract | undefined>(undefined);
+  const [contractFactory, setContractFactory] = React.useState<Contract | undefined>(undefined);
   // @validate valid token address
   React.useEffect(() => {
     if (
@@ -159,24 +160,23 @@ const Create = ({ step, setStep }: IProps) => {
 
   React.useEffect(() => {
     if (symbol && symbol?.status === "success") {
-      setTokenName (String(symbol.result));
+      setTokenName(String(symbol.result));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [symbol])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [symbol]);
 
-  // @get ETH price from chainbase
-  React.useEffect(() => {
-    fetch("/api/utils/eth-price")
-      .then(async (response) => {
-        const {
-          payload: { amount },
-        } = await response.json();
-        setEthPrice(amount);
-      })
-      .catch((err) => {
-        console.log("failed to fetch eth price");
-      });
-  }, []);
+  useAsyncEffect(async () => {
+    let price = 0;
+    try {
+      if (chainId === 56) {
+        price = await getBNBPrice();
+      } else {
+        price = await getETHPrice();
+      }
+      setEthPrice(price);
+    } catch (err) { }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId]);
 
   // @dev load contract from start
   React.useEffect(() => {
@@ -198,15 +198,15 @@ const Create = ({ step, setStep }: IProps) => {
   const handlePaySpamFilterFee = async () => {
 
     if (Number(daiBalance) < 100) {
-      showToast ("Insufficient DAI balance.", "warning");
+      showToast("Insufficient DAI balance.", "warning");
       return;
     }
 
     const _isPaid = await contractFactory?.paidSpamFilterFee(address);
-    setPaid (_isPaid);
+    setPaid(_isPaid);
 
     if (_isPaid) {
-      showToast ("You have already paid spam filter fee.", "success");
+      showToast("You have already paid spam filter fee.", "success");
       return;
     }
 
@@ -225,7 +225,7 @@ const Create = ({ step, setStep }: IProps) => {
       await _approveTx.wait();
       const _spamFilterFeeTx = await contractFactory.paySpamFilterFee();
       await _spamFilterFeeTx.wait();
-      setPaid (true);
+      setPaid(true);
       showToast(
         "You have successfully paid for your spam filter fee with 100 DAI.",
         "warning"
@@ -245,10 +245,10 @@ const Create = ({ step, setStep }: IProps) => {
   // @user click progress modal's close button
   const handleConfirm = () => {
     if (stepper < 4 && !isLoading) {
-      setShowProgressModal (false);
+      setShowProgressModal(false);
     } else if (stepper === 4 && !isLoading) {
-      setShowProgressModal (false);
-      setStep (2);
+      setShowProgressModal(false);
+      setStep(2);
     }
   }
 
@@ -274,14 +274,14 @@ const Create = ({ step, setStep }: IProps) => {
         valid = false;
       }
       if (!decimals || !totalSupply || !name || !symbol) {
-        showToast ("Invalid token information", "warning");
+        showToast("Invalid token information", "warning");
         valid = false;
       };
-    
+
       if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(ethPrice))) {
         showToast("Invalid Token price.", "warning");
         valid = false;
-      } 
+      }
       if (valid && preview) {
         handleSubmit();
       }
@@ -295,7 +295,7 @@ const Create = ({ step, setStep }: IProps) => {
   const _depositAmountToSoftcap = React.useMemo(() => {
     if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(ethPrice))) {
       return BigInt("0");
-    } 
+    }
     const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
     if (_price === BigInt("0")) {
       return BigInt("0");
@@ -309,7 +309,7 @@ const Create = ({ step, setStep }: IProps) => {
   const _depositAmountToHardcap = React.useMemo(() => {
     if (Number(price) === 0 || Number(ethPrice) === 0 || isNaN(Number(price)) || isNaN(Number(ethPrice))) {
       return BigInt("0");
-    } 
+    }
     const _price: bigint = currency === 'ETH' ? parseEther(price) : parseEther(price) / BigInt(Math.ceil(ethPrice));
     if (_price === BigInt("0")) {
       return BigInt("0");
@@ -320,20 +320,18 @@ const Create = ({ step, setStep }: IProps) => {
   }, [currency, price, ethPrice, hardCap]);
   // @dev totalSupply
   const _totalSupply = React.useMemo(() => {
+    console.log(totalSupply, decimals)
     if (totalSupply?.status !== 'success' || totalSupply === undefined || decimals?.status !== 'success' || decimals === undefined) {
       return BigInt("0");
     } else {
-      return BigInt(formatUnits(
-        BigInt(String(totalSupply.result)),
-        Number(decimals?.result)
-      ));
+      return BigInt(String(totalSupply.result)) / parseUnits('1', Number(decimals?.result))
     }
   }, [totalSupply, decimals])
 
   // @deploy smart contract with informations
   const handleSubmit = async () => {
 
-    setIco ("");
+    setIco("");
 
     if (!decimals || !totalSupply || !name || !symbol) return;
 
@@ -343,16 +341,16 @@ const Create = ({ step, setStep }: IProps) => {
     const _decimals = BigInt(String(decimals.result));
     const _softcap = parseEther(softCap);
 
-    
+
     // test if totalSupply and tokenPrice is valid
-    if (_price * _totalSupply / parseUnits ("1", Number(_decimals)) < _hardcap ) {
-      showToast ("Can't reach hardcap with this price and totalSupply", "warning");
+    if (_price * _totalSupply / parseUnits("1", Number(_decimals)) < _hardcap) {
+      showToast("Can't reach hardcap with this price and totalSupply", "warning");
       return;
     }
 
     // set amount
     const _amount = _hardcap / _price + BigInt("1");
-    setAmount (String(_amount));
+    setAmount(String(_amount));
     console.log("setting", {
       _amount,
       _price,
@@ -364,8 +362,8 @@ const Create = ({ step, setStep }: IProps) => {
     setIsLoading(true);
     try {
       // @step1 upload logo to PINATA
-      setStepper (1);
-      setPercent (0);
+      setStepper(1);
+      setPercent(0);
       const _logoURI = await uploadToPinata(
         preview?.data as string,
         ({ loaded, total }: { loaded: number; total: number }) => {
@@ -411,15 +409,15 @@ const Create = ({ step, setStep }: IProps) => {
         throw "Project Data upload failed to IPFS. Please retry.";
       });
       console.log("@projectURI: ", _projectURI);
-      setStepper (3);
-      setPercent (0);
+      setStepper(3);
+      setPercent(0);
 
       ///@step3 deploy smart contract to chain
       console.log({
         _projectURI,
         _softcap,
         _hardcap,
-        time: Math.floor(Number(endTime)/1000),
+        time: Math.floor(Number(endTime) / 1000),
         name: name.result,
         symbol: symbol.result,
         _price,
@@ -427,13 +425,13 @@ const Create = ({ step, setStep }: IProps) => {
         _totalSupply,
         tokenAddress,
         wallet,
-        cyptoSIDAO
+        crptoSIDAO: cyptoSIDAO[Number(chainId)]
       })
-      const _tx = await contractFactory?.launchNewICO (
+      const _tx = await contractFactory?.launchNewICO(
         _projectURI,
         _softcap,
         _hardcap,
-        BigInt(Math.floor(Number(endTime)/1000)),
+        BigInt(Math.floor(Number(endTime) / 1000)),
         // BigInt(Math.floor(Date.now()/1000) + 7200),
         name.result,
         symbol.result,
@@ -442,27 +440,27 @@ const Create = ({ step, setStep }: IProps) => {
         _totalSupply,
         tokenAddress,
         wallet,
-        cyptoSIDAO
+        cyptoSIDAO[Number(chainId)]
       );
       await _tx.wait();
-      setPaid (false);
-      showToast ("ICO ready to launch, please now deposit tokens to be distributed.", "success");
+      setPaid(false);
+      showToast("ICO ready to launch, please now deposit tokens to be distributed.", "success");
 
-      const _vulcans = await contractFactory?.getVulcans ();
-      setIco (_vulcans[_vulcans.length - 1]);
-      
+      const _vulcans = await contractFactory?.getVulcans();
+      setIco(_vulcans[_vulcans.length - 1]);
+
       setStepper(4);
       setPercent(0);
     } catch (err) {
       if (String(err).includes("user rejected transaction")) {
         showToast("Reject transation", "warning");
       } else {
-        showToast (String(err), "warning");
+        showToast(String(err), "warning");
         // console.log(err);
       }
-      setShowProgressModal (false);
+      setShowProgressModal(false);
     } finally {
-      setIsLoading (false);
+      setIsLoading(false);
     }
   };
 
@@ -484,7 +482,7 @@ const Create = ({ step, setStep }: IProps) => {
           hash={ico}
         />
       )}
-      
+
       <InputToken
         title="Token Address"
         className="mt-10"
@@ -529,13 +527,13 @@ const Create = ({ step, setStep }: IProps) => {
               </div>
             </div>
           </DropdownTrigger>
-          <DropdownMenu 
+          <DropdownMenu
             aria-label="Single selection example"
             variant="flat"
             disallowEmptySelection
             selectionMode="single"
             selectedKeys={[currency]}
-            // onSelectionChange={setSelectedKeys}
+          // onSelectionChange={setSelectedKeys}
           >
             <DropdownItem key={'ETH'} className={`${currency === 'ETH' && 'font-bold !text-gray-500'} text-gray-300 text-xs`} onClick={() => setCurrency("ETH")}>ETH</DropdownItem >
             <DropdownItem key={'USD'} className={`${currency === 'USD' && 'font-bold !text-gray-500'} text-gray-300 text-xs`} onClick={() => setCurrency("USD")}>USD</DropdownItem >
@@ -543,7 +541,7 @@ const Create = ({ step, setStep }: IProps) => {
         </Dropdown>
       </div>
       <div className="flex flex-row-reverse justify-between">
-        <h3 className="px-1 text-sm">( 1 ETH = {ethPrice} USD )</h3>
+        <h3 className="px-1 text-sm">( 1 {CHAIN_DATA[chainId as number]?.symbol} = {Intl.NumberFormat().format(ethPrice)} USD )</h3>
         {ethPrice && (
           <h3 className="px-1 text-sm">
             ( ={" "}
@@ -557,13 +555,13 @@ const Create = ({ step, setStep }: IProps) => {
 
       <div className="px-2 pt-2 text-sm">
         <h3 className="flex gap-2">
-          <span>* You need to deposit <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToHardcap) } tokens</span> to reach your hard cap and start this ICO </span>
+          <span>* You need to deposit <span className="text-[15px] text-green-600 font-bold">{String(_depositAmountToHardcap)} tokens</span> to reach your hard cap and start this ICO </span>
         </h3>
         <h3 className="flex gap-2">
-          <span>* If you reach your soft cap, you will distribute <span className="text-[15px] text-green-600 font-bold">{ String(_depositAmountToSoftcap) } tokens</span> and <span className="text-[15px] text-red-600 font-bold">{String(_depositAmountToHardcap - _depositAmountToSoftcap)} tokens</span> will be returned.</span>
+          <span>* If you reach your soft cap, you will distribute <span className="text-[15px] text-green-600 font-bold">{String(_depositAmountToSoftcap)} tokens</span> and <span className="text-[15px] text-red-600 font-bold">{String(_depositAmountToHardcap - _depositAmountToSoftcap)} tokens</span> will be returned.</span>
         </h3>
       </div>
-      { _depositAmountToHardcap > _totalSupply && <span className="text-red-600 text-sm mt-10 px-3">You can&apos;t reach hard cap with this token price and totalSupply.</span> }
+      {_depositAmountToHardcap > _totalSupply && <span className="text-red-600 text-sm mt-10 px-3">You can&apos;t reach hard cap with this token price and totalSupply.</span>}
 
       <h2 className="text-lg font-bold mt-12 mb-2">*Token Information</h2>
       <div

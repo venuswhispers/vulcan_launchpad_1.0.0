@@ -12,6 +12,7 @@ import { useAtom } from "jotai";
 import { IMGBB_API_KEY } from "@/constants/config";
 import Loader from "@/components/share/loading";
 const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), {ssr: false});
+import { uploadToPinata } from "@/utils";
 
 import { isAuthenticatedAtom, userAtom } from "@/store/user";
 import useAuth from "@/hooks/useAuth";
@@ -137,15 +138,27 @@ const Evangilists = () => {
       let _avatar = avatar;
 
       if (newAvatar) {
-        const formData = new FormData();
-        formData.append("image", newAvatar);
-        const {
-          data: { url: _newAvatar },
-        } = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-          method: "POST",
-          body: formData,
-        }).then((res) => res.json());
-        _avatar = _newAvatar;
+
+        const _logoURI = await uploadToPinata(
+          preview as string,
+          // ({ loaded, total }: { loaded: number; total: number }) => {
+          //   console.log(Math.floor((loaded * 100) / total));
+          //   setPercent(Math.floor((loaded * 100) / total));
+          // }
+        ).catch((err) => {
+          console.log(err);
+          throw "File upload failed to IPFS. Please retry.";
+        });
+
+        // const formData = new FormData();
+        // formData.append("image", newAvatar);
+        // const {
+        //   data: { url: _newAvatar },
+        // } = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+        //   method: "POST",
+        //   body: formData,
+        // }).then((res) => res.json());
+        _avatar = _logoURI;
       }
 
       await api.put("/user", {

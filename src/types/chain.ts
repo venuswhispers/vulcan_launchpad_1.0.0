@@ -17,7 +17,14 @@ export type RAINBOW_CHAIN = {
     name?: string;
     unsupported?: boolean;
 };
+
 export type CHAIN = {
+    name: string,
+    symbol: string,
+    ticker: string,
+    rpc: string,
     chainId: number,
-    explorer: string
-};
+    explorer: string,
+    logo: string,
+    istestnet?: boolean
+}

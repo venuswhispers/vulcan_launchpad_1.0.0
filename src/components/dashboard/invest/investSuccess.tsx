@@ -3,8 +3,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import ClipboardCopier from "@/components/share/clipCopier";
 import Image from "next/image";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
-import { CHAIN_DATA } from "@/constants/constants";
-import { cyptoSIDAO } from "@/constants/config";
+import { CHAIN_DATA, cyptoSIDAO } from "@/constants/constants";
 import { formatEther } from "viem";
 import { useRouter } from "next/navigation";
 
@@ -19,7 +18,7 @@ interface IProps {
 
 const Success = ({ setVisible, hash, ethAmount, percent, tokens }: IProps) => {
 
-  const { chain } = useActiveWeb3 ();
+  const { chain, chainId } = useActiveWeb3 ();
   const router = useRouter ();
 
   return (
@@ -51,7 +50,7 @@ const Success = ({ setVisible, hash, ethAmount, percent, tokens }: IProps) => {
           <div className="px-8 py-2 text-sm">
             <p className="pb-1"><span className="opacity-60 font-bold">Amount:</span> {formatEther(ethAmount)}ETH</p>
             <p className="pb-1"><span className="opacity-60 font-bold">Token Amount:</span> {tokens} ( {percent}% of totalSupply )</p>
-            <p className="pb-1"><span className="opacity-60 font-bold">Contributor:</span> <a href={`${CHAIN_DATA[String(chain?.id)].explorer}/tx/${cyptoSIDAO}`} target="_blank" className="relative hover:underline cursor-pointer">{ cyptoSIDAO }</a></p>
+            <p className="pb-1"><span className="opacity-60 font-bold">Contributor:</span> <a href={`${CHAIN_DATA[String(chain?.id)].explorer}/address/${cyptoSIDAO[Number(chainId)]}`} target="_blank" className="relative hover:underline cursor-pointer">{ cyptoSIDAO[Number(chainId)] }</a></p>
             <div className="flex gap-1 items-center">
               <span className="opacity-60 font-bold">TX:</span>
               <a href={`${CHAIN_DATA[String(chain?.id)].explorer}/tx/${hash}`} target="_blank" className="truncate hover:underline">

@@ -11,6 +11,7 @@ import useAuth from "@/hooks/useAuth";
 const Description = dynamic(() => import("@/components/dashboard/create/atoms/descriptionInput"), { ssr: false });
 import { useRouter } from "next/navigation";
 import { IMGBB_API_KEY } from "@/constants/config";
+import { uploadToPinata } from "@/utils";
 
 const acceptables = [
   'image/png',
@@ -76,16 +77,25 @@ const Create = () => {
 
       let _avatar = "";
       if (avatar) {
-        const formData = new FormData();
-        formData.append("image", avatar);
-        const { data: { url: _newAvatar } } = await fetch(
-          `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, 
-          {
-            method: "POST",
-            body: formData
-          }
-        ).then(res => res.json());
-        _avatar = _newAvatar;
+
+        const _logoURI = await uploadToPinata(
+          preview as string
+        ).catch((err) => {
+          console.log(err);
+          throw "File upload failed to IPFS. Please retry.";
+        });
+
+        // const formData = new FormData();
+        // formData.append("image", avatar);
+        // const { data: { url: _newAvatar } } = await fetch(
+        //   `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, 
+        //   {
+        //     method: "POST",
+        //     body: formData
+        //   }
+        // ).then(res => res.json());
+        // _avatar = _newAvatar;
+        _avatar = _logoURI;
       }
       
       const data = { fullName, company, website, twitter, facebook, instagram, farcaster, lens, bio, linkedin, avatar: _avatar };

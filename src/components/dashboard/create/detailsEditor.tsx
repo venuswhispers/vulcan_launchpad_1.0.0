@@ -62,6 +62,15 @@ const Create = ({ step, setStep }: IProps) => {
 
   const [time, setTime] = React.useState<string>("00:00");
 
+  function isValidYoutubeURL(url: string) {
+    const regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    if (url.match(regExp)) {
+      return true; // URL is valid
+    } else {
+      return false; // URL is invalid
+    }
+  }
+
   // @when user type softcap
   const handleSoftcapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -125,6 +134,12 @@ const Create = ({ step, setStep }: IProps) => {
       showToast("The end time must be in the future.", "warning");
       valid = false;
     }
+    if (!isValidYoutubeURL(youtubeLink)) {
+      showToast("Video Link is valid Youtube url.", "warning");
+      valid = false;
+    }
+    
+
     if (valid) {
       setStep (1);
     }
@@ -144,7 +159,7 @@ const Create = ({ step, setStep }: IProps) => {
   
   return (
     <div className="w-full">
-      <h3 className="font-bold">Upload File</h3>
+      <h3 className="font-bold">Upload Project Logo</h3>
       <h5 className="text-[#777E90] text-xs py-1">
         Drag or choose your file to upload
       </h5>
@@ -184,14 +199,15 @@ const Create = ({ step, setStep }: IProps) => {
         />
         <InputInfo
           title="Video Link"
-          info="*Link to a video describing your project in greater detail"
-          placeholder="*video link"
+          info="*Link to a youtube video describing your project in greater detail"
+          placeholder="*Youtube video link"
           value={youtubeLink}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setYoutubeLink(e.target.value)
           }
+          validator={isValidYoutubeURL}
           isInvalid={isInvalid}
-          message="input youtube video link"
+          message="Invalid youtube link"
         />
         <Datepicker
           title="End Date"

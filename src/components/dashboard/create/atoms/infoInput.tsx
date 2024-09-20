@@ -11,10 +11,12 @@ interface IProps {
   message: string,
   isInvalid: boolean,
   info?: string,
-  readOnly?: boolean
+  readOnly?: boolean,
+  validator?: (value: string) => boolean
 }
 
-const Input = ({title, className, onChange, value, placeholder, message, isInvalid, info = "info", readOnly = false }: IProps) => {
+const Input = ({title, className, onChange, value, placeholder, message, isInvalid, info = "info", readOnly = false, validator }: IProps) => {
+
   return (
     <div className={className}>
       <div className="px-1 py-1 font-bold truncate flex gap-1 items-center">{title} 
@@ -29,7 +31,7 @@ const Input = ({title, className, onChange, value, placeholder, message, isInval
         value={value}
         disabled={readOnly}
       />
-      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isInvalid && !value ) ? message : '' }</p>
+      <p className="text-red-800 text-[11px] px-2 h-3">{ ( isInvalid && (!value || (validator && !validator(value))) ) ? message : '' }</p>
     </div>
   )
 };

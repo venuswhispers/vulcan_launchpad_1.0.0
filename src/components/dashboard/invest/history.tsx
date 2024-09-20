@@ -17,7 +17,7 @@ const History = ({ investments, setVisible, explorer }: IProps) => {
       <div className="rounded-xl relative p-[1px] bg-gradient-to-tr from-[#ff6a0096] via-[#6d78b280] to-[#e02d6f86] mt-10 md:mt-0 w-full sm:w-[600px]">
         <div className="dark:bg-[#100E28] w-full h-full bg-white rounded-xl dark:text-white p-4 z-50">
           <div className="flex justify-between pb-2">
-            <h2 className="text-lg flex gap-1 items-center pt-3"><Icon icon="system-uicons:files-history" width={25} height={25} /> Investment Details ({investments.length})</h2>
+            <h2 className="text-lg flex gap-1 items-center pt-3"><Icon icon="system-uicons:files-history" width={25} height={25} /> Contribution Details ({investments.length})</h2>
             <Icon onClick={() => setVisible(false)} icon="ep:close-bold" width={20} className="relative cursor-pointer hover:opacity-60"/>
           </div>
           { investments.map((_investment: HISTORY, index: number) => <Investment key={index} data={_investment} explorer={explorer}/>) }

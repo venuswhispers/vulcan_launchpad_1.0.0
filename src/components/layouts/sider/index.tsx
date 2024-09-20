@@ -25,50 +25,50 @@ const navs: INav[] = [
   },
   { 
     title: "Current ICOs", 
-    url: "/live", 
+    url: "/live/", 
     icon: "fluent:live-24-regular" 
   },
   { 
     title: "Archived ICOs", 
-    url: "/done", 
+    url: "/done/", 
     icon: "hugeicons:wallet-done-02" 
   },
   { 
     title: "Launch ICO", 
-    url: "/create", 
+    url: "/create/", 
     icon: "bi:gem" 
   },
   { 
     title: "News", 
-    url: "/news", 
+    url: "/news/", 
     icon: "emojione-monotone:newspaper",
     soon: true
   },
   { title: "Tutorials", 
-    url: "/tutorials", 
+    url: "/tutorials/", 
     icon: "ic:round-school",
     soon: true
   },
   { title: "Videos", 
-    url: "/videos", 
+    url: "/videos/", 
     icon: "icon-park-outline:video",
     soon: true
   },
   {
     title: "Evangalists",
-    url: "/evangilists",
+    url: "/evangilists/",
     icon: "simple-icons:marketo",
     soon: true,
   },
   {
     title: "Accreditors",
-    url: "/accreditors",
+    url: "/accreditors/",
     icon: "ph:user-circle-light",
     soon: true,
   },
   { 
     title: "Help", 
-    url: "/help", 
+    url: "/help/", 
     icon: "ri:file-list-3-line" 
   },
 ];
@@ -259,16 +259,6 @@ const Sider = () => {
             </section>
             <section id="theme-switcher" className="p-6">
               {_renderThemeSwitch()}
-              <h2 className="text mt-2 px-2">Insigts</h2>
-              <div className="flex justify-between items-center mt-3 px-1">
-                <div className="text flex gap-2 items-center">
-                  <Icon icon="tabler:message-circle" width={30} hFlip />
-                  <span>Inbox</span>
-                </div>
-                <div className="p-1 px-2 rounded-md text-white bg-[#FF3E46]">
-                  8
-                </div>
-              </div>
             </section>
           </div>
         </div>

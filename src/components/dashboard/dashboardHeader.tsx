@@ -8,11 +8,8 @@ interface INav {
 }
 
 const navs = [
-  {title: 'Dashboard', url: '/'},
-  {title: 'Current ICOs', url: '/live/'},
-  {title: 'Archieved ICOs', url: '/done/'},
-  {title: 'Launch ICO', url: '/create/'},
-  // {title: 'My Contributions', url: '/'},
+  {title: 'Current ICOs', url: '/'},
+  {title: 'Liked ICOs', url: '/like'}
 ]
 
 const Header = () => {

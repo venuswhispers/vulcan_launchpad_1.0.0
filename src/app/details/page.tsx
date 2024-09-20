@@ -6,6 +6,7 @@ import { Tooltip } from "@nextui-org/react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Skeleton } from "@nextui-org/react";
 import { Contract } from "ethers";
+import ReactPlayer from "react-player";
 // dynamic imports
 import dynamic from "next/dynamic";
 const Refund = dynamic(() => import("@/components/dashboard/invest/refund"), { ssr: false });
@@ -15,9 +16,11 @@ const History = dynamic(() => import("@/components/dashboard/invest/history"), {
 const Displayer = dynamic(() => import("@/components/dashboard/create/atoms/quillDisplayer"), { ssr: false });
 const SuccessModal = dynamic(() => import("@/components/dashboard/invest/investSuccess"), { ssr: false });
 const IntroductionMovie = dynamic(() => import("@/components/dashboard/introMovie"), { ssr: false });
+const ContributionPartners = dynamic(() => import("@/components/dashboard/invest/contributionPartners"), { ssr: false });
 //hooks
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import useToastr from "@/hooks/useToastr";
+import { useSwitchChain } from "wagmi";
 //abis
 import ICO from "@/constants/abis/ICO.json";
 import axios from "axios";
@@ -26,7 +29,7 @@ import { baseURL } from "@/constants/config";
 import { IUSER, IProject, IToken, HISTORY, REFUND, DISTRIBUTION, CONTRIBUTION, INVESTMENT } from "@/types";
 // utils
 import { formatEther, formatUnits, parseEther, parseUnits } from "viem";
-import { reduceAmount } from "@/utils";
+import { _getYoutubeId, _getYoutubeThumbnailURL, getBNBPrice, getETHPrice, reduceAmount } from "@/utils";
 // constants
 import { CHAIN_DATA, DATES } from "@/constants/constants";
 import useAPI from "@/hooks/useAPI";
@@ -35,6 +38,9 @@ import { fromAmountAtom, toAmountAtom, ethAmountAtom, hashAtom } from "@/store";
 import { useAtom } from "jotai";
 // router
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import LazyImage from "@/components/share/lazyImage";
+import { title } from "process";
+import useAsyncEffect from "use-async-effect";
 
 
 const LaunchPad = () => {
@@ -79,31 +85,26 @@ const LaunchPad = () => {
   const [showRefund, setShowRefund] = React.useState<boolean>(false);
   const [showIntroduction, setShowIntroduction] = React.useState<boolean>(false);
   // router
-  const searchParams = useSearchParams ();
-  const id = searchParams.get("id")??"";
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") ?? "";
+  const network = searchParams.get("chainId") ?? "";
+  const { switchChain } = useSwitchChain()
 
-  const [refund, setRefund] = React.useState<REFUND>({     
+  const [refund, setRefund] = React.useState<REFUND>({
     refunded: false,
     refunder: "",
     timestamp: 0,
     hash: ""
   });
-  const [distribution, setDistribution] = React.useState<DISTRIBUTION>({     
+  const [distribution, setDistribution] = React.useState<DISTRIBUTION>({
     distributed: false,
     distributor: "",
     timestamp: 0,
     hash: ""
   });
 
-  const { showToast } = useToastr ();
-  const api = useAPI ();
-
-  // console.log(
-  //   Number(hardcap),
-  //   Number(token?.price),
-  //   tokensAvailable,
-  //   tokensFullyCharged
-  // );
+  const { showToast } = useToastr();
+  const api = useAPI();
 
   /**
    * get tokens available
@@ -111,7 +112,7 @@ const LaunchPad = () => {
    */
   async function _tokensAvailable(_contract: Contract) {
     try {
-      
+
       const __tokensAvailable = await _contract.tokensAvailable();
       setTokensAvailable(__tokensAvailable);
 
@@ -209,7 +210,7 @@ const LaunchPad = () => {
    */
   async function _tokensFullyCharged(_contract: Contract) {
     try {
-      const __tokensFullyCharged = await _contract.tokensFullyCharged ();
+      const __tokensFullyCharged = await _contract.tokensFullyCharged();
       setTokensFullyCharged(__tokensFullyCharged);
     } catch (err) {
       console.log("failed to test if ICO is fully charged with tokens");
@@ -250,11 +251,11 @@ const LaunchPad = () => {
    * fetch ICO investment history
    * @param _contract 
    */
-  async function _history (_contract: Contract) {
+  async function _history(_contract: Contract) {
     try {
-      const __history: any[] = await _contract.getHistory ();
+      const __history: any[] = await _contract.getHistory();
       const _investHistory: HISTORY[] = __history.map((_item: any[]) => ({ investor: String(_item[0]), contributor: String(_item[1]), amount: BigInt(_item[2]), timestamp: Number(_item[3]) }))
-      setInvestHistory (_investHistory);
+      setInvestHistory(_investHistory);
     } catch (err) {
       console.log("Failed to fetch ICO investment history");
     }
@@ -264,10 +265,10 @@ const LaunchPad = () => {
    * fetch ICO investors
    * @param _contract 
    */
-  async function _investors (_contract: Contract) {
+  async function _investors(_contract: Contract) {
     try {
-      const ___investors: string[] = await _contract.getInvestors ();
-      setInvestors (___investors);
+      const ___investors: string[] = await _contract.getInvestors();
+      setInvestors(___investors);
     } catch (err) {
       console.log("Failed to fetch ICO investors");
     }
@@ -277,10 +278,10 @@ const LaunchPad = () => {
    * fetch ICO creator's wallet
    * @param _contract 
    */
-  async function _creator (_contract: Contract) {
+  async function _creator(_contract: Contract) {
     try {
-      const __wallet: string = await _contract.fundsAddress ();
-      setWallet (__wallet);
+      const __wallet: string = await _contract.fundsAddress();
+      setWallet(__wallet);
     } catch (err) {
       console.log(err)
       console.log("Failed to fetch ICO creator's wallet that funds will go to");
@@ -291,13 +292,13 @@ const LaunchPad = () => {
    * fetch ICO status
    * @param _contract 
    */
-  async function _ICOStatus (_contract: Contract) {
+  async function _ICOStatus(_contract: Contract) {
     try {
-      const _status: number = await _contract.getICOState ();
-      setICOStatus (Number(_status));
+      const _status: number = await _contract.getICOState();
+      setICOStatus(Number(_status));
 
       if (_status === 1) {
-        const _refund = await _contract.refund ();
+        const _refund = await _contract.refund();
         const { data } = await api.get(`/ico/invest/refund?refunder=${_refund[1]}&ico=${id}`);
         console.log(data);
         const _hash = data ? data.txHash : "";
@@ -324,12 +325,6 @@ const LaunchPad = () => {
     }
   }
 
-  // console.log({
-  //   distribution,
-  //   refund,
-  //   ICOStatus
-  // })
-
   const myContribution = React.useMemo(() => {
     if (!address) {
       return BigInt("");
@@ -344,7 +339,7 @@ const LaunchPad = () => {
     }
     const _value = BigInt(tokensAvailable) - parseEther("1") * BigInt(fundsRaised) / BigInt(token.price);
     return _value;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fundsRaised, token?.price, tokensAvailable, fundsRaised]);
 
   const _getICOInfo = async (_contract: Contract) => {
@@ -367,18 +362,20 @@ const LaunchPad = () => {
     // creator data
     _user(_contract);
     // ICO history
-    _history (_contract);
+    _history(_contract);
     // get ICO investors
-    _investors (_contract);
+    _investors(_contract);
     // get tokensAvailable
-    _tokensAvailable (_contract);
+    _tokensAvailable(_contract);
     // get ICO status
-    _ICOStatus (_contract);
+    _ICOStatus(_contract);
     // get ICO wallet that funds will go to
-    _creator (_contract);
+    _creator(_contract);
+    // get contribution details
+    _fetchDistributionData(_contract);
 
     const _lister = await _contract.lister();
-    setLister (_lister);
+    setLister(_lister);
   };
 
   React.useEffect(() => {
@@ -418,57 +415,64 @@ const LaunchPad = () => {
   // console.log(Number(fundsRaised), useBalance({address: id}).data?.value);
 
   React.useEffect(() => {
+
+
     if (!address || !chainId || !signer || !id) {
       return;
     }
-    const _contract = new Contract(id, ICO, signer);
-    setContract(_contract);
-    _getICOInfo(_contract);
+    if (chainId !== Number(network)) {
+      showToast(`Invalid Network. Please switch to ${CHAIN_DATA[network].name}`, "error");
+      switchChain({ chainId: Number(network) })
+    } else {
+      const _contract = new Contract(id, ICO, signer);
+      setContract(_contract);
+      _getICOInfo(_contract);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, chainId, signer, id]);
+  }, [address, chainId, signer, id, network]);
 
-  React.useEffect(() => {
-    fetch("/api/utils/eth-price")
-    .then(async (response) => {
-      const {
-        payload: { amount },
-      } = await response.json();
-      setEthPrice(amount);
-    })
-    .catch((err) => {
-      console.log("failed to fetch eth price");
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const _fetchDistributionData = async () => {
+  useAsyncEffect(async () => {
+    let price = 0;
     try {
-      if (!contract) throw "no contract";
-      const _contributors = await contract.getContributors ();
-      const contributions: CONTRIBUTION[] = await Promise.all(_contributors.map(async(_contributor: string) => {
-        const _amount: bigint = await contract.contributions(_contributor);
+      if (Number(network) === 56) {
+        price = await getBNBPrice();
+      } else {
+        price = await getETHPrice();
+      }
+      setEthPrice(price);
+    } catch (err) { }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [network]);
+
+  const _fetchDistributionData = async (_contract: Contract) => {
+    try {
+      const _contributors = await _contract.getContributors();
+      const contributions: CONTRIBUTION[] = await Promise.all(_contributors.map(async (_contributor: string) => {
+        const _amount: bigint = await _contract.contributions(_contributor);
         return {
           contributor: _contributor,
           amount: _amount
         }
       }));
-      setContributions (contributions);
+      setContributions(contributions);
     } catch (err) {
       console.log(err);
     }
   }
 
-  React.useEffect(() => {
-    // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", distribution)
-    if (( ICOStatus === 2 || ICOStatus === 3 ) && distribution.distributed) {
-      _fetchDistributionData ();
-      setCap(ICOStatus === 2 ? "Softcap": "Hardcap");
-      setShowDistribution (true);
-    } else if (ICOStatus === 1 && refund.refunded) {
-      setShowRefund (true);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ICOStatus, distribution, refund])
+  // React.useEffect(() => {
+  //   // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", distribution)
+  //   if (( ICOStatus === 2 || ICOStatus === 3 ) && distribution.distributed) {
+  //     _fetchDistributionData ();
+  //     setCap(ICOStatus === 2 ? "Softcap": "Hardcap");
+  //     setShowDistribution (true);
+  //   } else if (ICOStatus === 1 && refund.refunded) {
+  //     setShowRefund (true);
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [ICOStatus, distribution, refund])
+
+
 
   const _renderItem = (title: string, value: string) => (
     <div className="flex h-12 gap-4 justify-between text-sm items-center border-b border-[#E6E8EC] dark:border-[#ededee1a]">
@@ -511,18 +515,18 @@ const LaunchPad = () => {
       setIsLoading(true);
 
       const _distribution = await contract?.distribution();
-      const _refund = await contract?.refund ();
+      const _refund = await contract?.refund();
 
       if (_refund[0] || _distribution[0]) {
-        _getICOInfo (contract as Contract);
+        _getICOInfo(contract as Contract);
         return;
       }
-     
-      const _tx = await contract?.finish ();
-      await _tx.wait ();
+
+      const _tx = await contract?.finish();
+      await _tx.wait();
 
       if (ICOStatus === 2) {
-        await api.post('/ico/invest/distribution', { 
+        await api.post('/ico/invest/distribution', {
           ico: id,
           distributor: String(address),
           txHash: _tx.hash,
@@ -530,7 +534,7 @@ const LaunchPad = () => {
         });
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> success distribute update")
       } else if (ICOStatus === 1) {
-        await api.post('/ico/invest/refund', { 
+        await api.post('/ico/invest/refund', {
           ico: id,
           refunder: String(address),
           txHash: _tx.hash,
@@ -539,9 +543,9 @@ const LaunchPad = () => {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> success refund update")
       };
 
-      showToast ("Success", "success");
-      _getICOInfo (contract as Contract);
-    } catch (err) { 
+      showToast("Success", "success");
+      _getICOInfo(contract as Contract);
+    } catch (err) {
       showToast(String(err), "wanring");
       console.log(err);
     } finally {
@@ -553,19 +557,19 @@ const LaunchPad = () => {
     if (ICOStatus === 0) {
       return (
         <button onClick={() => setShowInvestModal(true)} className="bg-[#2B6EC8] text-sm flex gap-1 items-center rounded-lg py-2 pt-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
-          <Icon icon="token:bondly" width={20} height={20}/> Back This Project
+          <Icon icon="token:bondly" width={20} height={20} /> Back This Project
         </button>
       )
     } else if (ICOStatus === 1 && !refund.refunded) {
       return (
         <button onClick={_finish} className="bg-[#2B6EC8] flex gap-1 text-sm items-center rounded-lg py-2 pt-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
           {
-              isLoading ?
+            isLoading ?
               <>
-                <Icon icon="eos-icons:bubble-loading" width={20} height={20}/> PROCESSING...
+                <Icon icon="eos-icons:bubble-loading" width={20} height={20} /> PROCESSING...
               </> :
               <span className="flex gap-1 items-center">
-                <Icon icon="tabler:credit-card-refund" width={20} height={20}/> REFUND ALL
+                <Icon icon="tabler:credit-card-refund" width={20} height={20} /> REFUND ALL
               </span>
           }
         </button>
@@ -576,7 +580,7 @@ const LaunchPad = () => {
           <h3 onClick={() => setShowRefund(true)} className="rounded-lg cursor-pointer text-red-700 underline hover:opacity-60 py-3 font-bold text-lg">
             Refunded as Failure
           </h3>
-          <Tooltip className="relative z-50 bg-black text-white p-2" content={`Completed by ${refund.refunder} on ${new Date(refund.timestamp*1000).toLocaleString()}`}>
+          <Tooltip className="relative z-50 bg-black text-white p-2" content={`Completed by ${refund.refunder} on ${new Date(refund.timestamp * 1000).toLocaleString()}`}>
             <Icon icon="ep:info-filled" className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
           </Tooltip>
         </div>
@@ -585,12 +589,12 @@ const LaunchPad = () => {
       return (
         <button onClick={_finish} className="bg-[#2B6EC8] flex gap-1 text-sm items-center rounded-lg py-2 pt-3 px-4 text-white font-bold hover:bg-[#2b35c8]">
           {
-              isLoading ?
+            isLoading ?
               <>
-                <Icon icon="eos-icons:bubble-loading" width={20} height={20}/> PROCESSING...
+                <Icon icon="eos-icons:bubble-loading" width={20} height={20} /> PROCESSING...
               </> :
               <>
-                <Icon icon="icon-park-outline:funds" width={20} height={20}/> DISTRIBUTE FUNDS & TOKENS
+                <Icon icon="icon-park-outline:funds" width={20} height={20} /> DISTRIBUTE FUNDS & TOKENS
               </>
           }
         </button>
@@ -601,7 +605,7 @@ const LaunchPad = () => {
           <h3 onClick={() => setShowDistribution(true)} className="rounded-lg text-green-500 underline hover:opacity-60 cursor-pointer py-3 font-bold text-lg">
             Distributed After Reaching Softcap
           </h3>
-          <Tooltip className="relative z-50 bg-black text-white p-2" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp*1000).toLocaleString()}`}>
+          <Tooltip className="relative z-50 bg-black text-white p-2" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp * 1000).toLocaleString()}`}>
             <Icon icon="ep:info-filled" className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
           </Tooltip>
         </div>
@@ -612,7 +616,7 @@ const LaunchPad = () => {
           <h3 onClick={() => setShowDistribution(true)} className="rounded-lg text-green-500 underline hover:opacity-60 cursor-pointer py-3 font-bold text-lg">
             Distributed After Reaching Hardcap
           </h3>
-          <Tooltip className="relative z-50 bg-black text-white p-2" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp*1000).toLocaleString()}`}>
+          <Tooltip className="relative z-50 bg-black text-white p-2" content={`Completed by ${distribution.distributor} on ${new Date(distribution.timestamp * 1000).toLocaleString()}`}>
             <Icon icon="ep:info-filled" className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
           </Tooltip>
         </div>
@@ -620,14 +624,31 @@ const LaunchPad = () => {
     }
   }
 
-  
+  const _renderYoutubeThumbnail = (url: string) => (
+    ReactPlayer.canPlay(url) ?
+      <div className="w-full relative p-1 py-10 bg-black rounded-2xl flex items-center justify-center">
+        <LazyImage src={_getYoutubeThumbnailURL(url) + ""} className="rounded-none aspect-video" />
+        <div className="flex justify-center items-center absolute w-1/2 aspect-[3/1] rounded-2xl bg-[#00000079] px-[2.5%] py-[2.5%]">
+          <Icon onClick={() => setShowIntroduction(true)} icon="fluent:play-12-regular" className="w-1/2 h-full text-white cursor-pointer opacity-60 hover:opacity-100" />
+          <a href={url} target="_blank" className="w-1/2 h-full flex items-center justify-center">
+            <Icon icon="humbleicons:external-link" className="w-1/2 h-full text-white cursor-pointer opacity-60 hover:opacity-100" />
+          </a>
+        </div>
+      </div> :
+      <div className="bg-black py-10 p-1 w-full rounded-2xl">
+        <div className="aspect-video w-full flex justify-center items-center">
+          <Icon icon="iwwa:bad-o" className="text-8xl text-white" />
+        </div>
+      </div>
+  )
+
   return (
     <div className="flex w-full flex-col gap-4">
       <Header />
-      { showInvestModal && token && contract && chainId && 
-        <Invest 
+      {showInvestModal && token && contract && chainId &&
+        <Invest
           id={id}
-          visible={showInvestModal} 
+          visible={showInvestModal}
           setVisible={setShowInvestModal}
           setShowSuccessModal={setShowSuccessModal}
           token={token}
@@ -639,21 +660,21 @@ const LaunchPad = () => {
           maxTokens={maxTokens}
           totalSupply={token.totalSupply}
           tokensAvailable={tokensAvailable}
-        /> 
+        />
       }
-      { showHistory && chainId &&
-        <History 
-          investments={investHistory} 
-          setVisible={setShowHistory} 
+      {showHistory && chainId &&
+        <History
+          investments={investHistory}
+          setVisible={setShowHistory}
           explorer={CHAIN_DATA[String(chainId)].explorer}
-        /> 
+        />
       }
       {
         showDistribution && contract && chainId &&
-        <Distribution 
+        <Distribution
           cap={cap}
           id={id}
-          setVisible={setShowDistribution} 
+          setVisible={setShowDistribution}
           explorer={CHAIN_DATA[String(chainId)].explorer}
           contract={contract}
           wallet={wallet}
@@ -665,9 +686,9 @@ const LaunchPad = () => {
       }
       {
         showRefund && contract && chainId &&
-        <Refund 
+        <Refund
           id={id}
-          setVisible={setShowRefund} 
+          setVisible={setShowRefund}
           explorer={CHAIN_DATA[String(chainId)].explorer}
           contract={contract}
           fundsRaised={fundsRaised}
@@ -687,37 +708,28 @@ const LaunchPad = () => {
         />
       }
       {
-        showIntroduction && 
-        <IntroductionMovie 
+        showIntroduction &&
+        <IntroductionMovie
           setShowIntroduction={setShowIntroduction}
-          url={project?.youtubeLink ? project.youtubeLink : "/introduction.mp4"}
+          url={project ? project.youtubeLink : ""}
         />
       }
       <div className="dark:bg-[#100E28] mt-10 bg-white px-3 xs:px-6 py-6 rounded-2xl grid grid-cols-1 gap-12 w1340:gap-8 w1340:grid-cols-[55%_calc(45%-32px)]">
         <section>
-          <div className="w-full aspect-[2/1] bg-black rounded-2xl flex items-center justify-center">
-            <Icon width={100}  onClick={() => setShowIntroduction(true)} className="text-white cursor-pointer hover:opacity-60" icon="material-symbols-light:smart-display-outline-rounded" />
-          </div>
-          {/* <div className="w-full min-h-[230px] bg-black rounded-2xl flex items-center">
-            <ReactPlayer
-              controls
-              className="react-player rounded-[19px]"
-              url={
-                project?.youtubeLink ? project.youtubeLink : "/introduction.mp4"
-              }
-              width="100%"
-              height="100%"
-              style={{
-                borderRadius: 17,
-              }}
-            />
-          </div> */}
+
+
+          {
+            project ? _renderYoutubeThumbnail(project.youtubeLink) :
+              <Skeleton className="rounded-lg w-full py-10 dark:bg-[#363639] bg-gray-400">
+                <div className="aspect-video w-full"></div>
+              </Skeleton>
+          }
 
           <div className="w-full px-1">
             <div className="flex justify-between mt-5 flex-col xs:flex-row items-center gap-2 xs:gap-1 border-b border-[#E6E8EC] dark:border-[#ededee1a] py-3">
               <div className="flex gap-2 items-center">
                 <h3 className="dark:text-[#CCCCCC] text-[#101010] text-lg font-bold">
-                  { project?.title }
+                  {project?.title}
                 </h3>
               </div>
               <div className="flex gap-1 items-center">
@@ -779,7 +791,7 @@ const LaunchPad = () => {
                 <Image src={"/images/eth.svg"} width={20} alt="" height={20} />
                 <div className="text-[15px] flex gap-2 font-bold text-[#0CAF60] items-center">
                   <h2 className="max-w-[100px] truncate">
-                    { formatEther(fundsRaised) }
+                    {formatEther(fundsRaised)}
                   </h2>
                   ETH
                   <Icon icon="bxs:up-arrow" />
@@ -791,15 +803,18 @@ const LaunchPad = () => {
                 Current Contributors
               </h2>
               <div className="flex gap-1 items-center">
+                <Tooltip content="Click to view more details..." className="p-2 text-white bg-black">
                   <h3 onClick={() => setShowHistory(true)} className="text-[#0CAF60] underline cursor-pointer font-bold text-[15px] hover:underline hover:opacity-60"><span className="dark:text-white font-bold text-gray-700 text-lg">{invetors.length}</span> BACKERS</h3>
-                  <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`Totally ${invetors.length} investors with ${investHistory.length} times`}>
-                    <Icon icon="ep:info-filled" width={17} height={17} className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
-                  </Tooltip>
+                </Tooltip>
+                <Tooltip className="relative z-50 bg-black text-white p-2 border-none" content={`Totally ${invetors.length} investors with ${investHistory.length} times`}>
+                  <Icon icon="ep:info-filled" width={17} height={17} className="dark:text-[#a48ccf] text-[#5a4483] cursor-pointer hover:opacity-60" />
+                </Tooltip>
               </div>
             </div>
-            {_renderCoolDownItem("Charged Tokens", formatUnits(tokensAvailable, Number(token?.decimal)), true)}
             {_renderItem("Token Price", formatEther(price))}
             {_renderItem("My Contribution", formatEther(myContribution))}
+            {_renderCoolDownItem("Expected Tokens", Number(price) > 0 ? reduceAmount(Number(myContribution) / Number(price)) : '0', true)}
+            <ContributionPartners contributions={contributions} />
             {_renderCoolDownItem(
               "Start Time",
               DATES[new Date(startTime * 1000).getDay()] + " " + new Date(startTime * 1000).toLocaleString(),
@@ -835,8 +850,8 @@ const LaunchPad = () => {
                   </span>
                 </div>
               </a>
-            ): <div></div>}
-            { _renderActionButton () }
+            ) : <div></div>}
+            {_renderActionButton()}
           </div>
           {_renderCoolDownItem("Evangalists", "Coming Soon", true, true)}
           {_renderCoolDownItem("Whitelists", "Coming Soon", true)}
@@ -844,29 +859,29 @@ const LaunchPad = () => {
 
         <section>
           <h1 className="text-[#23262F] dark:text-[#CCCCCC] text-2xl font-bold">
-            Building an open digital economy
+            {project?.title}
           </h1>
           <div className="mt-5 mb-5 aspect-[2/1] flex justify-center items-center">
-          {
-            !project ?
-            <Skeleton className="rounded-lg w-full aspect-video dark:bg-[#363639] bg-gray-400">
-              <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
-            </Skeleton> :
-            project.logo.type === "video/mp4" ?
-            <video
-              className="w-full rounded-xl"
-              src={project.logo.url}
-              controls
-            /> :
-            <Image
-              src={project.logo.url}
-              width={0}
-              alt=""
-              height={0}
-              sizes="100vw"
-              className="w-full rounded-xl"
-            />
-          }
+            {
+              !project ?
+                <Skeleton className="rounded-lg w-full aspect-video dark:bg-[#363639] bg-gray-400">
+                  <div className="dark:bg-gray-700 bg-gray-400 aspect-square w-full h-full rounded-[19px]"></div>
+                </Skeleton> :
+                project.logo.type === "video/mp4" ?
+                  <video
+                    className="w-full rounded-xl"
+                    src={project.logo.url}
+                    controls
+                  /> :
+                  <Image
+                    src={project.logo.url}
+                    width={0}
+                    alt=""
+                    height={0}
+                    sizes="100vw"
+                    className="w-full rounded-xl"
+                  />
+            }
           </div>
           <div className="mt-5 text-sm text-[#777E90]">
             <Displayer value={project?.description ?? ""} />

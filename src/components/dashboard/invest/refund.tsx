@@ -10,7 +10,6 @@ import { useBalance } from "wagmi";
 import useActiveWeb3 from "@/hooks/useActiveWeb3";
 import { reduceAmount } from "@/utils";
 import useToastr from "@/hooks/useToastr";
-import { cyptoSIDAO } from '@/constants/config';
 import { useRouter } from "next/navigation";
 
 
@@ -27,7 +26,6 @@ interface IProps {
 
 const Distribution = ({ setVisible, id, explorer, contract, fundsRaised, refund, investments, investors }: IProps) => {
 
-  const [creator, setCreator] = React.useState<string>("");
   const router = useRouter ();
 
   return (

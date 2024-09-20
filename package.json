@@ -34,6 +34,7 @@
     "react-qrcode-logo": "^2.10.0",
     "react-quill": "^2.0.0",
     "react-time-picker-typescript": "^1.2.3",
+    "use-async-effect": "^2.2.7",
     "viem": "^2.9.9",
     "wagmi": "^2.5.19"
   },

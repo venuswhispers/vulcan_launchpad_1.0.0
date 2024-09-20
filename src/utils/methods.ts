@@ -1,3 +1,6 @@
+import { Contract, ethers, providers, utils } from "ethers";
+import { parseUnits } from "viem";
+
 /**
  * copy text to clipboard
  * @param text
@@ -122,3 +125,80 @@ export const reduceAddress = (
 export const _randomNumber = () => {
   return Math.floor(Math.random() * 1000000000);
 }
+
+// @dev get id from youtube link
+export const _getYoutubeId = (url: string) => {
+  var match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|watch)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/);
+  return match ? match[1] : null;
+}
+
+// @dev get id from youtube link
+export const _getYoutubeThumbnailURL = (url: string) => {
+  var match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|watch)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/);
+  return match ? `https://i.ytimg.com/vi/${match[1]}/maxresdefault.jpg` : "";
+}
+/**
+ * get ETH price from uniswapv2 pool
+ * @returns 
+ */
+export const getETHPrice = async () => {
+  try {
+    const uniswapPairAddress = "0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852";
+    // Connect to Ethereum
+    const jsonRpcProvider = new providers.JsonRpcBatchProvider(process.env.NEXT_PUBLIC_RPC_ETHEREUM);
+
+    // Load Uniswap's ETH/USDT pair contract
+    const uniswapPairContract = new Contract(
+      uniswapPairAddress,
+      [
+        "function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+      ],
+      jsonRpcProvider
+    );
+
+    // Get reserves (in this case, ETH and USDT reserves)
+    const reserves = await uniswapPairContract.getReserves();
+    const reserveETH = reserves.reserve0;
+    const reserveUSDT = reserves.reserve1;
+
+    // Calculate ETH price in terms of USDT
+    const ethPriceInUSDT = reserveUSDT * 1e18 / (reserveETH * 1e6);
+    return Number(ethPriceInUSDT);
+  } catch (err) {
+    console.log(err)
+    return 0;
+  }
+};
+/**
+ * get BNB price from uniswapv2 pool
+ * @returns 
+ */
+export const getBNBPrice = async () => {
+  try {
+    const uniswapPairAddress = "0x1b96b92314c44b159149f7e0303511fb2fc4774f";
+    // Connect to Ethereum
+    const jsonRpcProvider = new providers.JsonRpcBatchProvider(process.env.NEXT_PUBLIC_PRC_BSC);
+
+    // Load Uniswap's ETH/USDT pair contract
+    const uniswapPairContract = new ethers.Contract(
+      uniswapPairAddress,
+      [
+        "function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+      ],
+      jsonRpcProvider
+    );
+
+    // Get reserves (in this case, ETH and USDT reserves)
+    const reserves = await uniswapPairContract.getReserves();
+    const reserveBNB = reserves.reserve0;
+    const reserveUSDT = reserves.reserve1;
+
+    console.log(Number(reserveUSDT), Number(reserveBNB))
+    // Calculate BNB price in terms of USDT
+    const bnbPriceInUSDT = reserveUSDT / reserveBNB;
+    return Number(bnbPriceInUSDT);
+  } catch (err) {
+    console.log(err)
+    return 0;
+  }
+};

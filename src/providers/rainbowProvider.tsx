@@ -12,6 +12,7 @@ import { WagmiProvider } from "wagmi";
 import { config } from "@/constants/wagmiConfig";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
+import Image from "next/image";
 
 const queryClient = new QueryClient();
 
@@ -21,16 +22,18 @@ const RainbowProvider = ({ children }: { children: React.ReactNode }) => {
 
   const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => (
     user?.avatar ? 
-    <img
+    <Image
       src={user.avatar}
       width={size}
       height={size}
+      alt="avatar"
       className="rounded-full"
     /> :
-    <img
+    <Image
       src={'/favicon.svg'}
       width={size}
       height={size}
+      alt="avatar"
       className="rounded-full"
     />
   )

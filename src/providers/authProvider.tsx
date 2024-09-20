@@ -149,6 +149,7 @@ const AuthProvider = ({
    */
   const signWithJWT = async ( token: string ) => {
     try {
+      setIsAuthenticating (true);
       axios.defaults.headers.common['x-auth-token'] = token;
       const { data } = await axios.get(`${baseURL}/user/signinWithToken`);
       if (data === "none") {
@@ -159,6 +160,8 @@ const AuthProvider = ({
       }
     } catch (err) {
       _setAuth (undefined, undefined);
+    } finally {
+      setIsAuthenticating (false);
     }
   }
 
@@ -166,7 +169,6 @@ const AuthProvider = ({
   React.useEffect(() => {
     if (isConnected && typeof window !== 'undefined') {
       const jwt = window.localStorage.getItem("accessToken-");
-      console.log("jwt ------------------->", jwt);
       if (jwt) {
         signWithJWT (jwt);
       } else {
