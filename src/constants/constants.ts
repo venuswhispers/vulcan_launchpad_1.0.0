@@ -28,7 +28,6 @@ export const FACTORY_ADDRESSES: Record<string, string> = {
   [CHAIN_IDS.BASE]: "0x18e104Bfb108c65CCCDaf752825C90A05Cb1eD7e", //verified
   [CHAIN_IDS.BSC]: "0x18e104Bfb108c65CCCDaf752825C90A05Cb1eD7e", //verified
   [CHAIN_IDS.SEPOLIA]: "0x709Fc0DB7De3c354f7B165d9E8F5AAaB6Ffc1675", //verified
-  // [CHAIN_IDS.SEPOLIA]: "0x12C2b34c7D028AdfA8A077d547C6D2FDdEdFFF1B", //verified
 };
 export const DAI_ADDRESSES: Record<string, string> = {
   [CHAIN_IDS.ARBITRUM]: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1", //verified

@@ -7,7 +7,7 @@ import InfoShower from "@/components/dashboard/create/atoms/infoShower";
 import { reduceAmount, parseNumber, getBNBPrice, getETHPrice } from "@/utils";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 
-import { Contract, ethers } from "ethers";
+import { Contract, ethers, providers } from "ethers";
 //hooks
 import { useReadContracts, useReadContract } from "wagmi";
 import { useAtom } from "jotai";
@@ -89,6 +89,9 @@ const Create = ({ step, setStep }: IProps) => {
   const [stepper, setStepper] = React.useState<number>(0);
   const [paid, setPaid] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [daiBalance, setDaiBalance] = React.useState<number>(0);
+  const [calculateDaiBalance, setCalculateDaiBalance] = React.useState<boolean>(false);
+  const [isLoadingDaiBalance, setIsLoadingDaiBalance] = React.useState<boolean>(false);
   //hooks
   const { showToast } = useToastr();
   const { user, isAuthenticated } = useAuth();
@@ -121,20 +124,27 @@ const Create = ({ step, setStep }: IProps) => {
       },
     ],
   });
-  // @dev current DAI balance
-  const _daiBalance = useReadContract({
-    address: chainId ? `0x${DAI_ADDRESSES[chainId]}` : undefined,
-    abi: DAI,
-    functionName: "balanceOf",
-    args: [address],
-  });
-  const daiBalance = React.useMemo(() => {
-    if (!_daiBalance.isPending && _daiBalance.isSuccess) {
-      return formatEther(BigInt(String(_daiBalance.data)));
-    } else {
-      return 0;
+
+  useAsyncEffect(async () => {
+    if (!chainId || !address) return 0;
+    try {
+      setIsLoadingDaiBalance(true)
+      const _jsonRpcProvider = new providers.JsonRpcProvider(CHAIN_DATA[chainId].rpc);
+      const _contract = new Contract(
+        DAI_ADDRESSES[chainId],
+        ERC20,
+        _jsonRpcProvider
+      );
+      console.log({ contract: _contract, address });
+      const _balance = await _contract.balanceOf(address)
+      setDaiBalance(Number(formatEther(_balance)));
+    } catch (err) {
+      setDaiBalance(0);
+    } finally {
+      setIsLoadingDaiBalance(false)
     }
-  }, [_daiBalance]);
+  }, [chainId, address, calculateDaiBalance]);
+
   // @token infos
   const [name, symbol, decimals, totalSupply] = token || [];
   // @contracts
@@ -197,6 +207,10 @@ const Create = ({ step, setStep }: IProps) => {
   // @dev pay 100DAI of spam filter fee
   const handlePaySpamFilterFee = async () => {
 
+    if (isPayingSpamFilterFee) {
+      return;
+    }
+
     if (Number(daiBalance) < 100) {
       showToast("Insufficient DAI balance.", "warning");
       return;
@@ -207,10 +221,6 @@ const Create = ({ step, setStep }: IProps) => {
 
     if (_isPaid) {
       showToast("You have already paid spam filter fee.", "success");
-      return;
-    }
-
-    if (isPayingSpamFilterFee) {
       return;
     }
 
@@ -228,7 +238,7 @@ const Create = ({ step, setStep }: IProps) => {
       setPaid(true);
       showToast(
         "You have successfully paid for your spam filter fee with 100 DAI.",
-        "warning"
+        "success"
       );
     } catch (err) {
       if (String(err).includes("user rejected transaction")) {
@@ -239,6 +249,7 @@ const Create = ({ step, setStep }: IProps) => {
       console.log(err);
     } finally {
       setIsPayingSpamFilterFee(false);
+      setCalculateDaiBalance(prev => !prev);
     }
   };
 
@@ -621,7 +632,14 @@ const Create = ({ step, setStep }: IProps) => {
         </button>
         {paid && <Icon icon="pajamas:check" width={30} />}
       </div>
-      <h3 className="mt-1 px-1 text-xs">*Your DAI balance: {daiBalance}</h3>
+      <div className="mt-1 px-1 text-xs flex gap-2 items-center">
+        *Your DAI balance:
+        {
+          isLoadingDaiBalance ?
+            <Icon icon="eos-icons:three-dots-loading" className="text-2xl" /> :
+            <span>{Intl.NumberFormat().format(daiBalance)}</span>
+        }
+      </div>
 
       <div className="flex gap-2 justify-between items-center pr-3 mt-10">
         <button
